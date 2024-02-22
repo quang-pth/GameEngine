@@ -1,19 +1,18 @@
 #include<VIEngine/Core/Entry.h>
-#include<iostream>
+#include<Core/Logger/Logger.h>
 
 class Game : public VIEngine::Application {
 public:
 	Game(const VIEngine::ApplicationConfiguration& config) : VIEngine::Application(config) {
-
 	}
 
 	virtual bool Init() override {
-		std::cout << "Game is init\n";
+		LOG_INFO("Game is init");
 		return true;
 	}
 
 	virtual void Shutdown() override {
-		std::cout << "Game is shutdown\n";
+		LOG_INFO("Game is shutdown");
 	}
 };
 

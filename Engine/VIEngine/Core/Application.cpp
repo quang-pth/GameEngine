@@ -1,12 +1,14 @@
 #include"Application.h"
 #include<iostream>
 
+#include"Core/Logger/Logger.h"
+
 namespace VIEngine {
 	Application::Application(const ApplicationConfiguration& config) : mConfig(config) {
-
-	}
+		Logger::Init();
+    }
 
 	void Application::Run() {
-		std::cout << "App is running: " << mConfig.Width << ", " << mConfig.Height << ", " << mConfig.Title << std::endl;
+		CORE_LOG_INFO("App is running: ({0}, {1}, {2})", mConfig.Width, mConfig.Height, mConfig.Title);
 	}
 }
