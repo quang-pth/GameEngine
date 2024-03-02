@@ -5,11 +5,11 @@
 #include"pch.h"
 
 namespace VIEngine {
-	class Logger {
+	class VI_API Logger {
 	public:
 		static void Init();
-		static Shared<spdlog::logger> GetCoreLogger() { return sCoreLogger; }
-		static Shared<spdlog::logger> GetClientLogger() { return sClientLogger; }
+		static VI_FORCE_INLINE Shared<spdlog::logger> GetCoreLogger() { return sCoreLogger; }
+		static VI_FORCE_INLINE Shared<spdlog::logger> GetClientLogger() { return sClientLogger; }
 	private:
 		static Shared<spdlog::logger> sCoreLogger;
 		static Shared<spdlog::logger> sClientLogger;

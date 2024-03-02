@@ -1,12 +1,14 @@
 #pragma once
 
+#include"pch.h"
+
 namespace VIEngine {
-	struct ApplicationConfiguration {
+	struct VI_API ApplicationConfiguration {
 		int Width, Height;
 		const char* Title;
 	};
 
-	class Application {
+	class VI_API Application {
 	public:
 		virtual ~Application() = default;
 		virtual bool Init() { return true; }

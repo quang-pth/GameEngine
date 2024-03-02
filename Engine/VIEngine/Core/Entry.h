@@ -8,7 +8,8 @@ int main() {
 	}
 
 	application->Shutdown();
-	delete application;
-
+	VI_FREE_MEMORY(application);
+	
+	std::cin.get();
 	return 0;
 }
