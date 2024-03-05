@@ -11,9 +11,11 @@ namespace VIEngine {
 	class VI_API Application {
 	public:
 		virtual ~Application() = default;
-		virtual bool Init() { return true; }
+		bool Init();
+		virtual void OnInitClient() = 0;
 		void Run();
-		virtual void Shutdown() {}
+		virtual void OnShutdownClient() = 0;
+		void Shutdown();
 	protected:
 		Application() = default;
 		Application(const ApplicationConfiguration&);

@@ -1,14 +1,36 @@
 #include"Application.h"
 #include<iostream>
 
+#include"Core/Window/Window.h"
 #include"Core/Logger/Logger.h"
 
 namespace VIEngine {
 	Application::Application(const ApplicationConfiguration& config) : mConfig(config) {
-		Logger::Init();
     }
 
+	bool Application::Init() {
+		Logger::Init();
+		
+		if (!NativeWindow::Init(mConfig)) {
+			return false;
+		}
+
+		CORE_LOG_INFO("App init successfully");
+
+		return true;
+	}
+
 	void Application::Run() {
-		CORE_LOG_INFO("App is running: ({0}, {1}, {2})", mConfig.Width, mConfig.Height, mConfig.Title);
+		OnInitClient();
+		while (!NativeWindow::ShouldClosed()) {
+			NativeWindow::SwapBuffers();
+
+			NativeWindow::PollsEvent();
+		}
+		OnShutdownClient();
+	}
+
+	void Application::Shutdown() {
+		NativeWindow::Shutdown();
 	}
 }
