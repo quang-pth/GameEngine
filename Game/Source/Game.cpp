@@ -6,12 +6,11 @@ public:
 	Game(const VIEngine::ApplicationConfiguration& config) : VIEngine::Application(config) {
 	}
 
-	virtual bool Init() override {
+	virtual void OnInitClient() override {
 		LOG_INFO("Game is init");
-		return true;
 	}
 
-	virtual void Shutdown() override {
+	virtual void OnShutdownClient() override {
 		LOG_INFO("Game is shutdown");
 	}
 };
