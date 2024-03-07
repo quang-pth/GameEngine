@@ -1,4 +1,5 @@
 #include<VIEngine/Core/Entry.h>
+#include<VIEngine/Window/Window.h>
 #include<Core/Logger/Logger.h>
 
 class Game : public VIEngine::Application {
@@ -20,6 +21,7 @@ VIEngine::Application* VIEngine::CreateApplication() {
 	appConfig.Width = 800;
 	appConfig.Height = 600;
 	appConfig.Title = "VIEngine Alpha ver";
+	appConfig.WindowSpec = VIEngine::EWindowPlatformSpec::GLFW;
 
 	return new Game(appConfig);
 }

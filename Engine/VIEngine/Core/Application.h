@@ -1,11 +1,13 @@
 #pragma once
 
 #include"pch.h"
+#include"Window/WindowPlatform.h"
 
 namespace VIEngine {
 	struct VI_API ApplicationConfiguration {
 		int Width, Height;
 		const char* Title;
+		EWindowPlatformSpec WindowSpec;
 	};
 
 	class VI_API Application {
@@ -21,6 +23,7 @@ namespace VIEngine {
 		Application(const ApplicationConfiguration&);
 	private:
 		ApplicationConfiguration mConfig;
+		Unique<NativeWindow> mNativeWindow;
 	};
 
 	extern Application* CreateApplication();

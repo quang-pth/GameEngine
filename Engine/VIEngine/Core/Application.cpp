@@ -2,14 +2,20 @@
 #include<iostream>
 
 #include"Core/Logger/Logger.h"
-#include"Window/Window.h"
 
 namespace VIEngine {
 	Application::Application(const ApplicationConfiguration& config) : mConfig(config) {
+		mNativeWindow.reset(WindowPlatform::Create(config.WindowSpec));
     }
 
 	bool Application::Init() {
 		Logger::Init();
+
+		if (!mNativeWindow->Init(mConfig)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	void Application::Run() {
@@ -17,12 +23,16 @@ namespace VIEngine {
 
 		OnInitClient();
 
-		// Loop
+		while (!mNativeWindow->ShouldClose()) {
+			mNativeWindow->Swapbuffers();
+
+			mNativeWindow->PollsEvent();
+		}
 
 		OnShutdownClient();
 	}
 
 	void Application::Shutdown() {
-
+		mNativeWindow->Shutdown();
 	}
 }
