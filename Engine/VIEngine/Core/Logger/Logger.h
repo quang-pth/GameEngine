@@ -8,8 +8,8 @@ namespace VIEngine {
 	class VI_API Logger {
 	public:
 		static void Init();
-		static VI_FORCE_INLINE Shared<spdlog::logger> GetCoreLogger() { return sCoreLogger; }
-		static VI_FORCE_INLINE Shared<spdlog::logger> GetClientLogger() { return sClientLogger; }
+		static Shared<spdlog::logger> GetCoreLogger();
+		static Shared<spdlog::logger> GetClientLogger();
 	private:
 		static Shared<spdlog::logger> sCoreLogger;
 		static Shared<spdlog::logger> sClientLogger;

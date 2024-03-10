@@ -17,4 +17,13 @@ namespace VIEngine {
 		sClientLogger = spdlog::stdout_color_mt("Client");
 		sClientLogger->set_level(spdlog::level::trace);
 	}
+
+	Shared<spdlog::logger> Logger::GetClientLogger() {
+		return sClientLogger;
+	}
+
+	
+	Shared<spdlog::logger> Logger::GetCoreLogger() {
+		return sCoreLogger;
+	}
 }
