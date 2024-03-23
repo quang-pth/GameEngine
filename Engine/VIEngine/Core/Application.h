@@ -22,6 +22,8 @@ namespace VIEngine {
 		Application() = default;
 		Application(const ApplicationConfiguration&);
 	private:
+		bool OnWindowResizedEvent(const class WindowResizedEvent& windowResizedEvent);
+	private:
 		ApplicationConfiguration mConfig;
 		Unique<NativeWindow> mNativeWindow;
 	};

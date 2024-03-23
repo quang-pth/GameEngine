@@ -4,6 +4,7 @@
 
 #include"Core/Application.h"
 #include"Core/Logger/Logger.h"
+#include"Core/Event/EventDispatcher.h"
 
 #define GLAD_GL_IMPLEMENTATION
 #include<glad/gl.h>
@@ -37,6 +38,25 @@ namespace VIEngine {
 		}
 		CORE_LOG_INFO("Window created success");
 
+		glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height) {
+			glViewport(0, 0, width, height);
+			WindowResizedEvent windowResizedEvent(width, height);
+			EventDispatcher::DispatchEventListeners<WindowResizedEvent>(windowResizedEvent);
+		});
+
+		// TODO: Dispatcher key, mouse event listeners
+		glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+
+		});
+
+		glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods) {
+
+		});
+
+		glfwSetScrollCallback(mWindow, [](GLFWwindow* window, double xoffset, double yoffset) {
+
+		});
+
 		glfwMakeContextCurrent(mWindow);
 
 		if (!gladLoadGL((GLADloadfunc)glfwGetProcAddress)) {
@@ -44,7 +64,7 @@ namespace VIEngine {
 			glfwTerminate();
 			return false;
 		}
-		CORE_LOG_INFO("Glad loaded success");
+		CORE_LOG_INFO("Glad loaded success");;
 
 		return true;
 	}

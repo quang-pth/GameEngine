@@ -18,7 +18,7 @@ public:
 
 VIEngine::Application* VIEngine::CreateApplication() {
 	VIEngine::ApplicationConfiguration appConfig;
-	appConfig.Width = 800;
+	appConfig.Width = 900;
 	appConfig.Height = 600;
 	appConfig.Title = "VIEngine Alpha ver";
 	appConfig.WindowSpec = VIEngine::EWindowPlatformSpec::GLFW;
