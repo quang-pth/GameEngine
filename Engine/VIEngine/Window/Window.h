@@ -9,10 +9,17 @@ namespace VIEngine {
 		None
 	};
 
+	class EventDispatcher;
+	
+	struct WindowData {
+		int32_t Width, Height;
+		EventDispatcher* Dispatcher;
+	};
+
 	class NativeWindow {
 	public:
 		virtual ~NativeWindow() = default;
-		virtual bool Init(const struct ApplicationConfiguration&) = 0;
+		virtual bool Init(const struct ApplicationConfiguration&, EventDispatcher*) = 0;
 		virtual void Shutdown() = 0;
 		virtual void Swapbuffers() = 0;
 		virtual void PollsEvent() = 0;
@@ -26,12 +33,13 @@ namespace VIEngine {
 	public:
 		GLFWPlatformWindow();
 		~GLFWPlatformWindow();
-		virtual bool Init(const struct ApplicationConfiguration&) override;
+		virtual bool Init(const struct ApplicationConfiguration&, EventDispatcher*) override;
 		virtual void Shutdown() override;
 		virtual void Swapbuffers() override;
 		virtual void PollsEvent() override;
 		virtual bool ShouldClose() override;
 	private:
 		GLFWwindow* mWindow;
+		WindowData mData;
 	};
 }
