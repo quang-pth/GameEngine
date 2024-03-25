@@ -14,6 +14,7 @@ namespace VIEngine {
 		void AddEventListener(const EventCallback<T>& callback) {
 			VI_STATIC_ASSERT(std::is_base_of<EventContext, T>::value && "Add invalid event context");
 			const char* eventType = typeid(T).name();
+			// TODO: Allocate with Memory Management System
 			IEventAction* eventAction = new EventAction<T>(callback);
 			mEventActionMap[eventType].emplace_back(eventAction);
 		}
