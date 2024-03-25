@@ -2,22 +2,22 @@
 #include<iostream>
 
 #include"Core/Logger/Logger.h"
-#include"Core/Event/IEvent.h"
+#include"Core/Event/EventContext.h"
 #include"Core/Event/EventDispatcher.h"
 
 namespace VIEngine {
-	Application::Application(const ApplicationConfiguration& config) : mConfig(config) {
+	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher() {
 		mNativeWindow.reset(WindowPlatform::Create(config.WindowSpec));
     }
 
 	bool Application::Init() {
 		Logger::Init();
 
-		if (!mNativeWindow->Init(mConfig)) {
+		if (!mNativeWindow->Init(mConfig, &mEventDispatcher)) {
 			return false;
 		}
 
-		EventDispatcher::AddEventListener<WindowResizedEvent>(BIND_EVENT_FUNCTION(OnWindowResizedEvent));
+		mEventDispatcher.AddEventListener<WindowResizedEvent>(BIND_EVENT_FUNCTION(OnWindowResizedEvent));
 
 		return true;
 	}

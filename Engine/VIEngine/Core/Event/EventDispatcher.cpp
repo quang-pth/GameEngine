@@ -1,5 +1,16 @@
 #include"EventDispatcher.h"
 
 namespace VIEngine {
-	std::unordered_map<const char*, std::vector<IEventAction*>> EventDispatcher::mActionMap;
+	EventDispatcher::EventDispatcher() : mEventActionMap() {
+	}
+
+	EventDispatcher::~EventDispatcher() {
+		for (auto& pair : mEventActionMap) {
+			for (auto eventAction : pair.second) {
+				VI_FREE_MEMORY(eventAction);
+			}
+			pair.second.clear();
+		}
+		mEventActionMap.clear();
+	}
 }

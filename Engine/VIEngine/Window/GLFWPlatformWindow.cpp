@@ -19,7 +19,7 @@ namespace VIEngine {
 		
 	}
 
-	bool GLFWPlatformWindow::Init(const ApplicationConfiguration& config) {
+	bool GLFWPlatformWindow::Init(const ApplicationConfiguration& config, EventDispatcher* eventDispatcher) {
 		if (!glfwInit()) {
 			CORE_LOG_CRITICAL("GLFW init failed");
 			return false;
@@ -37,11 +37,21 @@ namespace VIEngine {
 			return false;
 		}
 		CORE_LOG_INFO("Window created success");
+		
+		mData.Dispatcher = eventDispatcher;
+
+		glfwSetWindowUserPointer(mWindow, &mData);
+
 
 		glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height) {
 			glViewport(0, 0, width, height);
 			WindowResizedEvent windowResizedEvent(width, height);
-			EventDispatcher::DispatchEventListeners<WindowResizedEvent>(windowResizedEvent);
+
+			WindowData* data = (WindowData*) glfwGetWindowUserPointer(window);
+			data->Width = width;
+			data->Height = height;
+
+			data->Dispatcher->DispatchEventListener<WindowResizedEvent>(windowResizedEvent);
 		});
 
 		// TODO: Dispatcher key, mouse event listeners
@@ -58,6 +68,20 @@ namespace VIEngine {
 		});
 
 		glfwMakeContextCurrent(mWindow);
+
+		mData.Dispatcher = eventDispatcher;
+
+		glfwSetWindowUserPointer(mWindow, &mData);
+
+		glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height) {
+			glViewport(0, 0, width, height);
+
+			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+			data->Width = width;
+			data->Height = height;
+			WindowResizedEvent eventContext(width, height);
+			data->Dispatcher->DispatchEventListener<WindowResizedEvent>(eventContext);
+		});
 
 		if (!gladLoadGL((GLADloadfunc)glfwGetProcAddress)) {
 			CORE_LOG_CRITICAL("Glad loaded failed");

@@ -3,31 +3,37 @@
 #include"EventAction.h"
 
 namespace VIEngine {
+	using EventActionList = std::vector<IEventAction*>;
+	
 	class VI_API EventDispatcher {
+		friend class Application;
 	public:
+		~EventDispatcher();
+
 		template<typename T>
-		static void AddEventListener(const EventCallback<T>& callback) {
-			VI_STATIC_ASSERT(std::is_base_of<IEvent, T>::value && "Add unknow event listener");
-			const char* eventID = typeid(T).name();
+		void AddEventListener(const EventCallback<T>& callback) {
+			VI_STATIC_ASSERT(std::is_base_of<EventContext, T>::value && "Add invalid event context");
+			const char* eventType = typeid(T).name();
+			// TODO: Allocate with Memory Management System
 			IEventAction* eventAction = new EventAction<T>(callback);
-			mActionMap[eventID].emplace_back(eventAction);
+			mEventActionMap[eventType].emplace_back(eventAction);
 		}
 
 		template<typename T>
-		static void DispatchEventListeners(const T& eventObject) {
-			VI_STATIC_ASSERT(std::is_base_of<IEvent, T>::value && "Add unknow event listener");
-			const char* eventID = typeid(T).name();
-			VI_ASSERT(mActionMap.find(eventID) != mActionMap.end() && "Dispatch unregistered event listener");
-			for (IEventAction* eventAction : mActionMap.at(eventID)) {
-				if (eventAction->Execute(&eventObject)) {
+		void DispatchEventListener(const T& eventContext) {
+			VI_STATIC_ASSERT(std::is_base_of<EventContext, T>::value && "Dispatch invalid event context");
+			const char* eventType = typeid(T).name();
+			VI_ASSERT(mEventActionMap.find(eventType) != mEventActionMap.end() && "Unknow event type");
+			for (auto eventAction : mEventActionMap.at(eventType)) {
+				if (eventAction->Execute(&eventContext)) {
 					break;
 				}
 			}
 		}
+
 	private:
-		EventDispatcher() = default;
-		~EventDispatcher() = default;
+		EventDispatcher();
 	private:
-		static std::unordered_map<const char*, std::vector<IEventAction*>> mActionMap;
+		std::unordered_map<const char*, EventActionList> mEventActionMap;
 	};
 }

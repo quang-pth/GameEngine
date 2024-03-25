@@ -8,10 +8,10 @@ namespace VIEngine {
 
 		switch (spec)
 		{
-			case EWindowPlatformSpec::GLFW: window = new GLFWPlatformWindow();
-			case EWindowPlatformSpec::SDL: VI_ASSERT("SDL Window not supported");
-			case EWindowPlatformSpec::None: VI_ASSERT("Unknown Window detected");
-			default: VI_ASSERT("Unknown Window detected");
+			case EWindowPlatformSpec::GLFW: window = new GLFWPlatformWindow(); break;
+			case EWindowPlatformSpec::SDL: VI_ASSERT("SDL Window not supported"); break;
+			case EWindowPlatformSpec::None:
+			default: VI_ASSERT("Unknown Window detected"); break;
 		}
 
 		return dynamic_cast<NativeWindow*>(window);

@@ -2,6 +2,7 @@
 
 #include"pch.h"
 #include"Window/WindowPlatform.h"
+#include"Core/Event/EventDispatcher.h"
 
 namespace VIEngine {
 	struct VI_API ApplicationConfiguration {
@@ -22,10 +23,11 @@ namespace VIEngine {
 		Application() = default;
 		Application(const ApplicationConfiguration&);
 	private:
-		bool OnWindowResizedEvent(const class WindowResizedEvent& windowResizedEvent);
+		bool OnWindowResizedEvent(const WindowResizedEvent&);
 	private:
 		ApplicationConfiguration mConfig;
 		Unique<NativeWindow> mNativeWindow;
+		EventDispatcher mEventDispatcher;
 	};
 
 	extern Application* CreateApplication();
