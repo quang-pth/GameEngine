@@ -5,6 +5,8 @@
 #include"Core/Application.h"
 #include"Core/Logger/Logger.h"
 #include"Core/Event/EventDispatcher.h"
+#include"Core/Input/InputState.h"
+#include"Window/WindowPlatform.h"
 
 #define GLAD_GL_IMPLEMENTATION
 #include<glad/gl.h>
@@ -20,6 +22,8 @@ namespace VIEngine {
 	}
 
 	bool GLFWPlatformWindow::Init(const ApplicationConfiguration& config, EventDispatcher* eventDispatcher) {
+		VI_ASSERT(config.WindowSpec == EWindowPlatformSpec::GLFW && "Invalid window spec for GLFW");
+
 		if (!glfwInit()) {
 			CORE_LOG_CRITICAL("GLFW init failed");
 			return false;
@@ -29,6 +33,7 @@ namespace VIEngine {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_SAMPLES, 4);
 
 		mWindow = glfwCreateWindow(config.Width, config.Height, config.Title, nullptr, nullptr);
 		if (!mWindow) {
@@ -38,10 +43,13 @@ namespace VIEngine {
 		}
 		CORE_LOG_INFO("Window created success");
 		
+		mData.Width = config.Width;
+		mData.Height = config.Height;
 		mData.Dispatcher = eventDispatcher;
+		mData.Input.Keyboard = WindowPlatform::CreateInput(config.WindowSpec, mWindow);
+		mData.Input.Mouse = WindowPlatform::CreateMouse(config.WindowSpec, mWindow);
 
 		glfwSetWindowUserPointer(mWindow, &mData);
-
 
 		glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height) {
 			glViewport(0, 0, width, height);
@@ -54,17 +62,50 @@ namespace VIEngine {
 			data->Dispatcher->DispatchEventListener<WindowResizedEvent>(windowResizedEvent);
 		});
 
-		// TODO: Dispatcher key, mouse event listeners
 		glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 
+			if (action == GLFW_PRESS) {
+				data->Dispatcher->DispatchEventListener<KeyPressedEvent>({ key });
+			}
+			else if (action == GLFW_RELEASE) {
+				data->Dispatcher->DispatchEventListener<KeyReleasedEvent>({ key });
+			}
+			else if (action == GLFW_REPEAT) {
+				data->Dispatcher->DispatchEventListener<KeyHeldEvent>({ key });
+			}
 		});
 
 		glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods) {
+			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
 
+			if (action == GLFW_PRESS) {
+				data->Dispatcher->DispatchEventListener<MouseButtonPressedEvent>({ button });
+			}
+			else if (action == GLFW_RELEASE) {
+				data->Dispatcher->DispatchEventListener<MouseButtonReleasedEvent>({ button });
+			}
 		});
 
-		glfwSetScrollCallback(mWindow, [](GLFWwindow* window, double xoffset, double yoffset) {
+		glfwSetScrollCallback(mWindow, [](GLFWwindow* window, double xOffset, double yOffset) {
+			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+			data->Input.Mouse->SetScroll(xOffset, yOffset);
+			data->Dispatcher->DispatchEventListener<MouseScrolledEvent>({ xOffset, yOffset });
+		});
 
+		glfwSetCursorPosCallback(mWindow, [](GLFWwindow* window, double x, double y) {
+			static double prevX = x;
+			static double prevY = y;
+
+			double xOffset = x - prevX;
+			double yOffset = y - prevY;
+
+			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+			data->Input.Mouse->SetPosition(x, y);
+			data->Input.Mouse->SetOffset(xOffset, yOffset);
+
+			prevX = x;
+			prevY = y;
 		});
 
 		glfwMakeContextCurrent(mWindow);
@@ -109,5 +150,9 @@ namespace VIEngine {
 
 	bool GLFWPlatformWindow::ShouldClose() {
 		return glfwWindowShouldClose(mWindow);
+	}
+
+	InputState* GLFWPlatformWindow::GetInputState() const {
+		return (InputState*)&(mData.Input);
 	}
 }

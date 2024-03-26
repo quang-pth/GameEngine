@@ -24,10 +24,14 @@ namespace VIEngine {
 		Application(const ApplicationConfiguration&);
 	private:
 		bool OnWindowResizedEvent(const WindowResizedEvent&);
+		bool OnKeyPressedEvent(const KeyPressedEvent&);
+		bool OnKeyHeldEvent(const KeyHeldEvent&);
+		bool OnKeyReleasedEvent(const KeyReleasedEvent&);
 	private:
 		ApplicationConfiguration mConfig;
 		Unique<NativeWindow> mNativeWindow;
 		EventDispatcher mEventDispatcher;
+		class InputState* mInputState;
 	};
 
 	extern Application* CreateApplication();

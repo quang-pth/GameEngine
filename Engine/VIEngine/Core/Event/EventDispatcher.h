@@ -1,6 +1,7 @@
 #pragma once
 
 #include"EventAction.h"
+#include"Core/Logger/Logger.h"
 
 namespace VIEngine {
 	using EventActionList = std::vector<IEventAction*>;
@@ -23,7 +24,11 @@ namespace VIEngine {
 		void DispatchEventListener(const T& eventContext) {
 			VI_STATIC_ASSERT(std::is_base_of<EventContext, T>::value && "Dispatch invalid event context");
 			const char* eventType = typeid(T).name();
-			VI_ASSERT(mEventActionMap.find(eventType) != mEventActionMap.end() && "Unknow event type");
+			
+			if (mEventActionMap.find(eventType) == mEventActionMap.end()) {
+				return;
+			}
+
 			for (auto eventAction : mEventActionMap.at(eventType)) {
 				if (eventAction->Execute(&eventContext)) {
 					break;

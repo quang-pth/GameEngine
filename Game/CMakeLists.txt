@@ -11,8 +11,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/S
 
 set(VIEngine_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/../Engine")
 
-add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${VIEngine_BUILD_DIR}/VIEngine.dll"
-        $<TARGET_FILE_DIR:${PROJECT_NAME}>
-)
+if (FALSE)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            "${VIEngine_BUILD_DIR}/VIEngine.dll"
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    )
+endif()
