@@ -15,7 +15,8 @@ namespace VIEngine {
 	}
 
 	GLFWPlatformWindow::~GLFWPlatformWindow() {
-		
+		VI_FREE_MEMORY(mData.Input.Keyboard);
+		VI_FREE_MEMORY(mData.Input.Mouse);
 	}
 
 	bool GLFWPlatformWindow::Init(const ApplicationConfiguration& config, EventDispatcher* eventDispatcher) {
@@ -40,6 +41,8 @@ namespace VIEngine {
 		glfwMakeContextCurrent(mWindow);
 
 		mData.Dispatcher = eventDispatcher;
+		mData.Input.Keyboard = WindowPlatform::CreateKeyboard(config.WindowSpec, mWindow);
+		mData.Input.Mouse = WindowPlatform::CreateMouse(config.WindowSpec, mWindow);
 
 		glfwSetWindowUserPointer(mWindow, &mData);
 
@@ -51,6 +54,54 @@ namespace VIEngine {
 			data->Height = height;
 			WindowResizedEvent eventContext(width, height);
 			data->Dispatcher->DispatchEventListener<WindowResizedEvent>(eventContext);
+		});
+
+		glfwSetKeyCallback(mWindow, [](GLFWwindow* window, int keyCode, int scanCode, int action, int mods) {
+			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+
+			if (action == GLFW_PRESS) {
+				data->Dispatcher->DispatchEventListener<KeyPressedEvent>({ keyCode });
+			}
+			else if (action == GLFW_REPEAT) {
+				data->Dispatcher->DispatchEventListener<KeyHeldEvent>({ keyCode });
+			}
+			else if (action == GLFW_RELEASE) {
+				data->Dispatcher->DispatchEventListener<KeyReleasedEvent>({ keyCode });
+			}
+		});
+
+		glfwSetMouseButtonCallback(mWindow, [](GLFWwindow* window, int button, int action, int mods) {
+			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+
+			if (action == GLFW_PRESS) {
+				data->Dispatcher->DispatchEventListener<MouseButtonPressedEvent>({ button });
+			}
+			else if (action == GLFW_RELEASE) {
+				data->Dispatcher->DispatchEventListener<MouseButtonReleasedEvent>({ button });
+			}
+		});
+
+		glfwSetCursorPosCallback(mWindow, [](GLFWwindow* window, double positionX, double positionY) {
+			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+
+			static double lastFrameX = positionX;
+			static double lastFrameY = positionY;
+
+			double offsetX = positionX - lastFrameX;
+			double offsetY = positionY - lastFrameY;
+
+			data->Dispatcher->DispatchEventListener<MouseMovedEvent>({ positionX, positionY, offsetX, offsetY });
+			data->Input.Mouse->SetPosition(positionX, positionY);
+			data->Input.Mouse->SetOffset(offsetX, offsetY);
+
+			lastFrameX = positionX;
+			lastFrameY = positionY;
+		});
+
+		glfwSetScrollCallback(mWindow, [](GLFWwindow* window, double scrollX, double scrollY) {
+			WindowData* data = (WindowData*)glfwGetWindowUserPointer(window);
+			data->Dispatcher->DispatchEventListener<MouseScrolledEvent>({ scrollX, scrollY });
+			data->Input.Mouse->SetScroll(scrollX, scrollY);
 		});
 
 		if (!gladLoadGL((GLADloadfunc)glfwGetProcAddress)) {
@@ -79,5 +130,9 @@ namespace VIEngine {
 
 	bool GLFWPlatformWindow::ShouldClose() {
 		return glfwWindowShouldClose(mWindow);
+	}
+
+	InputState* GLFWPlatformWindow::GetInputState() {
+		return &mData.Input;
 	}
 }

@@ -46,8 +46,8 @@ namespace VIEngine {
 		MouseMovedEvent(double x, double y, double offsetX, double offsetY) : 
 			xPosition(x), yPosition(y),
 			xOffset(offsetX), yOffset(offsetY) {}
-		VI_FORCE_INLINE double GetX() const { return xPosition; }
-		VI_FORCE_INLINE double GetY() const { return yPosition; }
+		VI_FORCE_INLINE double GetPositionX() const { return xPosition; }
+		VI_FORCE_INLINE double GetPositionY() const { return yPosition; }
 		VI_FORCE_INLINE double GetOffsetX() const { return xOffset; }
 		VI_FORCE_INLINE double GetOffsetY() const { return yOffset; }
 	private:
@@ -58,8 +58,8 @@ namespace VIEngine {
 	class VI_API MouseScrolledEvent : public EventContext {
 	public:
 		MouseScrolledEvent(double offsetX, double offsetY) : xOffset(offsetX), yOffset(offsetY) {}
-		VI_FORCE_INLINE double GetOffsetX() const { return xOffset; }
-		VI_FORCE_INLINE double GetOffsetY() const { return yOffset; }
+		VI_FORCE_INLINE double GetScrollX() const { return xOffset; }
+		VI_FORCE_INLINE double GetScrollY() const { return yOffset; }
 	private:
 		double xOffset, yOffset;
 	};
