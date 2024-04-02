@@ -71,3 +71,17 @@ template<typename T> using Unique = std::unique_ptr<T>;
 
 #define BIND_EVENT_FUNCTION(function) [this](auto&... args) -> decltype(auto)\
 	{ return this->function(std::forward<decltype(args)>(args)...); }
+
+#define INVALID_ID 0
+
+namespace VIEngine {
+	using UUID = size_t;
+
+	UUID VI_API GetUUID();
+
+	template<typename T>
+	UUID VI_API GetTypeUUID() {
+		static UUID uuid = GetUUID();
+		return uuid;
+	}
+}
