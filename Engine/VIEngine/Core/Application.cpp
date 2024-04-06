@@ -3,9 +3,18 @@
 
 #include"Core/Logger/Logger.h"
 
+#define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
+	Layer* layer = *iter;\
+	if (!layer->IsEnabled()) return false;\
+	if (layer->On##eventType(eventContext)) {\
+		break;\
+	}\
+}\
+
 namespace VIEngine {
-	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher() {
+	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher(), mIsRunning(true) {
 		mNativeWindow.reset(WindowPlatform::Create(config.WindowSpec));
+		mLayerStack.reset(new LayerStack());
     }
 
 	bool Application::Init() {
@@ -35,26 +44,50 @@ namespace VIEngine {
 
 		OnInitClient();
 
-		while (!mNativeWindow->ShouldClose()) {
-			mNativeWindow->Swapbuffers();
+		constexpr float MAX_DELTA_TIME = 0.05f;
+		constexpr double MIN_DELTA_TIME = 1 / 60.0f; // Constraints at max 60FPS
 
-			//if (mInputState->Mouse->IsPressed(EMouseButton::BUTTON_LEFT)) {
-			//	CORE_LOG_TRACE("Left mouse is clicked");
-			//}
-			//
-			//if (mInputState->Mouse->IsPressed(EMouseButton::BUTTON_RIGHT)) {
-			//	CORE_LOG_TRACE("Right mouse is clicked");
-			//}
+		while (mIsRunning && !mNativeWindow->ShouldClose()) {
+			static double lastFrameTime = 0.0f;
 
-			//if (mInputState->Keyboard->IsPressed(EKeyCode::A)) {
-			//	CORE_LOG_TRACE("A key is pressed");
-			//}
-
-			//if (mInputState->Keyboard->IsReleased(EKeyCode::A)) {
-			//	CORE_LOG_TRACE("A key is released");
-			//}
+			while (mNativeWindow->GetTimeSeconds() - lastFrameTime < MIN_DELTA_TIME);
 
 			mNativeWindow->PollsEvent();
+
+			for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {
+				Layer* layer = *iter;
+				if (layer->IsEnabled()) {
+					layer->OnProcessInput(*mInputState);
+				}
+			}
+
+			double currentFrameTime = mNativeWindow->GetTimeSeconds();
+			double deltaTime = currentFrameTime - lastFrameTime;
+			Time time(deltaTime);
+			while (time > MAX_DELTA_TIME) {
+				for (Layer* layer : *mLayerStack.get()) {
+					if (layer->IsEnabled()) {
+						layer->OnUpdate(MAX_DELTA_TIME);
+					}
+				}
+				time -= MAX_DELTA_TIME;
+			}
+
+			for (Layer* layer : *mLayerStack.get()) {
+				if (layer->IsEnabled()) {
+					layer->OnUpdate(time);
+				}
+			}
+
+			mNativeWindow->Swapbuffers();
+
+			for (Layer* layer : *mLayerStack.get()) {
+				if (layer->IsEnabled()) {
+					layer->OnRender();
+				}
+			}
+
+			lastFrameTime = mNativeWindow->GetTimeSeconds();
 		}
 
 		OnShutdownClient();
@@ -64,48 +97,73 @@ namespace VIEngine {
 		mNativeWindow->Shutdown();
 	}
 
+	void Application::PushLayer(Layer* layer) {
+		mLayerStack->PushLayer(layer);
+		layer->OnAttach();
+	}
+	
+	void Application::PopLayer(Layer* layer) {
+		mLayerStack->PopLayer(layer);
+		layer->OnDetach();
+	}
+	
+	void Application::PushOverlayLayer(Layer* layer) {
+		mLayerStack->PushOverlay(layer);
+		layer->OnAttach();
+	}
+	
+	void Application::PopOverlayLayer(Layer* layer) {
+		mLayerStack->PopOverlay(layer);
+		layer->OnDetach();
+	}
+
 	bool Application::OnWindowResizedEvent(const WindowResizedEvent& eventContext) {
-		CORE_LOG_TRACE("(Width: {0}, Height: {1})", eventContext.GetWidth(), eventContext.GetHeight());
+		DISPATCH_LAYER_EVENT(WindowResizedEvent, eventContext);
 		return false;
 	}
 
 	bool Application::OnKeyPressedEvent(const KeyPressedEvent& eventContext) {
-		CORE_LOG_TRACE("Key {0} is pressed", (char)eventContext.GetKeyCode());
+		DISPATCH_LAYER_EVENT(KeyPressedEvent, eventContext);
+
+		if (eventContext.IsKey(EKeyCode::ESCAPE)) {
+			mIsRunning = false;
+		}
+
 		return false;
 	}
 	
 	bool Application::OnKeyHeldEvent(const KeyHeldEvent& eventContext) {
-		CORE_LOG_TRACE("Key {0} is held", (char)eventContext.GetKeyCode());
+		DISPATCH_LAYER_EVENT(KeyHeldEvent, eventContext);
 		return false;
 	}
 	
 	bool Application::OnKeyReleasedEvent(const KeyReleasedEvent& eventContext) {
-		CORE_LOG_TRACE("Key {0} is released", (char)eventContext.GetKeyCode());
+		DISPATCH_LAYER_EVENT(KeyReleasedEvent, eventContext);
 		return false;
 	}
 	
 	bool Application::OnMouseMovedEvent(const MouseMovedEvent& eventContext) {
-		CORE_LOG_TRACE("Mouse position: {0}, {1}. Mouse relative: {2}, {3}", eventContext.GetPositionX(), eventContext.GetPositionY(), eventContext.GetOffsetX(), eventContext.GetOffsetY());
+		DISPATCH_LAYER_EVENT(MouseMovedEvent, eventContext);
 		return false;
 	}
 	
 	bool Application::OnMouseScrolledEvent(const MouseScrolledEvent& eventContext) {
-		CORE_LOG_TRACE("Mouse scroll X: {0}, Mouse Scroll Y: {1}", eventContext.GetScrollX(), eventContext.GetScrollY());
+		DISPATCH_LAYER_EVENT(MouseScrolledEvent, eventContext);
 		return false;
 	}
 	
 	bool Application::OnMouseButtonPressedEvent(const MouseButtonPressedEvent& eventContext) {
-		CORE_LOG_TRACE("Mouse button {0} is pressed", eventContext.GetButton());
+		DISPATCH_LAYER_EVENT(MouseButtonPressedEvent, eventContext);
 		return false;
 	}
 	
 	bool Application::OnMouseButtonHeldEvent(const MouseButtonHeldEvent& eventContext) {
-		CORE_LOG_TRACE("Mouse button {0} is held", eventContext.GetButton());
+		DISPATCH_LAYER_EVENT(MouseButtonHeldEvent, eventContext);
 		return false;
 	}
 	
 	bool Application::OnMouseButtonReleasedEvent(const MouseButtonReleasedEvent& eventContext) {
-		CORE_LOG_TRACE("Mouse button {0} is released", eventContext.GetButton());
+		DISPATCH_LAYER_EVENT(MouseButtonReleasedEvent, eventContext);
 		return false;
 	}
 }

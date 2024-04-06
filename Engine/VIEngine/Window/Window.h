@@ -29,6 +29,7 @@ namespace VIEngine {
 		virtual void PollsEvent() = 0;
 		virtual bool ShouldClose() = 0;
 		virtual InputState* GetInputState() = 0;
+		virtual double GetTimeSeconds() const = 0;
 	protected:
 		NativeWindow() = default;
 		NativeWindow(NativeWindow&) = default;
@@ -44,6 +45,7 @@ namespace VIEngine {
 		virtual void PollsEvent() override;
 		virtual bool ShouldClose() override;
 		virtual InputState* GetInputState() override;
+		virtual double GetTimeSeconds() const override;
 	private:
 		GLFWwindow* mWindow;
 		WindowData mData;
