@@ -1,6 +1,10 @@
 #pragma once
 
 #include"pch.h"
+#include"Core/Input/KeyCode.h"
+
+#define IS_KEY VI_FORCE_INLINE bool IsKey(EKeyCode keyCode) const { return mKeyCode == (int32_t)keyCode; } 
+#define IS_BUTTON VI_FORCE_INLINE bool IsButton(EMouseButton button) const { return mButton == (int32_t)button; } 
 
 namespace VIEngine {
 	class VI_API EventContext {
@@ -20,7 +24,8 @@ namespace VIEngine {
 	class VI_API KeyPressedEvent : public EventContext {
 	public:
 		KeyPressedEvent(int32_t keyCode) : mKeyCode(keyCode) {}
-		VI_FORCE_INLINE int32_t GetKeyCode() const { return mKeyCode; }
+		VI_FORCE_INLINE int32_t GetKey() const { return mKeyCode; }
+		IS_KEY
 	private:
 		int32_t mKeyCode;
 	};
@@ -28,7 +33,8 @@ namespace VIEngine {
 	class VI_API KeyHeldEvent : public EventContext {
 	public:
 		KeyHeldEvent(int32_t keyCode) : mKeyCode(keyCode) {}
-		VI_FORCE_INLINE int32_t GetKeyCode() const { return mKeyCode; }
+		VI_FORCE_INLINE int32_t GetKey() const { return mKeyCode; }
+		IS_KEY
 	private:
 		int32_t mKeyCode;
 	};
@@ -36,7 +42,8 @@ namespace VIEngine {
 	class VI_API KeyReleasedEvent : public EventContext {
 	public:
 		KeyReleasedEvent(int32_t keyCode) : mKeyCode(keyCode) {}
-		VI_FORCE_INLINE int32_t GetKeyCode() const { return mKeyCode; }
+		VI_FORCE_INLINE int32_t GetKey() const { return mKeyCode; }
+		IS_KEY
 	private:
 		int32_t mKeyCode;
 	};
@@ -68,6 +75,7 @@ namespace VIEngine {
 	public:
 		MouseButtonPressedEvent(int32_t button) : mButton(button) {}
 		VI_FORCE_INLINE int32_t GetButton() const { return mButton; }
+		IS_BUTTON
 	private:
 		int32_t mButton;
 	};
@@ -76,6 +84,7 @@ namespace VIEngine {
 	public:
 		MouseButtonHeldEvent(int32_t button) : mButton(button) {}
 		VI_FORCE_INLINE int32_t GetButton() const { return mButton; }
+		IS_BUTTON
 	private:
 		int32_t mButton;
 	};
@@ -84,6 +93,7 @@ namespace VIEngine {
 	public:
 		MouseButtonReleasedEvent(int32_t button) : mButton(button) {}
 		VI_FORCE_INLINE int32_t GetButton() const { return mButton; }
+		IS_BUTTON
 	private:
 		int32_t mButton;
 	};
