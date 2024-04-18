@@ -4,6 +4,7 @@
 #include"Core/Time.h"
 #include"Core/Input/InputState.h"
 #include"Core/Event/EventContext.h"
+#include<mutex>
 
 namespace VIEngine {
     class VI_API Layer {
@@ -27,9 +28,10 @@ namespace VIEngine {
         virtual bool OnMouseButtonHeldEvent(const MouseButtonHeldEvent&) { return false; }
         virtual bool OnMouseButtonReleasedEvent(const MouseButtonReleasedEvent&) { return false; }
         
-        VI_FORCE_INLINE void SetEnabled(bool value) { mEnabled = value; }
-        VI_FORCE_INLINE bool IsEnabled() const { return mEnabled; }
+        VI_FORCE_INLINE void SetEnabled(bool value) { std::unique_lock<std::mutex> lock(mMutex); mEnabled = value; }
+        VI_FORCE_INLINE bool IsEnabled() const {  return mEnabled; }
     protected:
         bool mEnabled;
+        std::mutex mMutex;
     };
 }

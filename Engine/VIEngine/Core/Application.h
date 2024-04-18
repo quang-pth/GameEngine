@@ -4,6 +4,7 @@
 #include"Window/WindowPlatform.h"
 #include"Core/Event/EventDispatcher.h"
 #include"Core/Layer/LayerStack.h"
+#include"JobSystem/ThreadPool.h"
 
 namespace VIEngine {
 	struct VI_API ApplicationConfiguration {
@@ -44,6 +45,7 @@ namespace VIEngine {
 		Unique<LayerStack> mLayerStack;
 		Time mTime;
 		class InputState* mInputState;
+		Unique<ThreadPool> mThreadPool;
 		bool mIsRunning;
 	};
 

@@ -2,19 +2,21 @@
 #include<iostream>
 
 #include"Core/Logger/Logger.h"
+#include"JobSystem/ThreadPool.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
-	Layer* layer = *iter;\
-	if (!layer->IsEnabled()) return false;\
-	if (layer->On##eventType(eventContext)) {\
-		break;\
+		Layer* layer = *iter;\
+		if (!layer->IsEnabled()) return false;\
+		if (layer->On##eventType(eventContext)) return false;\
 	}\
-}\
 
 namespace VIEngine {
 	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher(), mIsRunning(true) {
 		mNativeWindow.reset(WindowPlatform::Create(config.WindowSpec));
 		mLayerStack.reset(new LayerStack());
+
+		size_t cpuThreads = std::thread::hardware_concurrency();
+		mThreadPool.reset(new ThreadPool(cpuThreads));
     }
 
 	bool Application::Init() {
@@ -45,7 +47,7 @@ namespace VIEngine {
 		OnInitClient();
 
 		constexpr float MAX_DELTA_TIME = 0.05f;
-		constexpr double MIN_DELTA_TIME = 1 / 60.0f; // Constraints at max 60FPS
+		constexpr float MIN_DELTA_TIME = 1 / 60.0f; // Constraints at max 60FPS
 
 		while (mIsRunning && !mNativeWindow->ShouldClose()) {
 			static double lastFrameTime = 0.0f;
@@ -55,10 +57,11 @@ namespace VIEngine {
 			mNativeWindow->PollsEvent();
 
 			for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {
-				Layer* layer = *iter;
-				if (layer->IsEnabled()) {
-					layer->OnProcessInput(*mInputState);
-				}
+				mThreadPool->SubmitJob([layer = *iter, inputState = std::move(*mInputState)]() {
+					if (layer->IsEnabled()) {
+						layer->OnProcessInput(inputState);
+					}
+				});
 			}
 
 			double currentFrameTime = mNativeWindow->GetTimeSeconds();
@@ -66,25 +69,31 @@ namespace VIEngine {
 			Time time(deltaTime);
 			while (time > MAX_DELTA_TIME) {
 				for (Layer* layer : *mLayerStack.get()) {
-					if (layer->IsEnabled()) {
-						layer->OnUpdate(MAX_DELTA_TIME);
-					}
+					mThreadPool->SubmitJob([layer = layer](const Time& time) {
+						if (layer->IsEnabled()) {
+							layer->OnUpdate(time);
+						}
+					}, MAX_DELTA_TIME);
 				}
 				time -= MAX_DELTA_TIME;
 			}
 
 			for (Layer* layer : *mLayerStack.get()) {
-				if (layer->IsEnabled()) {
-					layer->OnUpdate(time);
-				}
+				mThreadPool->SubmitJob([layer = layer](const Time& time) {
+					if (layer->IsEnabled()) {
+						layer->OnUpdate(time);
+					}
+				}, time);
 			}
 
 			mNativeWindow->Swapbuffers();
 
 			for (Layer* layer : *mLayerStack.get()) {
-				if (layer->IsEnabled()) {
-					layer->OnRender();
-				}
+				mThreadPool->SubmitJob([layer = layer]() {
+					if (layer->IsEnabled()) {
+						layer->OnRender();
+					}
+				});
 			}
 
 			lastFrameTime = mNativeWindow->GetTimeSeconds();
@@ -94,6 +103,7 @@ namespace VIEngine {
 	}
 
 	void Application::Shutdown() {
+		mThreadPool->JoinAndRelease();
 		mNativeWindow->Shutdown();
 	}
 
@@ -123,17 +133,19 @@ namespace VIEngine {
 	}
 
 	bool Application::OnKeyPressedEvent(const KeyPressedEvent& eventContext) {
-		DISPATCH_LAYER_EVENT(KeyPressedEvent, eventContext);
-
 		if (eventContext.IsKey(EKeyCode::ESCAPE)) {
 			mIsRunning = false;
+			return true;
 		}
+		
+		DISPATCH_LAYER_EVENT(KeyPressedEvent, eventContext);
 
 		return false;
 	}
 	
 	bool Application::OnKeyHeldEvent(const KeyHeldEvent& eventContext) {
 		DISPATCH_LAYER_EVENT(KeyHeldEvent, eventContext);
+
 		return false;
 	}
 	

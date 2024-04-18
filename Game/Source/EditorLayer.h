@@ -17,9 +17,16 @@ public:
 	}
 
 	virtual void OnProcessInput(const VIEngine::InputState& input) override {
+		LOG_TRACE("Key {0} value", input.Keyboard->GetValue(VIEngine::EKeyCode::SPACE));
 	}
 
 	virtual void OnUpdate(const VIEngine::Time& time) {
+		LOG_TRACE("{0}", time.GetDeltaTime());
+	}
+
+	virtual bool OnKeyPressedEvent(const VIEngine::KeyPressedEvent& eventContext) override {
+		LOG_TRACE("Key {0} is pressed", (char)eventContext.GetKeyCode());
+		return false;
 	}
 
 	virtual bool OnMouseButtonPressedEvent(const VIEngine::MouseButtonPressedEvent& eventContext) override {
@@ -42,6 +49,16 @@ public:
 	}
 	
 	virtual void OnProcessInput(const VIEngine::InputState& input) override {
+		LOG_TRACE("Key {0} value", input.Keyboard->GetValue(VIEngine::EKeyCode::SPACE));
+	}
+
+	virtual void OnUpdate(const VIEngine::Time& time) override {
+		LOG_TRACE("{0}", time.GetDeltaTime());
+	}
+
+	virtual bool OnKeyPressedEvent(const VIEngine::KeyPressedEvent& eventContext) override {
+		LOG_TRACE("Key {0} is pressed", (char)eventContext.GetKeyCode());
+		return false;
 	}
 
 	virtual bool OnMouseButtonPressedEvent(const VIEngine::MouseButtonPressedEvent& eventContext) override {
