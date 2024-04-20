@@ -10,7 +10,9 @@
 }
 
 namespace VIEngine {
-	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher() {
+	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher(), 
+			mIsRunning(true), mInputState(nullptr), mTime() 
+	{
 		mNativeWindow.reset(WindowPlatform::Create(config.WindowSpec));
 		mLayerStack.reset(new LayerStack());
     }
@@ -40,20 +42,44 @@ namespace VIEngine {
 	void Application::Run() {
 		CORE_LOG_INFO("App is running: ({0}, {1}, {2})", mConfig.Width, mConfig.Height, mConfig.Title);
 
+		const float MAX_DELTA_TIME = 0.05f;
+		float minDeltaTime = 1.0f / mConfig.MaxFPS;
+
 		OnInitClient();
 
-		while (!mNativeWindow->ShouldClose()) {
-			mNativeWindow->Swapbuffers();
+		while (mIsRunning && !mNativeWindow->ShouldClose()) {
+			static float lastFrameTime = 0.0f;
+
+			while (mNativeWindow->GetTimeSeconds() - lastFrameTime < minDeltaTime);
+
+			float currentFrameTime = mNativeWindow->GetTimeSeconds();
+
+			mTime = currentFrameTime - lastFrameTime;
+			lastFrameTime = currentFrameTime;
+
+			mNativeWindow->PollsEvent();
 
 			for (auto layer : *mLayerStack.get()) {
 				layer->OnProcessInput(*mInputState);
 			}
 			
-			for (auto layer : *mLayerStack.get()) {
-				layer->OnUpdate(0.0f);
+			mNativeWindow->Swapbuffers();
+			while (mTime.GetDeltaTime() > MAX_DELTA_TIME) {
+				for (auto layer : *mLayerStack.get()) {
+					layer->OnUpdate(MAX_DELTA_TIME);
+				}
+
+				for (auto layer : *mLayerStack.get()) {
+					layer->OnRender();
+				}
+
+				mTime -= MAX_DELTA_TIME;
 			}
 
-			mNativeWindow->PollsEvent();
+			for (auto layer : *mLayerStack.get()) {
+				layer->OnUpdate(mTime);
+			}
+
 			for (auto layer : *mLayerStack.get()) {
 				layer->OnRender();
 			}
@@ -72,6 +98,11 @@ namespace VIEngine {
 	}
 
 	bool Application::OnKeyPressedEvent(const KeyPressedEvent& eventContext) {
+		if (eventContext.IsKey(EKeyCode::ESCAPE)) {
+			mIsRunning = false;
+			return true;
+		}
+
 		DISPATCH_LAYER_EVENT(KeyPressedEvent, eventContext);
 		return false;
 	}

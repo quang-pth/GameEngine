@@ -2,6 +2,7 @@
 
 #include"pch.h"
 #include"Core/Event/EventContext.h"
+#include"Core/Time/Time.h"
 
 namespace VIEngine {
 	class VI_API Layer {
@@ -16,7 +17,7 @@ namespace VIEngine {
 		virtual void OnDetach() {}
 
 		virtual void OnProcessInput(const struct InputState&) {}
-		virtual void OnUpdate(float deltaTime) {}
+		virtual void OnUpdate(Time time) {}
 		virtual void OnRender() {}
 		virtual bool OnWindowResizedEvent(const WindowResizedEvent&) { return false; }
 		virtual bool OnKeyPressedEvent(const KeyPressedEvent&) { return false; }

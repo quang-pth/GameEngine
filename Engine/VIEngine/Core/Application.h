@@ -4,12 +4,14 @@
 #include"Window/WindowPlatform.h"
 #include"Core/Event/EventDispatcher.h"
 #include"Core/Layer/LayerStack.h"
+#include"Core/Time/Time.h"
 
 namespace VIEngine {
 	struct VI_API ApplicationConfiguration {
 		int Width, Height;
 		const char* Title;
 		EWindowPlatformSpec WindowSpec;
+		uint16_t MaxFPS;
 	};
 
 	class VI_API Application {
@@ -44,6 +46,8 @@ namespace VIEngine {
 		Unique<LayerStack> mLayerStack;
 		EventDispatcher mEventDispatcher;
 		class InputState* mInputState;
+		Time mTime;
+		bool mIsRunning;
 	};
 
 	extern Application* CreateApplication();
