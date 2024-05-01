@@ -20,6 +20,8 @@
 #include<unordered_map>
 #include<map>
 #include<stack>
+#include<queue>
+#include<unordered_set>
 
 template<typename T> using Shared = std::shared_ptr<T>;
 template<typename T> using Unique = std::unique_ptr<T>;
@@ -72,7 +74,12 @@ template<typename T> using Unique = std::unique_ptr<T>;
 #define BIND_EVENT_FUNCTION(function) [this](auto&... args) -> decltype(auto)\
 	{ return this->function(std::forward<decltype(args)>(args)...); }
 
-#define INVALID_ID 0
+#define VI_BASE_CLASS_STATIC_ASSERT(baseClass, derivedClass, message) VI_STATIC_ASSERT(std::is_base_of<baseClass, derivedClass>::value && message)
+
+#define INVALID_ID -1
+// 128MB
+#define MEMORY_GLOBAL_CAPACITY 128 * 1024 * 1024
+#define MAX_OBJECTS_PER_CHUNK 512
 
 namespace VIEngine {
 	using UUID = size_t;
@@ -84,4 +91,15 @@ namespace VIEngine {
 		static UUID uuid = GetUUID();
 		return uuid;
 	}
+
+	class VI_API GlobalMemory {
+	public:
+		GlobalMemory();
+		virtual void Init(enum class EMemoryAllocator);
+		virtual void Shutdown();
+		void* Allocate(size_t memorySize, uint8_t alignment, const char* usage = nullptr);
+		void Free(void* memory);
+	private:
+		class MemoryManager* mMemoryManager;
+	};
 }

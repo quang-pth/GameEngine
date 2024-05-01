@@ -9,7 +9,7 @@ namespace VIEngine {
 		Time(float deltaTime) : mDeltaTime(deltaTime), mTimeScale(1.0f) {}
 		~Time() = default;
 
-		VI_FORCE_INLINE float GetDeltaTime() const { return mDeltaTime; }
+		VI_FORCE_INLINE float GetDeltaTime() const { return mDeltaTime * mTimeScale; }
 		VI_FORCE_INLINE float GetTimeScale() const { return mTimeScale; }
 		VI_FORCE_INLINE float SetTimeScale(float value) { mTimeScale = value; }
 

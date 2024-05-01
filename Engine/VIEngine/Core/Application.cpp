@@ -3,6 +3,8 @@
 
 #include"Core/Logger/Logger.h"
 #include"JobSystem/ThreadPool.h"
+#include"Core/Component/InfoComponent.h"
+#include"Core/System/InputSystem.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
 		Layer* layer = *iter;\
@@ -11,12 +13,22 @@
 	}\
 
 namespace VIEngine {
+	Application* Application::sInstance = nullptr;
+
+	Application& Application::GetInstance() {
+		return *sInstance;
+	}
+
 	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher(), mIsRunning(true) {
 		mNativeWindow.reset(WindowPlatform::Create(config.WindowSpec));
 		mLayerStack.reset(new LayerStack());
 
 		size_t cpuThreads = std::thread::hardware_concurrency();
 		mThreadPool.reset(new ThreadPool(cpuThreads));
+
+		mCoordinator.reset(new ECS::Coordinator());
+
+		sInstance = this;
     }
 
 	bool Application::Init() {
@@ -37,6 +49,38 @@ namespace VIEngine {
 		mEventDispatcher.AddEventListener<MouseButtonPressedEvent>(BIND_EVENT_FUNCTION(OnMouseButtonPressedEvent));
 		mEventDispatcher.AddEventListener<MouseButtonHeldEvent>(BIND_EVENT_FUNCTION(OnMouseButtonHeldEvent));
 		mEventDispatcher.AddEventListener<MouseButtonReleasedEvent>(BIND_EVENT_FUNCTION(OnMouseButtonReleasedEvent));
+
+		auto& sys0 = mCoordinator->AddSystem<InputSystem>();
+		sys0.SetPriority(ECS::ESystemPriority::High);
+		sys0.SetUpdateInterval(3.0f);
+
+		auto& sys1 = mCoordinator->AddSystem<InputSystem>();
+		sys1.SetPriority(ECS::ESystemPriority::High);
+		
+		auto& sys2 = mCoordinator->AddSystem<InputSystem>();
+		sys2.SetPriority(ECS::ESystemPriority::High);
+		
+		auto& sys3 = mCoordinator->AddSystem<InputSystem>();
+		sys3.SetPriority(ECS::ESystemPriority::High);
+
+		auto& sys4 = mCoordinator->AddSystem<VRSystem>();
+		sys4.SetPriority(ECS::ESystemPriority::Medium);
+
+		auto& sys5 = mCoordinator->AddSystem<VRSystem>();
+		sys5.SetPriority(ECS::ESystemPriority::Medium);
+		sys5.SetUpdateInterval(1.0f);
+
+		auto& sys6 = mCoordinator->AddSystem<VRSystem>();
+		sys6.SetPriority(ECS::ESystemPriority::Low);
+		
+		auto& sys7 = mCoordinator->AddSystem<VRSystem>();
+		sys7.SetPriority(ECS::ESystemPriority::Low);
+
+		mCoordinator->AddSystemDependency(&sys2, &sys0, &sys1);
+		mCoordinator->AddSystemDependency(&sys1, &sys3);
+		mCoordinator->AddSystemDependency(&sys0, &sys1);
+
+		mCoordinator->AddSystemDependency(&sys5, &sys4);
 
 		return true;
 	}
@@ -66,6 +110,7 @@ namespace VIEngine {
 
 			double currentFrameTime = mNativeWindow->GetTimeSeconds();
 			double deltaTime = currentFrameTime - lastFrameTime;
+			lastFrameTime = currentFrameTime;
 			Time time(deltaTime);
 			while (time > MAX_DELTA_TIME) {
 				for (Layer* layer : *mLayerStack.get()) {
@@ -86,6 +131,8 @@ namespace VIEngine {
 				}, time);
 			}
 
+			mCoordinator->OnUpdate(time);
+
 			mNativeWindow->Swapbuffers();
 
 			for (Layer* layer : *mLayerStack.get()) {
@@ -95,8 +142,6 @@ namespace VIEngine {
 					}
 				});
 			}
-
-			lastFrameTime = mNativeWindow->GetTimeSeconds();
 		}
 
 		OnShutdownClient();
@@ -125,6 +170,10 @@ namespace VIEngine {
 	void Application::PopOverlayLayer(Layer* layer) {
 		mLayerStack->PopOverlay(layer);
 		layer->OnDetach();
+	}
+
+	GameObject Application::CreateGameObject() {
+		return GameObject(mCoordinator.get());
 	}
 
 	bool Application::OnWindowResizedEvent(const WindowResizedEvent& eventContext) {

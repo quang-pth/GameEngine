@@ -5,6 +5,8 @@
 #include"Core/Event/EventDispatcher.h"
 #include"Core/Layer/LayerStack.h"
 #include"JobSystem/ThreadPool.h"
+#include"GameObject/GameObject.h"
+#include"ECS/Coordinator.h"
 
 namespace VIEngine {
 	struct VI_API ApplicationConfiguration {
@@ -15,12 +17,17 @@ namespace VIEngine {
 
 	class VI_API Application {
 	public:
+		static Application& GetInstance();
+	private:
+		static Application* sInstance;
+	public:
 		virtual ~Application() = default;
 		bool Init();
 		virtual void OnInitClient() = 0;
 		void Run();
 		virtual void OnShutdownClient() = 0;
 		void Shutdown();
+		GameObject CreateGameObject();
 	protected:
 		Application() = default;
 		Application(const ApplicationConfiguration&);
@@ -46,6 +53,7 @@ namespace VIEngine {
 		Time mTime;
 		class InputState* mInputState;
 		Unique<ThreadPool> mThreadPool;
+		Unique<ECS::Coordinator> mCoordinator;
 		bool mIsRunning;
 	};
 

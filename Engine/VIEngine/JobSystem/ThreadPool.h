@@ -17,7 +17,7 @@ namespace VIEngine {
 		template<typename F, typename... Args>
 		void SubmitJob(const F& f, Args&&... args) {
 			{
-				std::unique_lock<std::mutex> lock(mQueueMutex);
+				std::lock_guard<std::mutex> lock(mQueueMutex);
 				mJobs.emplace([=]() { std::invoke(f, args...); });
 			}
 			mCondition.notify_one();

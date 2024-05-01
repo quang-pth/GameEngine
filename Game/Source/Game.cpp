@@ -2,7 +2,7 @@
 #include<VIEngine/Window/Window.h>
 #include<Core/Logger/Logger.h>
 
-#include"EditorLayer.h"
+#include"Layer/EditorLayer.h"
 
 class Game : public VIEngine::Application {
 public:
@@ -12,21 +12,17 @@ public:
 	virtual void OnInitClient() override {
 		LOG_INFO("Game is init");
 
-		mUILayer = new UILayer();
-		PushOverlayLayer(mUILayer);
-		
-		mGameplayLayer = new GameplayLayer();
-		PushLayer(mGameplayLayer);
+		mEditorLayer = new EditorLayer();
+		PushLayer(mEditorLayer);
 	}
 
 	virtual void OnShutdownClient() override {
-		PopLayer(mGameplayLayer);
-		PopLayer(mUILayer);
+		PopLayer(mEditorLayer);
 
 		LOG_INFO("Game is shutdown");
 	}
 private:
-	VIEngine::Layer* mUILayer, *mGameplayLayer;
+	VIEngine::Layer *mEditorLayer;
 };
 
 VIEngine::Application* VIEngine::CreateApplication() {
