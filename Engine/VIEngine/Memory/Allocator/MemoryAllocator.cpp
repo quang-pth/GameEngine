@@ -27,24 +27,28 @@ namespace VIEngine
     uintptr_t MemoryAllocator::CalculateAddressAlignment(const void* address, uint8_t alignment) {
         VI_ASSERT(IsPowerOfTwo(alignment) && "Address alignment must be power of two");
         // This is the "%"" operator but faster
-        uintptr_t modulo = reinterpret_cast<uintptr_t>(address) & (alignment - 1);
-        return alignment - modulo;
+        uintptr_t remainder = reinterpret_cast<uintptr_t>(address) & (alignment - 1);
+        if (remainder == 0) {
+            return 0;
+        }
+
+        return alignment - remainder;
     }
 
     size_t MemoryAllocator::AlignForward(size_t memorySize, uint8_t alignment) {
         VI_ASSERT(IsPowerOfTwo(alignment) && "Address alignment must be power of two");
-        uint8_t modulo = memorySize & (alignment - 1);
-        if (modulo != 0) {
-            memorySize += alignment - modulo;
+        uint8_t remainder = memorySize & (alignment - 1);
+        if (remainder != 0) {
+            memorySize += alignment - remainder;
         }
         return memorySize;
     }
 
     uintptr_t MemoryAllocator::AlignForward(uintptr_t memorySize, uintptr_t alignment) {
         VI_ASSERT(IsPowerOfTwo(alignment) && "Address alignment must be power of two");
-        uintptr_t modulo = memorySize & (alignment - 1);
-        if (modulo != 0) {
-            memorySize += alignment - modulo;
+        uintptr_t remainder = memorySize & (alignment - 1);
+        if (remainder != 0) {
+            memorySize += alignment - remainder;
         }
         return memorySize;
     }

@@ -39,8 +39,6 @@ namespace VIEngine
     }
 
     void LinearAllocator::Clear() {
-        if (mUsedMemory || mAllocationCount);
-
         mUsedMemory = 0;
         mAllocationCount = 0;
     }
