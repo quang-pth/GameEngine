@@ -15,7 +15,6 @@ public:
 		mLayer = new GameplayLayer();
 		PushLayer(mLayer);
 	}
-
 	virtual void OnShutdownClient() override {
 		LOG_INFO("Game is shutdown");
 		PopLayer(mLayer);

@@ -2,6 +2,7 @@
 
 #include<Core/Layer/Layer.h>
 #include<Core/Logger/Logger.h>
+#include<Memory/MemoryAllocator.h>
 
 class GameplayLayer : public VIEngine::Layer {
 public:
@@ -10,6 +11,38 @@ public:
 
 	virtual void OnAttach() override {
 		LOG_TRACE("GameplayLayer is attached");
+
+		size_t size = 128 * 1024 * 1024;
+		void* address = malloc(size);
+		mAllocator = new VIEngine::LinearAllocator(size, address);
+
+		struct GameObject {
+			size_t ID = 0;
+			std::string Name = "GameObject";
+		};
+		
+		std::vector<GameObject*> gameObjects;
+		for (int i = 0; i < 10000; i++) {
+			void* memory = mAllocator->Allocate(sizeof(GameObject), alignof(GameObject));
+			GameObject* go = new (memory)GameObject();
+			go->ID = i;
+			go->Name = "GameObject: " + std::to_string(i);
+			gameObjects.emplace_back(go);
+		}
+		
+		mAllocator->Clear();
+		gameObjects.clear();
+
+		for (int i = 0; i < 10000; i++) {
+			void* memory = mAllocator->Allocate(sizeof(GameObject), alignof(GameObject));
+			GameObject* go = new (memory)GameObject();
+			go->ID = i + 10000;
+			go->Name = "GameObject: " + std::to_string(i);
+			gameObjects.emplace_back(go);
+		}
+
+		mAllocator->Clear();
+		gameObjects.clear();
 	}
 
 	virtual void OnDetach() override {
@@ -24,6 +57,8 @@ public:
 		LOG_TRACE("Key {0} is pressed", (char)eventContext.GetKey());
 		return false;
 	}
+private:
+	VIEngine::MemoryAllocator* mAllocator;
 };
 
 
