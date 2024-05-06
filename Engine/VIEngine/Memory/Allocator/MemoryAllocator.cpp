@@ -56,20 +56,20 @@ namespace VIEngine
     uintptr_t MemoryAllocator::CalculateAddressAlignment(const void* address, uint8_t alignment, uintptr_t extraMemory) {
         VI_ASSERT(IsPowerOfTwo(alignment) && "Address alignment must be power of two");
 
-        uintptr_t originalAdjustment = CalculateAddressAlignment(address, alignment);
-        uintptr_t extraAdjustment = 0;
+        uintptr_t padding = CalculateAddressAlignment(address, alignment);
 
-        if (extraMemory > originalAdjustment) {
-            extraMemory -= originalAdjustment;
+        if (extraMemory > padding) {
+            extraMemory -= padding;
 
-            extraAdjustment = originalAdjustment + alignment * (extraMemory / alignment);
-
-            if ((extraAdjustment & (alignment - 1)) != 0) {
-                extraAdjustment += alignment;
+            if ((extraMemory & (alignment - 1)) != 0) {
+                padding += alignment * (1 + (extraMemory / alignment));
+            }
+            else {
+                padding += alignment * (extraMemory / alignment);
             }
         }
 
-        return extraAdjustment;
+        return padding;
     }
 
     bool MemoryAllocator::IsPowerOfTwo(uint8_t alignment) {
