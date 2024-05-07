@@ -26,14 +26,12 @@ namespace VIEngine {
             return nullptr;
         }
 
-        // Update stack memory
-        mUsedMemory += memorySize + adjustment;
-        mAllocationCount++;
-        // Update Header
-        asMemoryHeader->Adjustment = adjustment;
-
-        // Return aligned addressed after take the header into account
+        // Memory layout as following |Header|Memory Address|
         asUintPtrAddress += adjustment;
+        asUintPtrAddress -= sizeof(asMemoryHeader);
+        asMemoryHeader->Adjustment = adjustment;
+        // Offset back to data memory address
+        asUintPtrAddress += sizeof(asMemoryHeader);
 
         return asVoidPtrAddress;
     }
