@@ -14,7 +14,7 @@ public:
 
 		size_t size = 128 * 1024 * 1024;
 		void* address = malloc(size);
-		mAllocator = new VIEngine::LinearAllocator(size, address);
+		mAllocator = new VIEngine::StackAllocator(size, address);
 
 		struct GameObject {
 			size_t ID = 0;
@@ -22,21 +22,24 @@ public:
 		};
 		
 		std::vector<GameObject*> gameObjects;
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 10; i++) {
 			void* memory = mAllocator->Allocate(sizeof(GameObject), alignof(GameObject));
 			GameObject* go = new (memory)GameObject();
 			go->ID = i;
 			go->Name = "GameObject: " + std::to_string(i);
 			gameObjects.emplace_back(go);
-		}
+		}		
 		
-		mAllocator->Clear();
+		for (auto iter = gameObjects.rbegin(); iter != gameObjects.rend(); ++iter) {
+			mAllocator->Free(*iter);
+		}
+
 		gameObjects.clear();
 
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 10; i++) {
 			void* memory = mAllocator->Allocate(sizeof(GameObject), alignof(GameObject));
 			GameObject* go = new (memory)GameObject();
-			go->ID = i + 10000;
+			go->ID = i + 10;
 			go->Name = "GameObject: " + std::to_string(i);
 			gameObjects.emplace_back(go);
 		}

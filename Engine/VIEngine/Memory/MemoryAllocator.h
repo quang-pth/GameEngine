@@ -15,6 +15,7 @@ namespace VIEngine {
 		virtual void Clear() {}
 	protected:
 		uint8_t GetAddressAdjustment(const void* address, uint8_t alignment);
+		uint8_t GetAddressAdjustment(const void* address, uint8_t alignment, uint8_t extraMemory);
 		bool IsPowerOfTwo(uint8_t alignment);
 	protected:
 		void* mStartAddress;
@@ -27,6 +28,18 @@ namespace VIEngine {
 	public:
 		LinearAllocator(size_t memorySize, void* address);
 		~LinearAllocator();
+		virtual void* Allocate(size_t memorySize, uint8_t alignment) override;
+		virtual void Free(void* memory) override;
+		virtual void Clear() override;
+	};
+
+	class VI_API StackAllocator : public MemoryAllocator {
+		struct Header {
+			uint8_t Padding;
+		};
+	public:
+		StackAllocator(size_t memorySize, void* address);
+		~StackAllocator();
 		virtual void* Allocate(size_t memorySize, uint8_t alignment) override;
 		virtual void Free(void* memory) override;
 		virtual void Clear() override;
