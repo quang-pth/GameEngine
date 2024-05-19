@@ -16,6 +16,7 @@ namespace VIEngine {
 	protected:
 		uint8_t GetAddressAdjustment(const void* address, uint8_t alignment);
 		uint8_t GetAddressAdjustment(const void* address, uint8_t alignment, uint8_t extraMemory);
+		size_t AlignForward(size_t memorySize, uint8_t alignment);
 		bool IsPowerOfTwo(uint8_t alignment);
 	protected:
 		void* mStartAddress;
@@ -43,5 +44,22 @@ namespace VIEngine {
 		virtual void* Allocate(size_t memorySize, uint8_t alignment) override;
 		virtual void Free(void* memory) override;
 		virtual void Clear() override;
+	};
+
+	class VI_API PoolAllocator : public MemoryAllocator {
+		struct FreeNode {
+			FreeNode* Next;
+		};
+	public:
+		PoolAllocator(size_t memorySize, void* address, size_t chunkSize, uint8_t chunkAlignment);
+		~PoolAllocator();
+		void* AllocateChunk();
+		virtual void Free(void* memory) override;
+		virtual void Clear() override;
+	private:
+		size_t mChunkSize;
+		uint8_t mChunkAlignment;
+		FreeNode* mFreeListHead;
+		uint8_t mAddressOffset;
 	};
 }

@@ -45,6 +45,17 @@ namespace VIEngine {
 		return padding;
 	}
 
+	size_t MemoryAllocator::AlignForward(size_t memorySize, uint8_t alignment) {
+		VI_ASSERT(IsPowerOfTwo(alignment) && "Alignment is invalid");
+
+		uintptr_t remainder = memorySize & (alignment - 1);
+		if (remainder != 0) {
+			memorySize += alignment - remainder;
+		}
+
+		return memorySize;
+	}
+
 	bool MemoryAllocator::IsPowerOfTwo(uint8_t alignment) {
 		/*
 			0100 = 4
