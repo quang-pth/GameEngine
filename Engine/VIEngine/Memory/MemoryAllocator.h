@@ -11,8 +11,10 @@ namespace VIEngine {
 		MemoryAllocator(size_t memorySize, void* address);
 		virtual ~MemoryAllocator() = default;
 		virtual void* Allocate(size_t memorySize, uint8_t alignment) { return nullptr; }
+		virtual void* Allocate() { return nullptr; }
 		virtual void Free(void* memory) {}
 		virtual void Clear() {}
+		void* GetStartAddress() const { return mStartAddress; }
 	protected:
 		uint8_t GetAddressAdjustment(const void* address, uint8_t alignment);
 		uint8_t GetAddressAdjustment(const void* address, uint8_t alignment, uint8_t extraMemory);
@@ -53,9 +55,10 @@ namespace VIEngine {
 	public:
 		PoolAllocator(size_t memorySize, void* address, size_t chunkSize, uint8_t chunkAlignment);
 		~PoolAllocator();
-		void* AllocateChunk();
+		virtual void* Allocate() override;
 		virtual void Free(void* memory) override;
 		virtual void Clear() override;
+		bool Contains(void* memory);
 	private:
 		size_t mChunkSize;
 		uint8_t mChunkAlignment;
