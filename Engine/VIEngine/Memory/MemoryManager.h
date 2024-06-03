@@ -17,7 +17,7 @@ namespace VIEngine {
 
 	class MemoryManager {
 	public:
-		MemoryManager(const MemoryConfiguration& config);
+		MemoryManager(const MemoryConfiguration& config = MemoryConfiguration());
 		~MemoryManager();
 
 		// Clear temporary memories on a single frame allocated by allocators
@@ -42,7 +42,7 @@ namespace VIEngine {
 
 		template<typename T, typename... Args>
 		T* NewOnStack(const char* usage, Args&&... args) {
-			void* address = AllocateOnStack(usage, sizeof(T), alignof(T))
+			void* address = AllocateOnStack(usage, sizeof(T), alignof(T));
 			return new (address)T(std::forward<Args>(args)...);
 		}
 	private:
