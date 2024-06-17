@@ -15,45 +15,28 @@ void GameplayLayer::OnAttach() {
 	LOG_TRACE("GameplayLayer is attached");
 
 	MemoryManager memoryManager;
-	Actor* actor = memoryManager.NewOnStack<Actor>("ActorManager");
-	Object* obj = actor;
-
-	LOG_TRACE(actor->RunTimeType.GetTypeName()); // Actor
-	LOG_TRACE(actor->GetRunTimeTypeInfo().GetTypeName()); // Actor
-
-	LOG_TRACE(obj->RunTimeType.GetTypeName()); // Object
-	LOG_TRACE(obj->GetRunTimeTypeInfo().GetTypeName()); // Actor
-
-	LOG_TRACE(actor->IsTypeOf(obj->RunTimeType)); // false
-	LOG_TRACE(actor->IsDerivedFrom(obj->RunTimeType)); // true
-	LOG_TRACE(actor->IsExactlyTypeOf(obj)); // true
-	LOG_TRACE(actor->IsExactlyDerivedFrom(obj)); // true
-
-	// Casting
 	{
-		int count = 100000;
-		{
-			auto startTime = std::chrono::high_resolution_clock::now();
-			for (int i = 0; i < count; i++) {
-				auto obj = DownCast<Object>(actor);
-			}
-			auto endTime = std::chrono::high_resolution_clock::now();
-			std::chrono::duration<double, std::milli> duration = endTime - startTime;
-			LOG_INFO("RTTI takes {0} seconds", duration.count() / 1000.0f);
+		ECS::Coordinator* coordinator = memoryManager.NewOnStack<ECS::Coordinator>("Coordinator");
+		Actor* actor = memoryManager.NewOnStack<Actor>("Actor", coordinator);
+
+		actor->AddComponent<TransformComponent>(2.0f, 3.0f);
+		TransformComponent& transform = actor->GetComponent<TransformComponent>();
+		LOG_TRACE("Actor position: ({0}, {1})", transform.GetX(), transform.GetY());
+
+		transform.SetX(10.0f);
+		transform.SetY(-20.0f);
+		transform = actor->GetComponent<TransformComponent>();
+		LOG_TRACE("Actor position: ({0}, {1})", transform.GetX(), transform.GetY());
+
+		if (actor->HasComponent<TransformComponent>()) {
+			actor->RemoveComponent<TransformComponent>();
 		}
 
-		{
-			auto startTime = std::chrono::high_resolution_clock::now();
-			for (int i = 0; i < count; i++) {
-				auto obj = dynamic_cast<Object*>(actor);
-			}
-			auto endTime = std::chrono::high_resolution_clock::now();
-			std::chrono::duration<double, std::milli> duration = endTime - startTime;
-			LOG_INFO("RTTI takes {0} seconds", duration.count() / 1000.0f);
+		if (!actor->HasComponent<TransformComponent>()) {
+			LOG_WARN("Actor transform component has been removed");
 		}
 	}
-
-	memoryManager.FreeOnStack(actor);
+	memoryManager.ClearOnStack();
 }
 
 void GameplayLayer::OnDetach() {

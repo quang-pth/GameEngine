@@ -5,6 +5,8 @@
 #include"Core/Logger/Logger.h"
 #include"Core/Event/EventContext.h"
 #include"Memory/MemoryManager.h"
+#include"Core/Type/Actor.h"
+#include"Core/Type/Component.h"
 
 namespace VIEngine {
 	template<typename To, typename From>

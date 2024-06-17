@@ -18,6 +18,8 @@
 #include<algorithm>
 #include<functional>
 #include<unordered_map>
+#include<unordered_set>
+#include<queue>
 #include<map>
 #include<stack>
 
@@ -55,6 +57,8 @@ template<typename T> using Unique = std::unique_ptr<T>;
 #else
 	#define VI_STATIC_ASSERT static_assert
 #endif
+
+#define VI_BASE_CLASS_ASSERT(baseClass, derivedClass, message) VI_STATIC_ASSERT(std::is_base_of<baseClass, derivedClass>::value && message)
 
 #if defined(__clang__) || defined(_gcc__)
 	#define VI_FORCE_INLINE __attribute__((always_inline)) inline

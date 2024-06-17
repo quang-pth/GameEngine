@@ -105,7 +105,7 @@ namespace VIEngine {
 		};
 
 	public:
-		MemoryChunkManager(const char* usage, const MemoryConfiguration& config) : mUsage(usage), MemoryManager(config) {
+		MemoryChunkManager(const char* usage, const MemoryConfiguration& config = MemoryConfiguration()) : mUsage(usage), MemoryManager(config) {
 
 		}
 
