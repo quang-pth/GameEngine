@@ -2,7 +2,7 @@
 
 namespace VIEngine {
 	namespace ECS {
-		Coordinator::Coordinator() : mEntityManager(), mComponentManager() {
+		Coordinator::Coordinator() : mEntityManager(), mComponentManager(), mSystemManager(this) {
 
 		}
 

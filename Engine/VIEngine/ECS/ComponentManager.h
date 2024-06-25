@@ -27,11 +27,12 @@ namespace VIEngine {
 				~ComponentArray() = default;
 
 				template<typename... Args>
-				T& AddComponent(EntityID id, Args&&... args) {
+				T& AddComponent(EntityID id, class Coordinator* coordinator, Args&&... args) {
 					VI_BASE_CLASS_ASSERT(IComponent, T, "Add invalid component");
 					T* component = NewObject(std::forward<Args>(args)...);
-					component->SetOwner(id);
+					component->SetOwnerID(id);
 					component->SetID(GetUUID());
+					component->SetCoordinator(coordinator);
 					
 					mComponentsMap[id] = component;
 
@@ -81,7 +82,7 @@ namespace VIEngine {
 			}
 
 			template<typename T, typename... Args>
-			T& AddComponent(EntityID id, Args&&... args) {
+			T& AddComponent(EntityID id, class Coordinator* coordinator, Args&&... args) {
 				ComponentTypeID typeID = T::GetStaticTypeID();
 
 				if (!mComponentTypeMap.count(typeID)) {
@@ -89,7 +90,7 @@ namespace VIEngine {
 					mComponentTypeMap[typeID] = componentArray;
 				}
 
-				return StaticCast<ComponentArray<T>*>(mComponentTypeMap.at(typeID))->AddComponent(id, std::forward<Args>(args)...);
+				return StaticCast<ComponentArray<T>*>(mComponentTypeMap.at(typeID))->AddComponent(id, coordinator, std::forward<Args>(args)...);
 			}
 
 			template<typename T>

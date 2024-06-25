@@ -15,7 +15,7 @@ namespace VIEngine {
 		~Actor();
 
 		template<typename T, typename... Args>
-		VI_FORCE_INLINE T& AddComponent(Args&&... args) { return mCoordinator->AddComponent<T>(mID, std::forward<Args>(args)...); }
+		VI_FORCE_INLINE T& AddComponent(Args&&... args) { return mCoordinator->AddComponent<T>(mID, mCoordinator, std::forward<Args>(args)...); }
 		
 		template<typename T>
 		VI_FORCE_INLINE T& GetComponent() { return mCoordinator->GetComponent<T>(mID); }
@@ -25,6 +25,8 @@ namespace VIEngine {
 		
 		template<typename T>
 		VI_FORCE_INLINE void RemoveComponent() { mCoordinator->RemoveComponent<T>(mID); }
+
+		VI_FORCE_INLINE ECS::EntityID GetID() const { return mID; }
 
 	private:
 		ECS::EntityID mID;

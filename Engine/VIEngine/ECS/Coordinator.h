@@ -3,6 +3,7 @@
 #include"pch.h"
 #include"EntityManager.h"
 #include"ComponentManager.h"
+#include"SystemManager.h"
 
 namespace VIEngine {
 	namespace ECS {
@@ -15,7 +16,7 @@ namespace VIEngine {
 			VI_FORCE_INLINE ComponentManager::ComponentArray<T>& GetComponentArray() { return mComponentManager.GetComponentArray<T>(); }
 			
 			template<typename T, typename... Args>
-			VI_FORCE_INLINE T& AddComponent(EntityID id, Args&&... args) { return mComponentManager.AddComponent<T>(id, std::forward<Args>(args)...); }
+			VI_FORCE_INLINE T& AddComponent(EntityID id, Coordinator* coordinator, Args&&... args) { return mComponentManager.AddComponent<T>(id, coordinator, std::forward<Args>(args)...); }
 			
 			template<typename T>
 			VI_FORCE_INLINE T& GetComponent(EntityID id) { return mComponentManager.GetComponent<T>(id); }
@@ -34,6 +35,7 @@ namespace VIEngine {
 		private:
 			EntityManager mEntityManager;
 			ComponentManager mComponentManager;
+			SystemManager mSystemManager;
 		};
 	} // namespace ECS
 } // namespace VIEngine
