@@ -3,11 +3,11 @@
 namespace VIEngine {
 	DEFINE_RTTI(Actor, &Object::RunTimeType)
 	
-	Actor::Actor(ECS::Coordinator* coordinator) : mCoordinator(coordinator) {
+	Actor::Actor(Shared<ECS::Coordinator> coordinator) : mCoordinator(coordinator) {
 		mID = mCoordinator->AddEntity();
 	}
 	
-	Actor::Actor(ECS::EntityID id, ECS::Coordinator* coordinator) : mID(id), mCoordinator(coordinator) {
+	Actor::Actor(ECS::EntityID id, Shared<ECS::Coordinator> coordinator) : mID(id), mCoordinator(coordinator) {
 	}
 
 	Actor::~Actor() {

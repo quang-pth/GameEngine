@@ -3,6 +3,7 @@
 #include"ISystem.h"
 #include"Memory/MemoryManager.h"
 #include"Core/Logger/Logger.h"
+#include"Core/Cast/Cast.h"
 
 namespace VIEngine {
 	namespace ECS {

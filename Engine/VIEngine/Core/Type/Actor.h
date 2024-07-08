@@ -10,12 +10,12 @@ namespace VIEngine {
 		DECLARE_RTTI
 	public:
 		Actor() = default;
-		Actor(ECS::Coordinator* coordinator);
-		Actor(ECS::EntityID id, ECS::Coordinator* coordinator);
+		Actor(Shared<ECS::Coordinator> coordinator);
+		Actor(ECS::EntityID id, Shared<ECS::Coordinator> coordinator);
 		~Actor();
 
 		template<typename T, typename... Args>
-		VI_FORCE_INLINE T& AddComponent(Args&&... args) { return mCoordinator->AddComponent<T>(mID, mCoordinator, std::forward<Args>(args)...); }
+		VI_FORCE_INLINE T& AddComponent(Args&&... args) { return mCoordinator->AddComponent<T>(mID, mCoordinator.get(), std::forward<Args>(args)...); }
 		
 		template<typename T>
 		VI_FORCE_INLINE T& GetComponent() { return mCoordinator->GetComponent<T>(mID); }
@@ -30,6 +30,6 @@ namespace VIEngine {
 
 	private:
 		ECS::EntityID mID;
-		ECS::Coordinator* mCoordinator;
+		Shared<ECS::Coordinator> mCoordinator;
 	};
 }

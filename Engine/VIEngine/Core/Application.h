@@ -5,6 +5,10 @@
 #include"Core/Event/EventDispatcher.h"
 #include"Core/Layer/LayerStack.h"
 #include"Core/Time/Time.h"
+#include"Scene/Scene.h"
+#include"Core/Type/Actor.h"
+#include"Memory/MemoryManager.h"
+#include"ECS/SystemManager.h"
 
 namespace VIEngine {
 	struct VI_API ApplicationConfiguration {
@@ -16,12 +20,20 @@ namespace VIEngine {
 
 	class VI_API Application {
 	public:
-		virtual ~Application() = default;
+		static MemoryManager& GetGlobalMemoryUsage();
+	private:
+		static MemoryManager sGlobalMemory;
+
+	public:
+		virtual ~Application();
 		bool Init();
 		virtual void OnInitClient() = 0;
 		void Run();
 		virtual void OnShutdownClient() = 0;
 		void Shutdown();
+
+		VI_FORCE_INLINE Shared<Scene> GetCurrentActiveScene() const { return mCurrentActiveScene; }
+
 	protected:
 		Application() = default;
 		Application(const ApplicationConfiguration&);
@@ -44,6 +56,9 @@ namespace VIEngine {
 		ApplicationConfiguration mConfig;
 		Unique<NativeWindow> mNativeWindow;
 		Unique<LayerStack> mLayerStack;
+		Shared<Scene> mCurrentActiveScene;
+		Shared<ECS::Coordinator> mCoordinator;
+		ECS::SystemManager mSystemManager;
 		EventDispatcher mEventDispatcher;
 		class InputState* mInputState;
 		Time mTime;

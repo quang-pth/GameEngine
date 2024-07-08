@@ -4,7 +4,7 @@
 
 namespace VIEngine {
 	namespace ECS {
-		SystemManager::SystemManager() : MemoryManager(), mSystemIdx(0), mRebuildSystemWorkOrder(false) {
+		SystemManager::SystemManager() : MemoryManager(), mSystemIdx(0), mRebuildSystemWorkOrder(false), mCoordinator(nullptr) {
 
 		}
 

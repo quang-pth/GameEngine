@@ -2,6 +2,7 @@
 #include<iostream>
 
 #include"Core/Logger/Logger.h"
+#include"Core/System/System.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
 	if ((*iter)->On##eventType(eventContext)) {\
@@ -10,12 +11,26 @@
 }
 
 namespace VIEngine {
+	MemoryManager Application::sGlobalMemory;
+
+	MemoryManager& Application::GetGlobalMemoryUsage() {
+		return sGlobalMemory;
+	}
+
 	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher(), 
 			mIsRunning(true), mInputState(nullptr), mTime() 
 	{
 		mNativeWindow.reset(WindowPlatform::Create(config.WindowSpec));
 		mLayerStack.reset(new LayerStack());
+
+		mCoordinator.reset(GetGlobalMemoryUsage().NewOnStack<ECS::Coordinator>("ECS Coordinator"));
+		mCurrentActiveScene.reset(GetGlobalMemoryUsage().NewOnStack<Scene>("Current Active Scene", mCoordinator));
+		mSystemManager = mCoordinator.get();
     }
+
+	Application::~Application() {
+
+	}
 
 	bool Application::Init() {
 		Logger::Init();
@@ -35,6 +50,17 @@ namespace VIEngine {
 		mEventDispatcher.AddEventListener<MouseButtonPressedEvent>(BIND_EVENT_FUNCTION(OnMouseButtonPressedEvent));
 		mEventDispatcher.AddEventListener<MouseButtonHeldEvent>(BIND_EVENT_FUNCTION(OnMouseButtonHeldEvent));
 		mEventDispatcher.AddEventListener<MouseButtonReleasedEvent>(BIND_EVENT_FUNCTION(OnMouseButtonReleasedEvent));
+
+		auto& collisionSystem = mSystemManager.AddSystem<CollisionResolver>();
+		auto& animationSystem = mSystemManager.AddSystem<AnimationSystem>();
+		auto& renderer2D = mSystemManager.AddSystem<Renderer2D>();
+
+		mSystemManager.AddSystemDependency(&animationSystem, &collisionSystem);
+		mSystemManager.AddSystemDependency(&renderer2D, &collisionSystem, &animationSystem);
+
+		collisionSystem.SetUpdateInterval(1.0f / (mConfig.MaxFPS * 0.5));
+
+		mSystemManager.OnInit();
 
 		return true;
 	}
@@ -62,16 +88,14 @@ namespace VIEngine {
 			for (auto layer : *mLayerStack.get()) {
 				layer->OnProcessInput(*mInputState);
 			}
-			
+
 			mNativeWindow->Swapbuffers();
 			while (mTime.GetDeltaTime() > MAX_DELTA_TIME) {
 				for (auto layer : *mLayerStack.get()) {
 					layer->OnUpdate(MAX_DELTA_TIME);
 				}
 
-				for (auto layer : *mLayerStack.get()) {
-					layer->OnRender();
-				}
+				mSystemManager.OnUpdate(MAX_DELTA_TIME);
 
 				mTime -= MAX_DELTA_TIME;
 			}
@@ -80,15 +104,20 @@ namespace VIEngine {
 				layer->OnUpdate(mTime);
 			}
 
+			mSystemManager.OnUpdate(mTime);
+
 			for (auto layer : *mLayerStack.get()) {
-				layer->OnRender();
+				layer->OnRender(mTime);
 			}
+
+			GetGlobalMemoryUsage().Update();
 		}
 
 		OnShutdownClient();
 	}
 
 	void Application::Shutdown() {
+		mSystemManager.OnShutdown();
 		mNativeWindow->Shutdown();
 	}
 
@@ -143,11 +172,13 @@ namespace VIEngine {
 	}
 
 	void Application::PushLayer(Layer* layer) {
+		layer->SetScene(mCurrentActiveScene);
 		mLayerStack->Push(layer);
 		layer->OnAttach();
 	}
 
 	void Application::PushOverlayLayer(Layer* layer) {
+		layer->SetScene(mCurrentActiveScene);
 		mLayerStack->PushOverlay(layer);
 		layer->OnAttach();
 	}
