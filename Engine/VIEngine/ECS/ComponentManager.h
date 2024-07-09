@@ -14,6 +14,7 @@ namespace VIEngine {
 				virtual ~IComponentArray() = default;
 				virtual bool HasComponent(EntityID) = 0;
 				virtual void RemoveComponent(EntityID) = 0;
+				virtual void Release() = 0;
 			protected:
 				IComponentArray() = default;
 			};
@@ -58,6 +59,11 @@ namespace VIEngine {
 					FreeObject(mComponentsMap.at(id));
 					mComponentsMap.erase(id);
 				}
+
+				virtual void Release() override {
+					Reset();
+				}
+
 			private:
 				std::unordered_map<EntityID, IComponent*> mComponentsMap;
 			};
@@ -66,12 +72,7 @@ namespace VIEngine {
 
 		public:
 			ComponentManager() : mComponentTypeMap() {}
-			~ComponentManager() {
-				for (auto& [typeId, componentArray] : mComponentTypeMap) {
-					VI_FREE_MEMORY(componentArray);
-				}
-				mComponentTypeMap.clear();
-			}
+			~ComponentManager() {}
 
 			template<typename T>
 			ComponentArray<T>& GetComponentArray() {
@@ -126,6 +127,13 @@ namespace VIEngine {
 				}
 
 				mComponentTypeMap.erase(id);
+			}
+
+			void Release() {
+				for (auto& [typeId, componentArray] : mComponentTypeMap) {
+					componentArray->Release();
+				}
+				mComponentTypeMap.clear();
 			}
 
 		private:

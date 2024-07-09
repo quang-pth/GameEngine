@@ -16,14 +16,14 @@ void GameplayLayer::OnAttach() {
 	{
 		VIEngine::Actor actor = mScene->CreateActor();
 		
-		actor.AddComponent<VIEngine::TransformComponent>(2.0f, 3.0f);
+		actor.AddComponent<VIEngine::TransformComponent>(2.0f, 5.0f);
 		VIEngine::TransformComponent& transform = actor.GetComponent<VIEngine::TransformComponent>();
-		LOG_TRACE("Actor position: ({0}, {1})", transform.GetX(), transform.GetY());
+		LOG_TRACE("Actor position: ({0}, {1})", transform.GetPosition().X, transform.GetPosition().Y);
 
-		transform.SetX(10.0f);
-		transform.SetY(-20.0f);
+		transform.GetPosition().X = 10.0f;
+		transform.GetPosition().Y = -20.0f;
 		transform = actor.GetComponent<VIEngine::TransformComponent>();
-		LOG_TRACE("Actor position: ({0}, {1})", transform.GetX(), transform.GetY());
+		LOG_TRACE("Actor position: ({0}, {1})", transform.GetPosition().X, transform.GetPosition().Y);
 
 		if (actor.HasComponent<VIEngine::TransformComponent>()) {
 			actor.RemoveComponent<VIEngine::TransformComponent>();
@@ -40,7 +40,16 @@ void GameplayLayer::OnDetach() {
 }
 
 void GameplayLayer::OnUpdate(VIEngine::Time time) {
-	
+	using namespace VIEngine;
+
+	static float temp = 0.0f;
+	temp += time.GetDeltaTime();
+
+	mRenderer->Submit(RENDER_COMMAND(
+		{
+			RendererAPI::ClearColor(Math::Sin(temp), 0.5f, Math::Cos(temp));
+		}
+	));
 }
 
 bool GameplayLayer::OnKeyPressedEvent(const VIEngine::KeyPressedEvent& eventContext) {

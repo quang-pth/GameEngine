@@ -1,11 +1,13 @@
 #include"Layer.h"
+#include"Core/Application.h"
 
 namespace VIEngine {
-	Layer::Layer() : mID(GetUUID()) {
-
-	}
-
-	Layer::Layer(Shared<Scene> scene) : mID(GetUUID()), mScene(scene) {
+	Layer::Layer() 
+		: 
+		mID(GetUUID()),
+		mRenderer(Application::Get().GetRendererer()),
+		mScene(Application::Get().GetCurrentActiveScene())
+	{
 
 	}
 }

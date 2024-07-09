@@ -1,8 +1,8 @@
 #include"Application.h"
-#include<iostream>
 
 #include"Core/Logger/Logger.h"
 #include"Core/System/System.h"
+#include"Memory/MemoryMonitor.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
 	if ((*iter)->On##eventType(eventContext)) {\
@@ -12,13 +12,19 @@
 
 namespace VIEngine {
 	MemoryManager Application::sGlobalMemory;
+	Application* Application::sInstance;
 
 	MemoryManager& Application::GetGlobalMemoryUsage() {
 		return sGlobalMemory;
 	}
 
+	Application& Application::Get() {
+		VI_ASSERT(sInstance != nullptr && "Application is not initialized!");
+		return *sInstance;
+	}
+
 	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher(), 
-			mIsRunning(true), mInputState(nullptr), mTime() 
+			mIsRunning(true), mInputState(nullptr), mTime(), mRenderer()
 	{
 		mNativeWindow.reset(WindowPlatform::Create(config.WindowSpec));
 		mLayerStack.reset(new LayerStack());
@@ -26,10 +32,11 @@ namespace VIEngine {
 		mCoordinator.reset(GetGlobalMemoryUsage().NewOnStack<ECS::Coordinator>("ECS Coordinator"));
 		mCurrentActiveScene.reset(GetGlobalMemoryUsage().NewOnStack<Scene>("Current Active Scene", mCoordinator));
 		mSystemManager = mCoordinator.get();
+
+		sInstance = this;
     }
 
 	Application::~Application() {
-
 	}
 
 	bool Application::Init() {
@@ -53,14 +60,14 @@ namespace VIEngine {
 
 		auto& collisionSystem = mSystemManager.AddSystem<CollisionResolver>();
 		auto& animationSystem = mSystemManager.AddSystem<AnimationSystem>();
-		auto& renderer2D = mSystemManager.AddSystem<Renderer2D>();
 
 		mSystemManager.AddSystemDependency(&animationSystem, &collisionSystem);
-		mSystemManager.AddSystemDependency(&renderer2D, &collisionSystem, &animationSystem);
 
 		collisionSystem.SetUpdateInterval(1.0f / (mConfig.MaxFPS * 0.5));
 
 		mSystemManager.OnInit();
+
+		mRenderer.OnInit(mConfig.RendererAPISpec);
 
 		return true;
 	}
@@ -78,6 +85,8 @@ namespace VIEngine {
 
 			while (mNativeWindow->GetTimeSeconds() - lastFrameTime < minDeltaTime);
 
+			GetGlobalMemoryUsage().Update();
+
 			float currentFrameTime = mNativeWindow->GetTimeSeconds();
 
 			mTime = currentFrameTime - lastFrameTime;
@@ -90,6 +99,7 @@ namespace VIEngine {
 			}
 
 			mNativeWindow->Swapbuffers();
+
 			while (mTime.GetDeltaTime() > MAX_DELTA_TIME) {
 				for (auto layer : *mLayerStack.get()) {
 					layer->OnUpdate(MAX_DELTA_TIME);
@@ -110,7 +120,9 @@ namespace VIEngine {
 				layer->OnRender(mTime);
 			}
 
-			GetGlobalMemoryUsage().Update();
+			mRenderer.BeginScene();
+			mRenderer.Render();
+			mRenderer.EndScene();
 		}
 
 		OnShutdownClient();
@@ -118,7 +130,14 @@ namespace VIEngine {
 
 	void Application::Shutdown() {
 		mSystemManager.OnShutdown();
+		mRenderer.OnShutdown();
+		GetGlobalMemoryUsage().Clear();
 		mNativeWindow->Shutdown();
+		
+		mCoordinator->OnShutdown();
+		MemoryMonitor::DetecsMemoryLeaks();
+
+		sInstance = nullptr;
 	}
 
 	bool Application::OnWindowResizedEvent(const WindowResizedEvent& eventContext) {
@@ -172,13 +191,11 @@ namespace VIEngine {
 	}
 
 	void Application::PushLayer(Layer* layer) {
-		layer->SetScene(mCurrentActiveScene);
 		mLayerStack->Push(layer);
 		layer->OnAttach();
 	}
 
 	void Application::PushOverlayLayer(Layer* layer) {
-		layer->SetScene(mCurrentActiveScene);
 		mLayerStack->PushOverlay(layer);
 		layer->OnAttach();
 	}

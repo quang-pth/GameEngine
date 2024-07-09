@@ -7,7 +7,6 @@ namespace VIEngine {
 		}
 
 		Coordinator::~Coordinator() {
-
 		}
 
 		EntityID Coordinator::AddEntity() {
@@ -28,6 +27,10 @@ namespace VIEngine {
 		void Coordinator::ReleaseForReuseEntity(EntityID id) {
 			mEntityManager.ReleaseForReuse(id);
 			mComponentManager.RemoveRelatedComponents(id);
+		}
+
+		void Coordinator::OnShutdown() {
+			//mComponentManager.Release();
 		}
 	} // namespace ECS
 } // namespace VIEngine

@@ -1,12 +1,13 @@
 #include"MemoryManager.h"
 #include"Core/Logger/Logger.h"
+#include"MemoryMonitor.h"
 
 namespace VIEngine {
 	MemoryManager::MemoryManager(const MemoryConfiguration& config) : mConfig(config),
 		mPerFrameAllocator(config.PerFrameBufferSize, malloc(config.PerFrameBufferSize)),
 		mStackAllocator(config.StackBufferSize, malloc(config.StackBufferSize))
 	{
-
+		MemoryMonitor::Add(this);
 	}
 
 	MemoryManager::~MemoryManager() {
@@ -19,7 +20,7 @@ namespace VIEngine {
 
 	void MemoryManager::Clear() {
 		mPerFrameAllocator.Clear();
-		mStackAllocator.Clear();
+		ClearOnStack();
 	}
 
 	void* MemoryManager::AllocatePerFrame(size_t memorySize, uint8_t alignment) {
@@ -60,6 +61,7 @@ namespace VIEngine {
 
 	void MemoryManager::ClearOnStack() {
 		mStackAllocator.Clear();
+		mActiveMemories.clear();
 	}
 
 	void MemoryManager::DetecMemoryLeaks() {

@@ -119,8 +119,6 @@ namespace VIEngine {
 	}
 
 	void GLFWPlatformWindow::Swapbuffers() {
-		glClearColor(1.0f, 0.3f, .8f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
 		glfwSwapBuffers(mWindow);
 	}
 

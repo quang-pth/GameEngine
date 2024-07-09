@@ -14,12 +14,12 @@ namespace VIEngine {
 	template<typename T>
 	class VI_API EventAction : public IEventAction {
 	public:
-		EventAction(const EventCallback<T>& callback) : mCallback(callback) {}
+		EventAction(const EventCallback<T>& callback) : mCommand(callback) {}
 		virtual bool Execute(const EventContext* eventContext) override {
 			VI_STATIC_ASSERT(std::is_base_of<EventContext, T>::value && "Invalid event context");
-			return mCallback(*(T*)eventContext);
+			return mCommand(*(T*)eventContext);
 		}
 	private:
-		EventCallback<T> mCallback;
+		EventCallback<T> mCommand;
 	};
 }
