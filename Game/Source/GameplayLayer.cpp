@@ -47,7 +47,7 @@ void GameplayLayer::OnUpdate(VIEngine::Time time) {
 		RendererAPI::BindShader(mShader);
 		RendererAPI::BindVertexBuffer(mVertexBuffer);
 		RendererAPI::BindIndexBuffer(mIndexBuffer);
-		RendererAPI::DrawIndexed();
+		RendererAPI::DrawIndexed(mIndexBuffer->GetNums());
 	));
 }
 

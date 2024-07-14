@@ -14,6 +14,14 @@ namespace VIEngine {
 
 		return GL_STATIC_DRAW;
 	}
+	
+	static GLenum ToOpenGLPrimitive(EPrimitive primitive) {
+		if (primitive == EPrimitive::TRIANGLE) return GL_TRIANGLES;
+		if (primitive == EPrimitive::POINT) return GL_POINTS;
+		if (primitive == EPrimitive::LINE) return GL_LINE;
+
+		return GL_TRIANGLES;
+	}
 
 	OpenGLRendererAPI::OpenGLRendererAPI() {
 		RendererAPI::sRendererAPI = this;
@@ -95,7 +103,7 @@ namespace VIEngine {
 	{
 	}
 
-	void OpenGLRendererAPI::DrawIndexedImpl() {
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	void OpenGLRendererAPI::DrawIndexedImpl(uint32_t nums, EPrimitive primitive) {
+		glDrawElements(ToOpenGLPrimitive(primitive), nums, GL_UNSIGNED_INT, 0);
 	}
 }

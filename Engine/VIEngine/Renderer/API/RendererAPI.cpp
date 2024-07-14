@@ -49,8 +49,8 @@ namespace VIEngine {
 		sRendererAPI->UnBindShaderImpl(shader);
 	}
 
-	void RendererAPI::DrawIndexed() {
-		sRendererAPI->DrawIndexedImpl();
+	void RendererAPI::DrawIndexed(uint32_t nums, EPrimitive primitive) {
+		sRendererAPI->DrawIndexedImpl(nums, primitive);
 	}
 
 } // namespace VIEngine

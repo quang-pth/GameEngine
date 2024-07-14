@@ -19,7 +19,7 @@ namespace VIEngine {
 		virtual void UnBindVertexBufferImpl(const VertexBuffer*) override;
 		virtual void UnBindIndexBufferImpl(const IndexBuffer*) override;
 		virtual void UnBindShaderImpl(const Shader*) override;
-		virtual void DrawIndexedImpl() override;
+		virtual void DrawIndexedImpl(uint32_t nums, EPrimitive primitive) override;
 	private:
 		uint32_t mVertexArrayID;
 	};

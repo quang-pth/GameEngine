@@ -22,6 +22,12 @@ namespace VIEngine {
 		PROGRAM
 	};
 
+	enum class EPrimitive {
+		TRIANGLE,
+		LINE,
+		POINT
+	};
+
 	class VI_API RendererAPI {
 	public:
 		static VertexBuffer* CreateVertexBuffer();
@@ -38,7 +44,7 @@ namespace VIEngine {
 		static void UnBindIndexBuffer(const IndexBuffer*);
 		static void UnBindShader(const Shader*);
 
-		static void DrawIndexed();
+		static void DrawIndexed(uint32_t nums, EPrimitive primitive = EPrimitive::TRIANGLE);
 
 	public:
 		virtual ~RendererAPI() = default;
@@ -56,7 +62,7 @@ namespace VIEngine {
 		virtual void UnBindIndexBufferImpl(const IndexBuffer*) = 0;
 		virtual void UnBindShaderImpl(const Shader*) = 0;
 		
-		virtual void DrawIndexedImpl() = 0;
+		virtual void DrawIndexedImpl(uint32_t nums, EPrimitive primitive) = 0;
 	protected:
 		RendererAPI() = default;
 	protected:
