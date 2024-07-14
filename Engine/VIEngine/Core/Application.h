@@ -8,9 +8,8 @@
 #include"Scene/Scene.h"
 #include"Core/Type/Actor.h"
 #include"Memory/MemoryManager.h"
-#include"ECS/SystemManager.h"
-#include"Renderer/Renderer.h"
 #include"Input/InputState.h"
+#include"Renderer/API/RendererAPI.h"
 
 namespace VIEngine {
 	struct VI_API ApplicationConfiguration {
@@ -26,8 +25,6 @@ namespace VIEngine {
 		static MemoryManager& GetGlobalMemoryUsage();
 		static Application& Get();
 		static Application* sInstance;
-	private:
-		static MemoryManager sGlobalMemory;
 
 	public:
 		virtual ~Application();
@@ -38,7 +35,7 @@ namespace VIEngine {
 		void Shutdown();
 
 		VI_FORCE_INLINE Shared<Scene> GetCurrentActiveScene() const { return mCurrentActiveScene; }
-		VI_FORCE_INLINE Renderer* GetRendererer() { return &mRenderer; }
+		VI_FORCE_INLINE class Renderer* GetRendererer() { return mRenderer; }
 
 	protected:
 		Application() = default;
@@ -64,8 +61,8 @@ namespace VIEngine {
 		Unique<LayerStack> mLayerStack;
 		Shared<Scene> mCurrentActiveScene;
 		Shared<ECS::Coordinator> mCoordinator;
-		Renderer mRenderer;
-		ECS::SystemManager mSystemManager;
+		class Renderer* mRenderer;
+		class ECS::SystemManager* mSystemManager;
 		EventDispatcher mEventDispatcher;
 		InputState* mInputState;
 		Time mTime;

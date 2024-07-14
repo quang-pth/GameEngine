@@ -1,7 +1,6 @@
 #pragma once
 
 #include"RendererAPI.h"
-#include"Resource/Resource.h"
 
 namespace VIEngine {
 	class RendererAPIFactory {

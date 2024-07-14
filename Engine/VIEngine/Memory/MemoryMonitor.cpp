@@ -15,8 +15,20 @@ namespace VIEngine {
 		}
 	}
 
+	void MemoryMonitor::Update() {
+		for (MemoryManager* usage : sMemoryUsages) {
+			usage->Update();
+		}
+	}
+
+	void MemoryMonitor::Clear() {
+		for (MemoryManager* usage : sMemoryUsages) {
+			usage->Clear();
+		}
+	}
+
 	void MemoryMonitor::DetecsMemoryLeaks() {
-		// TODO: fix memory leaks later for the component array
+		// TODO: fix memory leaks later for component manager
 		for (MemoryManager* usage : sMemoryUsages) {
 			usage->DetecMemoryLeaks();
 		}

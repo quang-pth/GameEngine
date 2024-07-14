@@ -1,12 +1,12 @@
 #pragma once
 
 #include"pch.h"
-#include"Memory/MemoryManager.h"
 #include"RenderCommand.h"
 #include"API/RendererAPIFactory.h"
+#include"Memory/MemoryManager.h"
 
 namespace VIEngine {
-	class VI_API Renderer : public MemoryManager {
+	class VI_API Renderer : protected MemoryManager {
 	public:
 		Renderer();
 		~Renderer();
@@ -16,15 +16,6 @@ namespace VIEngine {
 
 		void Submit(const RenderCommandCallback& commandCallback);
 
-		void BindVertexBufferImpl(const VertexBuffer* vertexBuffer);
-		void UnbindVertexBufferImpl(const VertexBuffer* vertexBuffer);
-		
-		void BindIndexBufferImpl(const IndexBuffer* indexBuffer);
-		void UnbindIndexBufferImpl(const IndexBuffer* indexBuffer);
-
-		void BindShaderImpl(const Shader* shader);
-		void UnbindShaderImpl(const Shader* shader);
-	
 		void BeginScene();
 		void Render();
 		void EndScene();
@@ -34,4 +25,5 @@ namespace VIEngine {
 	};
 }
 
-#define RENDER_COMMAND(cmd) [this]() { cmd }
+
+#define RENDER_COMMAND(...) [this]() { __VA_ARGS__ }

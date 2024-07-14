@@ -3,7 +3,7 @@
 #include"Core/Logger/Logger.h"
 
 namespace VIEngine {
-	Renderer::Renderer() {
+	Renderer::Renderer() : MemoryManager() {
 
 	}
 
@@ -12,47 +12,18 @@ namespace VIEngine {
 
 	void Renderer::OnInit(ERendererAPI api) {
 		mRendererAPI.reset(RendererAPIFactory::CreateRendererAPI(api));
+		mRendererAPI->OnInit();
 	}
 
 	void Renderer::OnShutdown() {
-		MemoryManager::ClearOnStack();
-		mRendererAPI.reset();
+		mRendererAPI->OnShutdown();
 	}
 
 	void Renderer::Submit(const RenderCommandCallback& commandCallback)
 	{
-		RenderCommand* command = MemoryManager::NewPerFrame<RenderCommand>(commandCallback);
+		RenderCommand* command = NewPerFrame<RenderCommand>(commandCallback);
 		mCommandQueue.push(command);
-	}
-
-	void Renderer::BindVertexBufferImpl(const VertexBuffer* vertexBuffer)
-	{
-		mRendererAPI->BindVertexBufferImpl(vertexBuffer);
-	}
-
-	void Renderer::UnbindVertexBufferImpl(const VertexBuffer* vertexBuffer)
-	{
-		mRendererAPI->UnbindVertexBufferImpl(vertexBuffer);
-	}
-
-	void Renderer::BindIndexBufferImpl(const IndexBuffer* indexBuffer)
-	{
-		mRendererAPI->BindIndexBufferImpl(indexBuffer);
-	}
-
-	void Renderer::UnbindIndexBufferImpl(const IndexBuffer* indexBuffer)
-	{
-		mRendererAPI->UnbindIndexBufferImpl(indexBuffer);
-	}
-
-	void Renderer::BindShaderImpl(const Shader* shader)
-	{
-		mRendererAPI->BindShaderImpl(shader);
-	}
-
-	void Renderer::UnbindShaderImpl(const Shader* shader)
-	{
-		mRendererAPI->UnbindShaderImpl(shader);
+		//CORE_LOG_TRACE("Command is allocated at address {0}", (void*)command);
 	}
 
 	void Renderer::BeginScene()
@@ -69,6 +40,5 @@ namespace VIEngine {
 
 	void Renderer::EndScene()
 	{
-		MemoryManager::Clear();
 	}
 }
