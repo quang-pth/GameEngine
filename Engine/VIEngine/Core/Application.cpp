@@ -36,8 +36,7 @@ namespace VIEngine {
 		mCoordinator.reset(GetGlobalMemoryUsage().NewOnStack<ECS::Coordinator>("ECS Coordinator"));
 		mCurrentActiveScene.reset(GetGlobalMemoryUsage().NewOnStack<Scene>("Current Active Scene", mCoordinator));
 		mRenderer = GetGlobalMemoryUsage().NewOnStack<Renderer>("Renderer");
-
-		mSystemManager = new ECS::SystemManager(mCoordinator.get());
+		mSystemManager = GetGlobalMemoryUsage().NewOnStack<ECS::SystemManager>("SystemManager", mCoordinator.get());
 
 		sInstance = this;
     }

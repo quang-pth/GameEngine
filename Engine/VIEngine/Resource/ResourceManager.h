@@ -16,7 +16,7 @@ namespace VIEngine {
 		Shader* GetShader(const char* filepath);
 		void SaveShader(const char* filepath, Shader*);
 		std::unordered_map<std::string, std::string> ParseSourceGLSL(const char* filepath);
-		std::string LoadSourceGLSL(const char* filepath);
+		std::string ReadFile(const char* filepath);
 
 	private:
 		std::unordered_map<const char*, Shader*> mShaderMap;

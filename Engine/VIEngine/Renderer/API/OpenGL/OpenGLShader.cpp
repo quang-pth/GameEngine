@@ -1,5 +1,6 @@
 #include"OpenGLShader.h"
 #include"Core/Logger/Logger.h"
+#include"Core/Cast/Cast.h"
 #include<glad/gl.h>
 
 namespace VIEngine {
@@ -37,6 +38,61 @@ namespace VIEngine {
 	OpenGLShader::~OpenGLShader() {
 		glDeleteShader(mID);
 	}
+
+    void OpenGLShader::SetBool(const std::string& name, bool value)
+    {
+        glUniform1i(glGetUniformLocation(mID, name.c_str()), StaticCast<int>(value));
+    }
+
+    void OpenGLShader::SetInt(const std::string& name, int value)
+    {
+        glUniform1i(glGetUniformLocation(mID, name.c_str()), value);
+    }
+
+    void OpenGLShader::SetInts(const std::string& name, int32_t* value, uint32_t count)
+    {
+        glUniform1iv(glGetUniformLocation(mID, name.c_str()), count, value);
+    }
+
+    void OpenGLShader::SetFloat(const std::string& name, float value)
+    {
+        glUniform1f(glGetUniformLocation(mID, name.c_str()), value);
+    }
+
+    void OpenGLShader::SetFloats(const std::string& name, float* value, uint32_t count)
+    {
+        glUniform1fv(glGetUniformLocation(mID, name.c_str()), count, value);
+    }
+
+    void OpenGLShader::SetFloats2(const std::string& name, float* value, uint32_t count)
+    {
+        glUniform2fv(glGetUniformLocation(mID, name.c_str()), count, value);
+    }
+
+    void OpenGLShader::SetVector2(const std::string& name, float x, float y)
+    {
+        glUniform2f(glGetUniformLocation(mID, name.c_str()), x, y);
+    }
+
+    void OpenGLShader::SetVector2(const std::string& name, const Math::Vector2& value)
+    {
+        glUniform2fv(glGetUniformLocation(mID, name.c_str()), 1, value.GetAsFloatPtr());
+    }
+
+    void OpenGLShader::SetVector3(const std::string& name, float x, float y, float z)
+    {
+        glUniform3f(glGetUniformLocation(mID, name.c_str()), x, y, z);
+    }
+
+    void OpenGLShader::SetVector3(const std::string& name, const Math::Vector3& value)
+    {
+        glUniform3fv(glGetUniformLocation(mID, name.c_str()), 1, value.GetAsFloatPtr());
+    }
+
+    void OpenGLShader::SetMatrix4(const std::string& name, const Math::Matrix4& value)
+    {
+        glUniformMatrix4fv(glGetUniformLocation(mID, name.c_str()), 1, GL_TRUE, value.GetAsFloatPtr());
+    }
 
     bool OpenGLShader::IsValidShader(uint32_t shaderID, EShaderType shaderType) {
         int success;

@@ -8,6 +8,7 @@ namespace VIEngine {
 	struct Vertex {
 		Math::Vector3 Position;
 		Math::Vector2 TextureCoords;
+		Math::Vector3 Color;
 	};
 
 	class VI_API VertexBuffer : public Object {

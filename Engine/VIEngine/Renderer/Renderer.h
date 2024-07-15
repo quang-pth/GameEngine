@@ -20,7 +20,7 @@ namespace VIEngine {
 		void Render();
 		void EndScene();
 	private:
-		std::queue<RenderCommand*> mCommandQueue;
+		std::vector<RenderCommand*> mCommandQueue;
 		Shared<RendererAPI> mRendererAPI;
 	};
 }

@@ -12,6 +12,7 @@ namespace VIEngine {
 
 	void Renderer::OnInit(ERendererAPI api) {
 		mRendererAPI.reset(RendererAPIFactory::CreateRendererAPI(api));
+		VI_ASSERT(mRendererAPI != nullptr && "Failed to init renderer");
 		mRendererAPI->OnInit();
 	}
 
@@ -22,7 +23,7 @@ namespace VIEngine {
 	void Renderer::Submit(const RenderCommandCallback& commandCallback)
 	{
 		RenderCommand* command = NewPerFrame<RenderCommand>(commandCallback);
-		mCommandQueue.push(command);
+		mCommandQueue.emplace_back(command);
 		//CORE_LOG_TRACE("Command is allocated at address {0}", (void*)command);
 	}
 
@@ -32,13 +33,13 @@ namespace VIEngine {
 
 	void Renderer::Render()
 	{
-		while (!mCommandQueue.empty()) {
-			mCommandQueue.front()->Execute();
-			mCommandQueue.pop();
+		for (auto renderCommand : mCommandQueue) {
+			renderCommand->Execute();
 		}
 	}
 
 	void Renderer::EndScene()
 	{
+		mCommandQueue.clear();
 	}
 }

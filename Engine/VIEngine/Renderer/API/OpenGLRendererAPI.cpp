@@ -76,6 +76,8 @@ namespace VIEngine {
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, vertexBuffer->GetStride(), (void*)offsetof(Vertex, TextureCoords)); // Texture coordinates
 		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, vertexBuffer->GetStride(), (void*)offsetof(Vertex, Color)); // Color
+		glEnableVertexAttribArray(2);
 	}
 
 	void OpenGLRendererAPI::UnBindVertexBufferImpl(const VertexBuffer* vertexBuffer)

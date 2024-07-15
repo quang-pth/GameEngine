@@ -30,6 +30,11 @@ namespace Math {
 			Y = inY;
 		}
 
+		const float* GetAsFloatPtr() const
+		{
+			return reinterpret_cast<const float*>(&X);
+		}
+
 		// Vector addition (a + b)
 		friend Vector2 operator+(const Vector2& a, const Vector2& b)
 		{

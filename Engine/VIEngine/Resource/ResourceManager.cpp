@@ -28,7 +28,7 @@ namespace VIEngine {
 	}
 
 	std::unordered_map<std::string, std::string> ResourceManager::ParseSourceGLSL(const char* filepath) {
-		std::string source = LoadSourceGLSL(filepath);
+		std::string source = ReadFile(filepath);
 		std::unordered_map<std::string, std::string> shaderSources;
 
 		const char* typeToken = "#type";
@@ -51,7 +51,7 @@ namespace VIEngine {
 		return shaderSources;
 	}
 
-	std::string ResourceManager::LoadSourceGLSL(const char* filepath) {
+	std::string ResourceManager::ReadFile(const char* filepath) {
 		std::string result;
 		std::ifstream in(filepath, std::ios::in | std::ios::binary);
 		if (in)
