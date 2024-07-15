@@ -9,7 +9,6 @@ namespace VIEngine {
 	class VI_API Layer {
 	public:
 		Layer();
-		Layer(Shared<Scene> scene);
 
 		virtual ~Layer() = default;
 
@@ -33,6 +32,7 @@ namespace VIEngine {
 		virtual bool OnMouseButtonReleasedEvent(const MouseButtonReleasedEvent&) { return false; }
 	protected:
 		Shared<Scene> mScene;
+		class Renderer* mRenderer;
 	private:
 		UUID mID;
 	};

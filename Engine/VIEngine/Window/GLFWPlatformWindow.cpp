@@ -15,8 +15,8 @@ namespace VIEngine {
 	}
 
 	GLFWPlatformWindow::~GLFWPlatformWindow() {
-		VI_FREE_MEMORY(mData.Input.Keyboard);
-		VI_FREE_MEMORY(mData.Input.Mouse);
+		VI_FREE_MEMORY(mIndices.Input.Keyboard);
+		VI_FREE_MEMORY(mIndices.Input.Mouse);
 	}
 
 	bool GLFWPlatformWindow::Init(const ApplicationConfiguration& config, EventDispatcher* eventDispatcher) {
@@ -40,11 +40,11 @@ namespace VIEngine {
 
 		glfwMakeContextCurrent(mWindow);
 
-		mData.Dispatcher = eventDispatcher;
-		mData.Input.Keyboard = WindowPlatform::CreateKeyboard(config.WindowSpec, mWindow);
-		mData.Input.Mouse = WindowPlatform::CreateMouse(config.WindowSpec, mWindow);
+		mIndices.Dispatcher = eventDispatcher;
+		mIndices.Input.Keyboard = WindowPlatform::CreateKeyboard(config.WindowSpec, mWindow);
+		mIndices.Input.Mouse = WindowPlatform::CreateMouse(config.WindowSpec, mWindow);
 
-		glfwSetWindowUserPointer(mWindow, &mData);
+		glfwSetWindowUserPointer(mWindow, &mIndices);
 
 		glfwSetWindowSizeCallback(mWindow, [](GLFWwindow* window, int width, int height) {
 			glViewport(0, 0, width, height);
@@ -119,8 +119,6 @@ namespace VIEngine {
 	}
 
 	void GLFWPlatformWindow::Swapbuffers() {
-		glClearColor(1.0f, 0.3f, .8f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
 		glfwSwapBuffers(mWindow);
 	}
 
@@ -133,7 +131,7 @@ namespace VIEngine {
 	}
 
 	InputState* GLFWPlatformWindow::GetInputState() {
-		return &mData.Input;
+		return &mIndices.Input;
 	}
 
 	float GLFWPlatformWindow::GetTimeSeconds() {

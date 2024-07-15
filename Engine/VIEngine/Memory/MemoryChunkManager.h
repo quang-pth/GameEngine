@@ -47,11 +47,6 @@ namespace VIEngine {
 				mObjects.clear();
 			}
 
-			void Close() {
-				Clear();
-				VI_FREE_MEMORY(mAllocator);
-			}
-
 			void* GetStartAddress() const { return mAllocator->GetStartAddress(); }
 
 		private:
@@ -109,7 +104,7 @@ namespace VIEngine {
 
 		}
 
-		~MemoryChunkManager() {
+		virtual ~MemoryChunkManager() {
 		}
 
 		void* Allocate() {
@@ -160,7 +155,7 @@ namespace VIEngine {
 		void Reset() {
 			for (auto iter = mMemoryChunkList.rbegin(); iter != mMemoryChunkList.rend(); ++iter) {
 				FreeOnStack((*iter)->GetStartAddress());
-				(*iter)->Close();
+				(*iter)->Clear();
 				VI_FREE_MEMORY(*iter);
 			}
 			mMemoryChunkList.clear();

@@ -32,6 +32,8 @@ namespace VIEngine {
 			void RemoveEntity(EntityID id);
 			void ReleaseForReuseEntity(EntityID id);
 
+			void OnShutdown();
+
 		private:
 			EntityManager mEntityManager;
 			ComponentManager mComponentManager;

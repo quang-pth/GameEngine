@@ -48,6 +48,6 @@ namespace VIEngine {
 		virtual float GetTimeSeconds() override;
 	private:
 		GLFWwindow* mWindow;
-		WindowData mData;
+		WindowData mIndices;
 	};
 }
