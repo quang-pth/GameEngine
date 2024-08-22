@@ -71,13 +71,6 @@ namespace VIEngine {
 	{
 		glBindBuffer(GL_ARRAY_BUFFER, vertexBuffer->GetID());
 		glBufferData(GL_ARRAY_BUFFER, vertexBuffer->GetSize(), vertexBuffer->GetData(), ToOpenGLUsage(usage));
-		//CORE_LOG_TRACE("{0}", vertexBuffer->GetData()[0].Position.Y);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, vertexBuffer->GetStride(), (void*)offsetof(Vertex, Position)); // Position
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, vertexBuffer->GetStride(), (void*)offsetof(Vertex, TextureCoords)); // Texture coordinates
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, vertexBuffer->GetStride(), (void*)offsetof(Vertex, Color)); // Color
-		glEnableVertexAttribArray(2);
 	}
 
 	void OpenGLRendererAPI::UnBindVertexBufferImpl(const VertexBuffer* vertexBuffer)
@@ -101,8 +94,9 @@ namespace VIEngine {
 		glUseProgram(shader->GetID());
 	}
 
-	void OpenGLRendererAPI::UnBindShaderImpl(const Shader*)
+	void OpenGLRendererAPI::UnBindShaderImpl(const Shader* shader)
 	{
+		glUseProgram(0);
 	}
 
 	void OpenGLRendererAPI::DrawIndexedImpl(uint32_t nums, EPrimitive primitive) {
