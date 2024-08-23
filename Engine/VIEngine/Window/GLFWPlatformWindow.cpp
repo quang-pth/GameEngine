@@ -119,6 +119,7 @@ namespace VIEngine {
 	}
 
 	void GLFWPlatformWindow::Swapbuffers() {
+		// TODO: Move clear color commands to renderer API
 		glClearColor(1.0f, 0.3f, .8f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glfwSwapBuffers(mWindow);

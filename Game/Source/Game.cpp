@@ -30,6 +30,7 @@ VIEngine::Application* VIEngine::CreateApplication() {
 	appConfig.Title = "VIEngine Alpha ver";
 	appConfig.WindowSpec = VIEngine::EWindowPlatformSpec::GLFW;
 	appConfig.MaxFPS = 60;
+	appConfig.RendererAPISpec = ERendererAPISpec::OpenGL;
 
 	return new Game(appConfig);
 }

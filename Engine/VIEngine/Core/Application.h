@@ -5,16 +5,22 @@
 #include"Core/Event/EventDispatcher.h"
 #include"Core/Layer/LayerStack.h"
 #include"Core/Time/Time.h"
+#include"Renderer/RendererAPI.h"
 
 namespace VIEngine {
 	struct VI_API ApplicationConfiguration {
 		int Width, Height;
 		const char* Title;
 		EWindowPlatformSpec WindowSpec;
+		ERendererAPISpec RendererAPISpec;
 		uint16_t MaxFPS;
 	};
 
 	class VI_API Application {
+	public:
+		static Application& Get();
+	private:
+		static Application* sInstance;
 	public:
 		virtual ~Application() = default;
 		bool Init();
@@ -22,6 +28,8 @@ namespace VIEngine {
 		void Run();
 		virtual void OnShutdownClient() = 0;
 		void Shutdown();
+
+		VI_FORCE_INLINE const ApplicationConfiguration& GetConfig() const { return mConfig; }
 	protected:
 		Application() = default;
 		Application(const ApplicationConfiguration&);
@@ -48,6 +56,7 @@ namespace VIEngine {
 		class InputState* mInputState;
 		Time mTime;
 		bool mIsRunning;
+		class Renderer* mRenderer;
 	};
 
 	extern Application* CreateApplication();
