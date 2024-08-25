@@ -13,10 +13,10 @@ GameplayLayer::~GameplayLayer() {
 void GameplayLayer::OnAttach() {
 	LOG_TRACE("GameplayLayer is attached");
 
-	VIEngine::MemoryManager memoryManager;
+	VIEngine::MemoryManager* memoryManager = new VIEngine::MemoryManager();
 
 	{
-		auto systemManager = memoryManager.NewOnStack<VIEngine::ECS::SystemManager>("SystemManager");
+		auto systemManager = memoryManager->NewOnStack<VIEngine::ECS::SystemManager>("SystemManager");
 
 		auto& collisionSystem = systemManager->AddSystem<VIEngine::CollisionResolver>();
 		auto& animationSystem = systemManager->AddSystem<VIEngine::AnimationSystem>();
@@ -28,11 +28,13 @@ void GameplayLayer::OnAttach() {
 		systemManager->OnInit();
 		systemManager->OnUpdate(0.0f);
 		systemManager->OnShutdown();
+
+		memoryManager->FreeOnStack(systemManager);
 	}
 
 	{
-		VIEngine::ECS::Coordinator* coordinator = memoryManager.NewOnStack<VIEngine::ECS::Coordinator>("Coordinator");
-		VIEngine::Actor* actor = memoryManager.NewOnStack<VIEngine::Actor>(VIEngine::Actor::RunTimeType.GetTypeName(), coordinator);
+		VIEngine::ECS::Coordinator* coordinator = memoryManager->NewOnStack<VIEngine::ECS::Coordinator>("Coordinator");
+		VIEngine::Actor* actor = memoryManager->NewOnStack<VIEngine::Actor>(VIEngine::Actor::RunTimeType.GetTypeName(), coordinator);
 
 		actor->AddComponent<VIEngine::TransformComponent>(2.0f, 3.0f);
 		VIEngine::TransformComponent& transform = actor->GetComponent<VIEngine::TransformComponent>();
@@ -50,9 +52,13 @@ void GameplayLayer::OnAttach() {
 		if (!actor->HasComponent<VIEngine::TransformComponent>()) {
 			LOG_WARN("Actor transform component has been removed");
 		}
+
+		memoryManager->FreeOnStack(actor);
+		memoryManager->FreeOnStack(coordinator);
+		coordinator->~Coordinator();
 	}
 
-	memoryManager.ClearOnStack();
+	memoryManager->ClearOnStack();
 }
 
 void GameplayLayer::OnDetach() {

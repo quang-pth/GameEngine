@@ -24,7 +24,9 @@ namespace VIEngine {
 			public:
 				ComponentArray() = default;
 				ComponentArray(const char* resourceName) : MemoryChunkManager(resourceName) {}
-				~ComponentArray() = default;
+				~ComponentArray() {
+					Reset();
+				}
 
 				template<typename... Args>
 				T& AddComponent(EntityID id, class Coordinator* coordinator, Args&&... args) {

@@ -2,6 +2,7 @@
 
 #include"MemoryManager.h"
 #include"Core/Logger/Logger.h"
+#include"Memory/MemoryMonitor.h"
 
 namespace VIEngine {
 	template<typename T, std::size_t MAX_OBJECT_PER_CHUNK>
@@ -164,6 +165,7 @@ namespace VIEngine {
 				VI_FREE_MEMORY(*iter);
 			}
 			mMemoryChunkList.clear();
+			MemoryMonitor::Get().Remove(this);
 		}
 		
 		VI_FORCE_INLINE Iterator begin() { return Iterator(mMemoryChunkList.begin(), mMemoryChunkList.end()); }

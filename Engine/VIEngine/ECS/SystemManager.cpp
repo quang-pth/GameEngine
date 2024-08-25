@@ -1,6 +1,7 @@
 #include"SystemManager.h"
 #include"ECS/Coordinator.h"
 #include"Core/Time/Time.h"
+#include"Memory/MemoryMonitor.h"
 
 namespace VIEngine {
 	namespace ECS {
@@ -50,10 +51,11 @@ namespace VIEngine {
 		}
 
 		void SystemManager::OnShutdown() {
-			for (auto iter = mSortedOrderSystems.rbegin(); iter != mSortedOrderSystems.rend(); iter++) {
+			for (auto iter = mUnsortedOrderSystems.rbegin(); iter != mUnsortedOrderSystems.rend(); iter++) {
 				(*iter)->OnShutdown();
+				FreeOnStack(*iter);
 			}
-			ClearOnStack();
+			MemoryMonitor::Get().Remove(this);
 		}
 
 		void SystemManager::BuildSystemWorkOrder() {

@@ -2,6 +2,7 @@
 #include<iostream>
 
 #include"Core/Logger/Logger.h"
+#include"Memory/MemoryMonitor.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
 	if ((*iter)->On##eventType(eventContext)) {\
@@ -52,6 +53,8 @@ namespace VIEngine {
 
 			while (mNativeWindow->GetTimeSeconds() - lastFrameTime < minDeltaTime);
 
+			MemoryMonitor::Get().Update();
+
 			float currentFrameTime = mNativeWindow->GetTimeSeconds();
 
 			mTime = currentFrameTime - lastFrameTime;
@@ -90,6 +93,8 @@ namespace VIEngine {
 
 	void Application::Shutdown() {
 		mNativeWindow->Shutdown();
+		MemoryMonitor::Get().Clear();
+		MemoryMonitor::Get().DectecMemoryLeaks();
 	}
 
 	bool Application::OnWindowResizedEvent(const WindowResizedEvent& eventContext) {
