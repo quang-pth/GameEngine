@@ -51,4 +51,6 @@ namespace VIEngine {
 		LayerList mLayers;
 		uint8_t mIndex;
 	};
+
+	VI_MEM_DELETER(LayerStack);
 }

@@ -28,10 +28,15 @@ namespace VIEngine {
 	}
 
 	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher(), 
-			mIsRunning(true), mInputState(nullptr), mTime(), mRenderer()
+			mIsRunning(true), mInputState(nullptr), mTime(), mRenderer(), 
+			CREATED_SCOPED_OBJECT(LayerStack, mLayerStack)
 	{
 		mNativeWindow.reset(WindowPlatform::Create(config.WindowSpec));
-		mLayerStack.reset(new LayerStack());
+
+		//mLayerStack.reset(GetGlobalMemoryUsage().NewOnStack<LayerStack>("LayerStack"));
+		//mLayerStack.get_deleter() = VI_DELETER_ID(LayerStack);
+
+		//mLayerStack.reset(GetGlobalMemoryUsage().NewOnStack<LayerStack>("LayerStack"));
 
 		mCoordinator.reset(GetGlobalMemoryUsage().NewOnStack<ECS::Coordinator>("ECS Coordinator"));
 		mCurrentActiveScene.reset(GetGlobalMemoryUsage().NewOnStack<Scene>("Current Active Scene", mCoordinator));

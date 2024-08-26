@@ -57,8 +57,8 @@ namespace VIEngine {
 		bool OnMouseButtonReleasedEvent(const MouseButtonReleasedEvent&);
 	private:
 		ApplicationConfiguration mConfig;
-		Unique<NativeWindow> mNativeWindow;
-		Unique<LayerStack> mLayerStack;
+		Shared<NativeWindow> mNativeWindow;
+		SCOPED_OBJECT(LayerStack, mLayerStack);
 		Shared<Scene> mCurrentActiveScene;
 		Shared<ECS::Coordinator> mCoordinator;
 		class Renderer* mRenderer;

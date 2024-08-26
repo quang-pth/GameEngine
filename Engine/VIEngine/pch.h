@@ -23,8 +23,20 @@
 #include<map>
 #include<stack>
 
+#define VI_DELETER_ID(typeName) typeName##MemoryDeleter
+
+#define VI_MEM_DELETER(typeName) auto VI_DELETER_ID(typeName) = [](typeName* ptr) {\
+		if (ptr != nullptr) {\
+			ptr->~typeName();\
+			ptr = nullptr;\
+		}\
+	}
+
 template<typename T> using Shared = std::shared_ptr<T>;
 template<typename T> using Unique = std::unique_ptr<T>;
+
+#define SCOPED_OBJECT(typeName, variableName) std::unique_ptr<typeName, decltype(VI_DELETER_ID(typeName))> variableName
+#define CREATED_SCOPED_OBJECT(typeName, variableName) variableName(VIEngine::Application::GetGlobalMemoryUsage().NewOnStack<typeName>(#typeName), VI_DELETER_ID(typeName))
 
 #if ON_VI_ENGINE
 	#if DYNAMIC_BUILD
