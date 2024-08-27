@@ -5,6 +5,8 @@
 
 namespace VIEngine {
 	namespace ECS {
+		DEFINE_RTTI_NO_PARENT(SystemManager)
+
 		SystemManager::SystemManager() : MemoryManager(), mSystemIdx(0), mRebuildSystemWorkOrder(false) {
 
 		}
@@ -41,12 +43,14 @@ namespace VIEngine {
 				}
 
 				float intervalPassBy = system->GetLastUpdateTime() + time.GetDeltaTime();
+				// TODO: Fix update interval 
 				if (intervalPassBy > system->GetUpdateInterval()) {
 					system->OnUpdate(time);
 					intervalPassBy -= system->GetUpdateInterval();
 				}
-
-				system->SetLastUpdateTime(intervalPassBy);
+				else {
+					system->SetLastUpdateTime(intervalPassBy);
+				}
 			}
 		}
 

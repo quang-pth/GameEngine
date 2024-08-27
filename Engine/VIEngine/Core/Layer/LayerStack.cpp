@@ -1,6 +1,8 @@
 #include"LayerStack.h"
 
 namespace VIEngine {
+	DEFINE_RTTI_NO_PARENT(LayerStack)
+
 	LayerStack::LayerStack() : mIndex(0), mLayers() {
 
 	}

@@ -3,6 +3,10 @@
 
 #include"Core/Logger/Logger.h"
 #include"Memory/MemoryMonitor.h"
+#include"GlobalMemory.h"
+#include"ECS/SystemManager.h"
+#include"ECS/Coordinator.h"
+#include"Core/System/System.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
 	if ((*iter)->On##eventType(eventContext)) {\
@@ -15,7 +19,9 @@ namespace VIEngine {
 			mIsRunning(true), mInputState(nullptr), mTime() 
 	{
 		mNativeWindow.reset(WindowPlatform::Create(config.WindowSpec));
-		mLayerStack.reset(new LayerStack());
+		mLayerStack = GlobalMemoryUsage::Get().NewOnStack<LayerStack>(LayerStack::RunTimeType.GetTypeName());
+		mSystemManager = GlobalMemoryUsage::Get().NewOnStack<ECS::SystemManager>(ECS::SystemManager::RunTimeType.GetTypeName());
+		mCoordinator = GlobalMemoryUsage::Get().NewOnStack<ECS::Coordinator>(ECS::Coordinator::RunTimeType.GetTypeName());
     }
 
 	bool Application::Init() {
@@ -36,6 +42,18 @@ namespace VIEngine {
 		mEventDispatcher.AddEventListener<MouseButtonPressedEvent>(BIND_EVENT_FUNCTION(OnMouseButtonPressedEvent));
 		mEventDispatcher.AddEventListener<MouseButtonHeldEvent>(BIND_EVENT_FUNCTION(OnMouseButtonHeldEvent));
 		mEventDispatcher.AddEventListener<MouseButtonReleasedEvent>(BIND_EVENT_FUNCTION(OnMouseButtonReleasedEvent));
+
+
+		auto& collisionSystem = mSystemManager->AddSystem<CollisionResolver>();
+		auto& animationSystem = mSystemManager->AddSystem<AnimationSystem>();
+		auto& renderer2D = mSystemManager->AddSystem<Renderer2D>();
+
+		mSystemManager->AddSystemDependency(&animationSystem, &collisionSystem);
+		mSystemManager->AddSystemDependency(&renderer2D, &collisionSystem, &animationSystem);
+
+		collisionSystem.SetUpdateInterval(5.0f);
+
+		mSystemManager->OnInit();
 
 		return true;
 	}
@@ -62,28 +80,28 @@ namespace VIEngine {
 
 			mNativeWindow->PollsEvent();
 
-			for (auto layer : *mLayerStack.get()) {
+			for (auto layer : *mLayerStack) {
 				layer->OnProcessInput(*mInputState);
 			}
 			
 			mNativeWindow->Swapbuffers();
 			while (mTime.GetDeltaTime() > MAX_DELTA_TIME) {
-				for (auto layer : *mLayerStack.get()) {
+				for (auto layer : *mLayerStack) {
 					layer->OnUpdate(MAX_DELTA_TIME);
 				}
 
-				for (auto layer : *mLayerStack.get()) {
-					layer->OnRender();
-				}
+				mSystemManager->OnUpdate(MAX_DELTA_TIME);
 
 				mTime -= MAX_DELTA_TIME;
 			}
 
-			for (auto layer : *mLayerStack.get()) {
+			for (auto layer : *mLayerStack) {
 				layer->OnUpdate(mTime);
 			}
 
-			for (auto layer : *mLayerStack.get()) {
+			mSystemManager->OnUpdate(MAX_DELTA_TIME);
+
+			for (auto layer : *mLayerStack) {
 				layer->OnRender();
 			}
 		}
@@ -92,6 +110,8 @@ namespace VIEngine {
 	}
 
 	void Application::Shutdown() {
+		//GlobalMemoryUsage::Get().FreeOnStack(mLayerStack);
+		mSystemManager->OnShutdown();
 		mNativeWindow->Shutdown();
 		MemoryMonitor::Get().Clear();
 		MemoryMonitor::Get().DectecMemoryLeaks();

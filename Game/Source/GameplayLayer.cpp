@@ -16,23 +16,6 @@ void GameplayLayer::OnAttach() {
 	VIEngine::MemoryManager* memoryManager = new VIEngine::MemoryManager();
 
 	{
-		auto systemManager = memoryManager->NewOnStack<VIEngine::ECS::SystemManager>("SystemManager");
-
-		auto& collisionSystem = systemManager->AddSystem<VIEngine::CollisionResolver>();
-		auto& animationSystem = systemManager->AddSystem<VIEngine::AnimationSystem>();
-		auto& renderer2D = systemManager->AddSystem<VIEngine::Renderer2D>();
-
-		systemManager->AddSystemDependency(&animationSystem, &collisionSystem);
-		systemManager->AddSystemDependency(&renderer2D, &collisionSystem, &animationSystem);
-
-		systemManager->OnInit();
-		systemManager->OnUpdate(0.0f);
-		systemManager->OnShutdown();
-
-		memoryManager->FreeOnStack(systemManager);
-	}
-
-	{
 		VIEngine::ECS::Coordinator* coordinator = memoryManager->NewOnStack<VIEngine::ECS::Coordinator>("Coordinator");
 		VIEngine::Actor* actor = memoryManager->NewOnStack<VIEngine::Actor>(VIEngine::Actor::RunTimeType.GetTypeName(), coordinator);
 

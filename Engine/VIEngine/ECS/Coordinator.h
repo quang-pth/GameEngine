@@ -4,10 +4,14 @@
 #include"EntityManager.h"
 #include"ComponentManager.h"
 #include"SystemManager.h"
+#include"Core/Type/RTTI.h"
 
 namespace VIEngine {
 	namespace ECS {
 		class Coordinator {
+		public:
+			DECLARE_RTTI
+
 		public:
 			Coordinator();
 			~Coordinator();

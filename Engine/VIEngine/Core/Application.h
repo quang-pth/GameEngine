@@ -14,6 +14,11 @@ namespace VIEngine {
 		uint16_t MaxFPS;
 	};
 
+	namespace ECS {
+		class SystemManager;
+		class Coordinator;
+	}
+
 	class VI_API Application {
 	public:
 		virtual ~Application() = default;
@@ -43,7 +48,9 @@ namespace VIEngine {
 	private:
 		ApplicationConfiguration mConfig;
 		Unique<NativeWindow> mNativeWindow;
-		Unique<LayerStack> mLayerStack;
+		LayerStack* mLayerStack;
+		ECS::SystemManager* mSystemManager;
+		ECS::Coordinator* mCoordinator;
 		EventDispatcher mEventDispatcher;
 		class InputState* mInputState;
 		Time mTime;

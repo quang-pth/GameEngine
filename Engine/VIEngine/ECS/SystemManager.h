@@ -3,12 +3,15 @@
 #include"ISystem.h"
 #include"Memory/MemoryManager.h"
 #include"Core/Logger/Logger.h"
+#include"Core/Type/RTTI.h"
+#include"Core/Type/Cast.h"
 
 namespace VIEngine {
 	namespace ECS {
 		class SystemManager : public MemoryManager {
 			using DependenciesMatrix = std::vector<std::vector<bool>>;
-
+		public:
+			DECLARE_RTTI
 		public:
 			SystemManager();
 			SystemManager(class Coordinator*);

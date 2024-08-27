@@ -1,11 +1,15 @@
 #pragma once
 
 #include"Layer.h"
+#include"Core/Type/RTTI.h"
 
 namespace VIEngine {
 	using LayerList = std::vector<Layer*>;
 
 	class VI_API LayerStack {
+	public:
+		DECLARE_RTTI
+
 		class VI_API ReversedIterator {
 		public:
 			ReversedIterator() = default;
