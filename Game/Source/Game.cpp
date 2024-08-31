@@ -15,6 +15,7 @@ public:
 		mLayer = new GameplayLayer();
 		PushLayer(mLayer);
 	}
+
 	virtual void OnShutdownClient() override {
 		LOG_INFO("Game is shutdown");
 		PopLayer(mLayer);
@@ -30,6 +31,7 @@ VIEngine::Application* VIEngine::CreateApplication() {
 	appConfig.Title = "VIEngine Alpha ver";
 	appConfig.WindowSpec = VIEngine::EWindowPlatformSpec::GLFW;
 	appConfig.MaxFPS = 60;
+	appConfig.RendererSpec = ERendererSpec::OpenGL;
 
 	return new Game(appConfig);
 }

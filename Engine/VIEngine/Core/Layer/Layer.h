@@ -18,7 +18,7 @@ namespace VIEngine {
 
 		virtual void OnProcessInput(const struct InputState&) {}
 		virtual void OnUpdate(Time time) {}
-		virtual void OnRender() {}
+		virtual void OnGUIRender() {}
 		virtual bool OnWindowResizedEvent(const WindowResizedEvent&) { return false; }
 		virtual bool OnKeyPressedEvent(const KeyPressedEvent&) { return false; }
 		virtual bool OnKeyHeldEvent(const KeyHeldEvent&) { return false; }

@@ -43,14 +43,14 @@ namespace VIEngine {
 				}
 
 				float intervalPassBy = system->GetLastUpdateTime() + time.GetDeltaTime();
-				// TODO: Fix update interval 
+				//CORE_LOG_TRACE("intervalPassBy {0}", intervalPassBy);
 				if (intervalPassBy > system->GetUpdateInterval()) {
 					system->OnUpdate(time);
 					intervalPassBy -= system->GetUpdateInterval();
+					//CORE_LOG_TRACE("intervalPassBy remain {0}", intervalPassBy);
 				}
-				else {
-					system->SetLastUpdateTime(intervalPassBy);
-				}
+		
+				system->SetLastUpdateTime(intervalPassBy);
 			}
 		}
 

@@ -7,6 +7,7 @@
 #include"ECS/SystemManager.h"
 #include"ECS/Coordinator.h"
 #include"Core/System/System.h"
+#include"Renderer/Renderer.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
 	if ((*iter)->On##eventType(eventContext)) {\
@@ -22,6 +23,7 @@ namespace VIEngine {
 		mLayerStack = GlobalMemoryUsage::Get().NewOnStack<LayerStack>(LayerStack::RunTimeType.GetTypeName());
 		mSystemManager = GlobalMemoryUsage::Get().NewOnStack<ECS::SystemManager>(ECS::SystemManager::RunTimeType.GetTypeName());
 		mCoordinator = GlobalMemoryUsage::Get().NewOnStack<ECS::Coordinator>(ECS::Coordinator::RunTimeType.GetTypeName());
+		mRenderer = GlobalMemoryUsage::Get().NewOnStack<Renderer>(Renderer::RunTimeType.GetTypeName());
     }
 
 	bool Application::Init() {
@@ -44,16 +46,17 @@ namespace VIEngine {
 		mEventDispatcher.AddEventListener<MouseButtonReleasedEvent>(BIND_EVENT_FUNCTION(OnMouseButtonReleasedEvent));
 
 
-		auto& collisionSystem = mSystemManager->AddSystem<CollisionResolver>();
-		auto& animationSystem = mSystemManager->AddSystem<AnimationSystem>();
-		auto& renderer2D = mSystemManager->AddSystem<Renderer2D>();
+		//auto& collisionSystem = mSystemManager->AddSystem<CollisionResolver>();
+		//auto& animationSystem = mSystemManager->AddSystem<AnimationSystem>();
+		//auto& renderer2D = mSystemManager->AddSystem<Renderer2D>();
 
-		mSystemManager->AddSystemDependency(&animationSystem, &collisionSystem);
-		mSystemManager->AddSystemDependency(&renderer2D, &collisionSystem, &animationSystem);
+		//mSystemManager->AddSystemDependency(&animationSystem, &collisionSystem);
+		//mSystemManager->AddSystemDependency(&renderer2D, &collisionSystem, &animationSystem);
 
-		collisionSystem.SetUpdateInterval(5.0f);
+		//collisionSystem.SetUpdateInterval(1.5f);
 
 		mSystemManager->OnInit();
+		mRenderer->OnInit();
 
 		return true;
 	}
@@ -99,10 +102,15 @@ namespace VIEngine {
 				layer->OnUpdate(mTime);
 			}
 
-			mSystemManager->OnUpdate(MAX_DELTA_TIME);
+			mSystemManager->OnUpdate(mTime);
 
 			for (auto layer : *mLayerStack) {
-				layer->OnRender();
+				layer->OnGUIRender();
+			}
+
+			if (mRenderer->BeginScene()) {
+				mRenderer->Render();
+				mRenderer->EndScene();
 			}
 		}
 
@@ -111,6 +119,7 @@ namespace VIEngine {
 
 	void Application::Shutdown() {
 		//GlobalMemoryUsage::Get().FreeOnStack(mLayerStack);
+		mRenderer->ShutDown();
 		mSystemManager->OnShutdown();
 		mNativeWindow->Shutdown();
 		MemoryMonitor::Get().Clear();

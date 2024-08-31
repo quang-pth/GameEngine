@@ -5,13 +5,15 @@
 #include"Core/Event/EventDispatcher.h"
 #include"Core/Layer/LayerStack.h"
 #include"Core/Time/Time.h"
+#include"Renderer/RendererAPI.h"
 
 namespace VIEngine {
 	struct VI_API ApplicationConfiguration {
-		int Width, Height;
+		uint16_t Width, Height;
 		const char* Title;
 		EWindowPlatformSpec WindowSpec;
 		uint16_t MaxFPS;
+		ERendererSpec RendererSpec;
 	};
 
 	namespace ECS {
@@ -51,6 +53,7 @@ namespace VIEngine {
 		LayerStack* mLayerStack;
 		ECS::SystemManager* mSystemManager;
 		ECS::Coordinator* mCoordinator;
+		class Renderer* mRenderer;
 		EventDispatcher mEventDispatcher;
 		class InputState* mInputState;
 		Time mTime;
