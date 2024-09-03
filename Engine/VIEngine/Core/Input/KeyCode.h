@@ -63,8 +63,8 @@ namespace VIEngine {
 		ENTER              = 257,
 		TAB                = 258,
 		BACKSPACE          = 259,
-		INSERT             = 260,
-		DELETE             = 261,
+		INSERT             = 260, 
+		DEL                = 261, // Change from DELETE to DEL to avoid error when this file is include after the Core/Logger/Logger.h
 		RIGHT              = 262,
 		LEFT               = 263,
 		DOWN               = 264,

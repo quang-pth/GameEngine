@@ -8,6 +8,7 @@
 #include"ECS/Coordinator.h"
 #include"Core/System/System.h"
 #include"Renderer/Renderer.h"
+#include"Renderer/RenderCommand.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
 	if ((*iter)->On##eventType(eventContext)) {\
@@ -16,14 +17,19 @@
 }
 
 namespace VIEngine {
+	Application* Application::sInstance = nullptr;
+
+	Application& Application::Get() { return *sInstance; }
+
 	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher(), 
-			mIsRunning(true), mInputState(nullptr), mTime() 
+			mIsRunning(true), mInputState(nullptr), mTime(), mPerFrameData()
 	{
 		mNativeWindow.reset(WindowPlatform::Create(config.WindowSpec));
 		mLayerStack = GlobalMemoryUsage::Get().NewOnStack<LayerStack>(LayerStack::RunTimeType.GetTypeName());
 		mSystemManager = GlobalMemoryUsage::Get().NewOnStack<ECS::SystemManager>(ECS::SystemManager::RunTimeType.GetTypeName());
 		mCoordinator = GlobalMemoryUsage::Get().NewOnStack<ECS::Coordinator>(ECS::Coordinator::RunTimeType.GetTypeName());
 		mRenderer = GlobalMemoryUsage::Get().NewOnStack<Renderer>(Renderer::RunTimeType.GetTypeName());
+		sInstance = this;
     }
 
 	bool Application::Init() {
@@ -56,7 +62,7 @@ namespace VIEngine {
 		//collisionSystem.SetUpdateInterval(1.5f);
 
 		mSystemManager->OnInit();
-		mRenderer->OnInit();
+		mRenderer->OnInit(mConfig);
 
 		return true;
 	}
@@ -72,9 +78,9 @@ namespace VIEngine {
 		while (mIsRunning && !mNativeWindow->ShouldClose()) {
 			static float lastFrameTime = 0.0f;
 
-			while (mNativeWindow->GetTimeSeconds() - lastFrameTime < minDeltaTime);
+			mPerFrameData.FrameIndex++;
 
-			MemoryMonitor::Get().Update();
+			while (mNativeWindow->GetTimeSeconds() - lastFrameTime < minDeltaTime);
 
 			float currentFrameTime = mNativeWindow->GetTimeSeconds();
 
@@ -88,7 +94,10 @@ namespace VIEngine {
 			}
 			
 			mNativeWindow->Swapbuffers();
+
 			while (mTime.GetDeltaTime() > MAX_DELTA_TIME) {
+				mPerFrameData.IsCatchUpUpdate = true;
+
 				for (auto layer : *mLayerStack) {
 					layer->OnUpdate(MAX_DELTA_TIME);
 				}
@@ -97,7 +106,8 @@ namespace VIEngine {
 
 				mTime -= MAX_DELTA_TIME;
 			}
-
+			mPerFrameData.IsCatchUpUpdate = false;
+		
 			for (auto layer : *mLayerStack) {
 				layer->OnUpdate(mTime);
 			}
@@ -112,6 +122,8 @@ namespace VIEngine {
 				mRenderer->Render();
 				mRenderer->EndScene();
 			}
+
+			MemoryMonitor::Get().Update();
 		}
 
 		OnShutdownClient();
@@ -119,7 +131,7 @@ namespace VIEngine {
 
 	void Application::Shutdown() {
 		//GlobalMemoryUsage::Get().FreeOnStack(mLayerStack);
-		mRenderer->ShutDown();
+		mRenderer->OnShutdown();
 		mSystemManager->OnShutdown();
 		mNativeWindow->Shutdown();
 		MemoryMonitor::Get().Clear();

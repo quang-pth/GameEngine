@@ -5,8 +5,6 @@
 #include"Core/Application.h"
 #include"Core/Logger/Logger.h"
 
-#define GLAD_GL_IMPLEMENTATION
-#include<glad/gl.h>
 #include<GLFW/glfw3.h>
 
 namespace VIEngine {
@@ -119,8 +117,6 @@ namespace VIEngine {
 	}
 
 	void GLFWPlatformWindow::Swapbuffers() {
-		glClearColor(1.0f, 0.3f, .8f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
 		glfwSwapBuffers(mWindow);
 	}
 

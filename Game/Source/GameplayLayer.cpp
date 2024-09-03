@@ -1,6 +1,6 @@
 #include"GameplayLayer.h"
-#include<VIEngine/Base.h>
-#include<Core/System/System.h>
+#include<Core/Logger/Logger.h>
+#include<Renderer/Renderer.h>
 
 GameplayLayer::GameplayLayer() {
 
@@ -28,7 +28,7 @@ void GameplayLayer::OnDetach() {
 }
 
 void GameplayLayer::OnUpdate(VIEngine::Time time) {
-	
+	VIEngine::Renderer::ClearColor(1.0f, 0.3f, .8f, 1.0f);
 }
 
 bool GameplayLayer::OnKeyPressedEvent(const VIEngine::KeyPressedEvent& eventContext) {
