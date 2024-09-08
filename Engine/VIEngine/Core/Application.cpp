@@ -16,14 +16,22 @@
 }
 
 namespace VIEngine {
+	Application* Application::sInstance = nullptr;
+
+	Application& Application::Get() {
+		return *sInstance;
+	}
+
 	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher(), 
-			mIsRunning(true), mInputState(nullptr), mTime() 
+			mIsRunning(true), mInputState(nullptr), mTime(), mPerFrameData()
 	{
 		mNativeWindow.reset(WindowPlatform::Create(config.WindowSpec));
 		mLayerStack = GlobalMemoryUsage::Get().NewOnStack<LayerStack>(LayerStack::RunTimeType.GetTypeName());
 		mSystemManager = GlobalMemoryUsage::Get().NewOnStack<ECS::SystemManager>(ECS::SystemManager::RunTimeType.GetTypeName());
 		mCoordinator = GlobalMemoryUsage::Get().NewOnStack<ECS::Coordinator>(ECS::Coordinator::RunTimeType.GetTypeName());
 		mRenderer = GlobalMemoryUsage::Get().NewOnStack<Renderer>(Renderer::RunTimeType.GetTypeName());
+
+		sInstance = this;
     }
 
 	bool Application::Init() {
@@ -56,7 +64,7 @@ namespace VIEngine {
 		//collisionSystem.SetUpdateInterval(1.5f);
 
 		mSystemManager->OnInit();
-		mRenderer->OnInit();
+		mRenderer->OnInit(mConfig);
 
 		return true;
 	}
@@ -74,8 +82,6 @@ namespace VIEngine {
 
 			while (mNativeWindow->GetTimeSeconds() - lastFrameTime < minDeltaTime);
 
-			MemoryMonitor::Get().Update();
-
 			float currentFrameTime = mNativeWindow->GetTimeSeconds();
 
 			mTime = currentFrameTime - lastFrameTime;
@@ -89,6 +95,8 @@ namespace VIEngine {
 			
 			mNativeWindow->Swapbuffers();
 			while (mTime.GetDeltaTime() > MAX_DELTA_TIME) {
+				mPerFrameData.IsCatchUpPhase = true;
+
 				for (auto layer : *mLayerStack) {
 					layer->OnUpdate(MAX_DELTA_TIME);
 				}
@@ -97,6 +105,7 @@ namespace VIEngine {
 
 				mTime -= MAX_DELTA_TIME;
 			}
+			mPerFrameData.IsCatchUpPhase = false;
 
 			for (auto layer : *mLayerStack) {
 				layer->OnUpdate(mTime);
@@ -112,6 +121,9 @@ namespace VIEngine {
 				mRenderer->Render();
 				mRenderer->EndScene();
 			}
+
+			MemoryMonitor::Get().Update();
+			mPerFrameData.FrameIndex++;
 		}
 
 		OnShutdownClient();
@@ -119,7 +131,7 @@ namespace VIEngine {
 
 	void Application::Shutdown() {
 		//GlobalMemoryUsage::Get().FreeOnStack(mLayerStack);
-		mRenderer->ShutDown();
+		mRenderer->OnShutDown();
 		mSystemManager->OnShutdown();
 		mNativeWindow->Shutdown();
 		MemoryMonitor::Get().Clear();

@@ -16,6 +16,11 @@ namespace VIEngine {
 		ERendererSpec RendererSpec;
 	};
 
+	struct VI_API PerFrameData {
+		uint32_t FrameIndex = 0;
+		bool IsCatchUpPhase = false;
+	};
+
 	namespace ECS {
 		class SystemManager;
 		class Coordinator;
@@ -23,12 +28,18 @@ namespace VIEngine {
 
 	class VI_API Application {
 	public:
+		static Application& Get();
+	private:
+		static Application* sInstance;
+
+	public:
 		virtual ~Application() = default;
 		bool Init();
 		virtual void OnInitClient() = 0;
 		void Run();
 		virtual void OnShutdownClient() = 0;
 		void Shutdown();
+		VI_FORCE_INLINE const PerFrameData& GetPerFrameData() const { return mPerFrameData; }
 	protected:
 		Application() = default;
 		Application(const ApplicationConfiguration&);
@@ -58,6 +69,7 @@ namespace VIEngine {
 		class InputState* mInputState;
 		Time mTime;
 		bool mIsRunning;
+		PerFrameData mPerFrameData;
 	};
 
 	extern Application* CreateApplication();
