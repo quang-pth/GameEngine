@@ -40,6 +40,7 @@ namespace VIEngine {
 		virtual void OnShutdownClient() = 0;
 		void Shutdown();
 		VI_FORCE_INLINE const PerFrameData& GetPerFrameData() const { return mPerFrameData; }
+		VI_FORCE_INLINE const ApplicationConfiguration& GetConfiguration() const { return mConfig; }
 	protected:
 		Application() = default;
 		Application(const ApplicationConfiguration&);
@@ -64,7 +65,6 @@ namespace VIEngine {
 		LayerStack* mLayerStack;
 		ECS::SystemManager* mSystemManager;
 		ECS::Coordinator* mCoordinator;
-		class Renderer* mRenderer;
 		EventDispatcher mEventDispatcher;
 		class InputState* mInputState;
 		Time mTime;

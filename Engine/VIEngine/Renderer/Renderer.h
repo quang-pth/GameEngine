@@ -1,27 +1,25 @@
 #pragma once
 
 #include"pch.h"
-#include"Core/Type/RTTI.h"
 #include"Core/Application.h"
 #include"RenderCommandQueue.h"
 
 namespace VIEngine {
 	class VI_API Renderer {
 	public:
-		DECLARE_RTTI
-	public:
 		static void Submit(const RenderCallback&);
 		static void ClearColor(float r, float g, float b, float w = 1.0f);
+		static void DrawIndexed(uint32_t count, ERendererPrimitive primitive = ERendererPrimitive::Triangles, uint32_t offset = 0);
 	private:
 		static RenderCommandQueue sRenderCommandQueue;
 	public:
-		Renderer();
-		~Renderer();
-
-		void OnInit(const ApplicationConfiguration&);
-		bool BeginScene();
-		void Render();
-		void EndScene();
-		void OnShutDown();
+		~Renderer() = default;
+		static void OnInit(const ApplicationConfiguration&);
+		static bool BeginScene();
+		static void Render();
+		static void EndScene();
+		static void OnShutDown();
+	protected:
+		Renderer() = default;
 	};
 }

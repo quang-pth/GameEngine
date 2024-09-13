@@ -16,9 +16,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/VIEngine
 	${CMAKE_SOURCE_DIR}/Vendors/include
 	${CMAKE_SOURCE_DIR}/Vendors/glfw/include
+	${CMAKE_SOURCE_DIR}/Vendors/glm
 )
 
 target_link_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/Vendors/bin)
-target_link_libraries(${PROJECT_NAME} PUBLIC spdlogd glfw)
+target_link_libraries(${PROJECT_NAME} PUBLIC spdlogd glfw glm)
 
 target_precompile_headers(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/VIEngine/pch.h ${CMAKE_SOURCE_DIR}/Vendors/include/glad/gl.h)
