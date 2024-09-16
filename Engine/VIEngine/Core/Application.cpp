@@ -8,6 +8,7 @@
 #include"ECS/Coordinator.h"
 #include"Core/System/System.h"
 #include"Renderer/Renderer.h"
+#include"Resource/ResourceManager.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
 	if ((*iter)->On##eventType(eventContext)) {\
@@ -29,7 +30,6 @@ namespace VIEngine {
 		mLayerStack = GlobalMemoryUsage::Get().NewOnStack<LayerStack>(LayerStack::RunTimeType.GetTypeName());
 		mSystemManager = GlobalMemoryUsage::Get().NewOnStack<ECS::SystemManager>(ECS::SystemManager::RunTimeType.GetTypeName());
 		mCoordinator = GlobalMemoryUsage::Get().NewOnStack<ECS::Coordinator>(ECS::Coordinator::RunTimeType.GetTypeName());
-		mRenderer = GlobalMemoryUsage::Get().NewOnStack<Renderer>(Renderer::RunTimeType.GetTypeName());
 
 		sInstance = this;
     }
@@ -64,7 +64,8 @@ namespace VIEngine {
 		//collisionSystem.SetUpdateInterval(1.5f);
 
 		mSystemManager->OnInit();
-		mRenderer->OnInit(mConfig);
+		Renderer::OnInit(mConfig);
+		ResourceManager::OnInit(mConfig.RendererSpec);
 
 		return true;
 	}
@@ -117,9 +118,9 @@ namespace VIEngine {
 				layer->OnGUIRender();
 			}
 
-			if (mRenderer->BeginScene()) {
-				mRenderer->Render();
-				mRenderer->EndScene();
+			if (Renderer::BeginScene()) {
+				Renderer::Render();
+				Renderer::EndScene();
 			}
 
 			MemoryMonitor::Get().Update();
@@ -131,9 +132,10 @@ namespace VIEngine {
 
 	void Application::Shutdown() {
 		//GlobalMemoryUsage::Get().FreeOnStack(mLayerStack);
-		mRenderer->OnShutDown();
+		Renderer::OnShutDown();
 		mSystemManager->OnShutdown();
 		mNativeWindow->Shutdown();
+		ResourceManager::OnShutdown();
 		MemoryMonitor::Get().Clear();
 		MemoryMonitor::Get().DectecMemoryLeaks();
 	}

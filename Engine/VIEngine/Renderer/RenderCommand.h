@@ -8,9 +8,11 @@ namespace VIEngine {
 	class VI_API RenderCommand {
 	public:
 		static void ClearColor(float r, float g, float b, float w = 1.0f) { sInstance->ClearColorImpl(r, g, b, w); }
+		static void DrawIndexed(uint32_t nums, ERendererPrimitive primitive = ERendererPrimitive::Triangles, uint32_t offset = 0) { sInstance->DrawIndexedImpl(nums, primitive, offset); }
 
 	protected:
 		virtual void ClearColorImpl(float r, float g, float b, float w = 1.0f) = 0;
+		virtual void DrawIndexedImpl(uint32_t nums, ERendererPrimitive primitive = ERendererPrimitive::Triangles, uint32_t offset = 0) = 0;
 
 	public:
 		static void OnInit(ERendererSpec rendererSpec);
@@ -27,7 +29,13 @@ namespace VIEngine {
 	class OpenGLRenderCommand : public RenderCommand {
 	public:
 		DECLARE_RTTI
+	public:
+		OpenGLRenderCommand();
+		~OpenGLRenderCommand();
 	protected:
 		virtual void ClearColorImpl(float r, float g, float b, float w = 1.0f) override;
+		virtual void DrawIndexedImpl(uint32_t nums, ERendererPrimitive primitive = ERendererPrimitive::Triangles, uint32_t offset = 0) override;
+	private:
+		uint32_t mVertexArrayID;
 	};
 }

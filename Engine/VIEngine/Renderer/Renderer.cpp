@@ -3,8 +3,6 @@
 #include"RenderCommand.h"
 
 namespace VIEngine {
-	DEFINE_RTTI_NO_PARENT(Renderer)
-
 	RenderCommandQueue Renderer::sRenderCommandQueue;
 
 	void Renderer::Submit(const RenderCallback& renderCallback) {
@@ -19,18 +17,16 @@ namespace VIEngine {
 		});
 	}
 
-	Renderer::Renderer() {
-
-	}
-
-	Renderer::~Renderer() {
-
+	void Renderer::DrawIndexed(uint32_t nums, ERendererPrimitive primitive, uint32_t offset) {
+		Submit([nums, primitive, offset]() {
+			RenderCommand::DrawIndexed(nums, primitive, offset);
+		});
 	}
 
 	void Renderer::OnInit(const ApplicationConfiguration& appConfig) {
-		CORE_LOG_TRACE("Renderer init success");
 		Submit([rendererSpec = appConfig.RendererSpec]() {
 			RenderCommand::OnInit(rendererSpec);
+			CORE_LOG_INFO("Renderer init success");
 		});
 	}
 
@@ -47,9 +43,9 @@ namespace VIEngine {
 	}
 
 	void Renderer::OnShutDown() {
-		CORE_LOG_TRACE("Renderer is shutdown");
 		Submit([]() {
 			RenderCommand::OnShutdown();
+			CORE_LOG_INFO("Renderer is shutdown");
 		});
 	}
 }

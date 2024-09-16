@@ -20,6 +20,6 @@ namespace VIEngine {
 	}
 
 	void RenderCommand::OnShutdown() {
-
+		GlobalMemoryUsage::Get().FreeOnStack(sInstance);
 	}
 }
