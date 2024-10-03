@@ -1,6 +1,7 @@
 #pragma once
 
 #include<Core/Layer/Layer.h>
+#include<Resource/VertexArray.h>
 #include<Resource/VertexBuffer.h>
 #include<Resource/IndexBuffer.h>
 #include<Resource/Shader.h>
@@ -15,7 +16,7 @@ public:
 	virtual void OnUpdate(VIEngine::Time time);
 	virtual bool OnKeyPressedEvent(const VIEngine::KeyPressedEvent& eventContext);
 private:
-	VIEngine::VertexBuffer* mVertexBuffer;
-	VIEngine::IndexBuffer* mIndexBuffer;
+	VIEngine::VertexArray* mFirstQuad;
+	VIEngine::VertexArray* mSecondQuad;
 	VIEngine::Shader* mShader;
 };
