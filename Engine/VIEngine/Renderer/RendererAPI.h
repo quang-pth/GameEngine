@@ -23,4 +23,34 @@ namespace VIEngine {
 		Points,
 		Lines
 	};
+
+	enum class ERendererState {
+		Blending,
+		DepthTesting,
+		StencilTesting,
+		FaceCulling,
+		MultiSample,
+		Enable,
+		Disable,
+		None
+	};
+
+	enum class ERendererBlendEquation {
+		Add,
+		Subtract,
+		ReverseSubtract,
+		Min,
+		Max,
+		None
+	};
+
+	enum class ERendererBlendFunction {
+		Zero,
+		One,
+		SourceAlpha,
+		OneMinusSourceAlpha,
+		DestinationAlpha,
+		OneMinusDestionaAlpha,
+		None
+	};
 }

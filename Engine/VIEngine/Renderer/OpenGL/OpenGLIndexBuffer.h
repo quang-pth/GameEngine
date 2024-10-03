@@ -15,7 +15,9 @@ namespace VIEngine {
 		VI_FORCE_INLINE virtual uint32_t GetID() const override { return mID; }
 		VI_FORCE_INLINE virtual uint32_t GetSize() const override { return mSize; }
 		VI_FORCE_INLINE virtual uint32_t GetNums() const override { return mNums; }
-		virtual void SetData(void* data, uint32_t size, uint32_t nums, ERendererMode mode = ERendererMode::Static) override;
+		virtual void SetID(uint32_t id) override { mID = id; }
+		virtual void SetSize(uint32_t size) override { mSize = size; }
+		virtual void SetNums(uint32_t nums) override { mNums = nums; }
 	private:
 		uint32_t mID, mSize, mNums;
 	};
