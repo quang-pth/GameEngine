@@ -46,4 +46,33 @@ namespace VIEngine {
 
 		return GL_FUNC_ADD;
 	}
+
+	uint32_t OpenGLFactory::ToOpenGLFormat(ETextureFormat format)
+	{
+		if (format == ETextureFormat::RED) return GL_RED;
+		if (format == ETextureFormat::RGB) return GL_RGB;
+
+		return GL_RGBA;
+	}
+
+	uint32_t OpenGLFactory::ToOpenGLWrapMode(ETextureWrapMode mode)
+	{
+		if (mode == ETextureWrapMode::Clamp) return GL_CLAMP_TO_EDGE;
+		if (mode == ETextureWrapMode::Mirror) return GL_MIRRORED_REPEAT;
+		if (mode == ETextureWrapMode::Border) return GL_CLAMP_TO_BORDER;
+
+		return GL_REPEAT;
+	}
+
+	uint32_t OpenGLFactory::ToOpenGLTextureFilter(ETextureFilter filter)
+	{
+		if (filter == ETextureFilter::Nearest) return GL_NEAREST;
+		if (filter == ETextureFilter::NearestMipMapNearest) return GL_NEAREST_MIPMAP_NEAREST;
+		if (filter == ETextureFilter::NearestMipMapLinear) return GL_NEAREST_MIPMAP_LINEAR;
+		if (filter == ETextureFilter::LinearMipMapLinear) return GL_LINEAR_MIPMAP_LINEAR;
+		if (filter == ETextureFilter::LinearMipMapNearest) return GL_LINEAR_MIPMAP_NEAREST;
+
+
+		return GL_LINE;
+	}
 }

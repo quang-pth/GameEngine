@@ -2,6 +2,9 @@
 #include"Core/GlobalMemory.h"
 #include"Renderer/OpenGL/OpenGLResourceManager.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include<stb/stb_image.h>
+
 namespace VIEngine {
 	ResourceManager* ResourceManager::sInstance = nullptr;
 

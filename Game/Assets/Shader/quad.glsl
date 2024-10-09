@@ -26,7 +26,8 @@ in vec4 Color;
 
 uniform vec3 tempColor;
 uniform float alpha;
+uniform sampler2D image;
 
 void main() {
-	finalColor = vec4(tempColor, alpha) * Color;
+	finalColor = texture(image, TexCoords);
 }

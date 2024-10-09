@@ -23,15 +23,9 @@ namespace VIEngine {
 		});
 	}
 
-	void Renderer::EnableBlending(ERendererBlendFunction source, ERendererBlendFunction destination, ERendererBlendEquation blendEquation) {
-		Submit([source, destination, blendEquation]() {
-			RenderCommand::EnableBlending(source, destination, blendEquation);
-		});
-	}
-	
-	void Renderer::DisableBlending() {
-		Submit([]() {
-			RenderCommand::DisableBlending();
+	void Renderer::SetAlphaState(bool enable, ERendererBlendFunction source, ERendererBlendFunction destination, ERendererBlendEquation blendEquation) {
+		Submit([enable, source, destination, blendEquation]() {
+			RenderCommand::SetAlphaState(enable, source, destination, blendEquation);
 		});
 	}
 

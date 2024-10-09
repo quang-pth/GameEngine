@@ -1,6 +1,8 @@
 #include"OpenGLResourceManager.h"
 #include"Core/Type/Cast.h"
 
+#include<stb/stb_image.h>
+
 namespace VIEngine {
 	DEFINE_RTTI_NO_PARENT(OpenGLResourceManager)
 
@@ -8,7 +10,8 @@ namespace VIEngine {
 		mVertexArrayMemoryManager("VertexArrayMemoryManager"),
 		mVertexBufferMemoryManager("VertexBufferMemoryManager"),
 		mIndexBufferMemoryManager("IndexBufferMemoryManager"),
-		mShaderMemoryManager("ShaderMemoryManager")
+		mShaderMemoryManager("ShaderMemoryManager"),
+		mTexture2DMemoryManager("Texture2DMemoryManager")
 	{
 
 	}
@@ -24,6 +27,7 @@ namespace VIEngine {
 		mVertexBufferMemoryManager.Reset();
 		mIndexBufferMemoryManager.Reset();
 		mShaderMemoryManager.Reset();
+		mTexture2DMemoryManager.Reset();
 	}
 
 	VertexArray* OpenGLResourceManager::NewVertexArray()
@@ -41,7 +45,7 @@ namespace VIEngine {
 		return mVertexBufferMemoryManager.NewObject();
 	}
 
-	void OpenGLResourceManager::FreeVertexBuffer(void* memory)
+	void OpenGLResourceManager::FreeVertexBuffer(VertexBuffer* memory)
 	{
 		mVertexBufferMemoryManager.FreeObject(memory);
 	}
@@ -51,7 +55,7 @@ namespace VIEngine {
 		return mIndexBufferMemoryManager.NewObject();
 	}
 
-	void OpenGLResourceManager::FreeIndexBuffer(void* memory)
+	void OpenGLResourceManager::FreeIndexBuffer(IndexBuffer* memory)
 	{
 		mIndexBufferMemoryManager.FreeObject(memory);
 	}
@@ -68,15 +72,38 @@ namespace VIEngine {
 		return shader;
 	}
 
-	void OpenGLResourceManager::FreeShader(void* memory)
+	void OpenGLResourceManager::FreeShader(Shader* memory)
 	{
 		mShaderMemoryManager.FreeObject(memory);
-		mShaderMap.erase(StaticCast<OpenGLShader*>(memory)->GetName());
+		mShaderMap.erase(memory->GetName());
 	}
 
 	void* OpenGLResourceManager::AllocatePerFrame(uint32_t size, uint8_t alignment)
 	{
 		return mGeneralMemoryManager.AllocatePerFrame(size, alignment);
+	}
+
+	Texture2D* OpenGLResourceManager::NewTexture2D(const std::string& filepath, bool alpha)
+	{
+		if (mTexture2DMap.count(filepath.c_str()) > 0) {
+			return mTexture2DMap.at(filepath.c_str());
+		}
+
+		Texture2D* texture2D = mTexture2DMemoryManager.NewObject(filepath.c_str(), alpha);
+		mTexture2DMap[filepath.c_str()] = texture2D;
+
+		return texture2D;
+	}
+
+	void OpenGLResourceManager::FreeTexture2D(Texture2D* memory)
+	{
+		auto& textureData = memory->GetTextureData();
+		if (textureData.Data) {
+			CORE_LOG_WARN("Image {0} is not free before get released in resouce manager, possible memory leaks detected", textureData.Name);
+			FreeImageData(textureData.Data);
+		}
+		mTexture2DMemoryManager.FreeObject(memory);
+		mTexture2DMap.erase(memory->GetName());
 	}
 
 	std::unordered_map<std::string, std::string> OpenGLResourceManager::ParseGLSL(const char* shaderSource)
@@ -123,5 +150,55 @@ namespace VIEngine {
 		}
 
 		return result;
+	}
+
+	TextureData OpenGLResourceManager::LoadImageFromFile(const char* filepath, bool alpha) {
+		TextureData textureData;
+		textureData.Alpha = alpha;
+		textureData.Name = filepath;
+
+		int width, height, nrChannels;
+		stbi_set_flip_vertically_on_load(true);
+
+		void* data = stbi_load(filepath, &width, &height, &nrChannels, 0);
+		if (data) {
+			textureData.Width = width;
+			textureData.Height= height;
+			textureData.NumberOfChannels = nrChannels;
+			textureData.Data = data;
+
+			ETextureFormat format;
+			if (nrChannels == 1) {
+				format = ETextureFormat::RED;
+			}
+			else if (nrChannels == 3) {
+				format = ETextureFormat::RGB;
+			}
+			else {
+				format = ETextureFormat::RGBA;
+			}
+			textureData.InternalFormat = format;
+			textureData.ImageFormat = format;
+
+			CORE_LOG_INFO("Texture {0} loaded successfully", filepath);
+		}
+		else {
+			CORE_LOG_TRACE("====================TEXTURE==================");
+			CORE_LOG_ERROR("Width: {0}", width);
+			CORE_LOG_ERROR("Height: {0}", height);
+			CORE_LOG_ERROR("Channels: {0}", nrChannels);
+			CORE_LOG_ERROR("Failed to load texture: {0}", stbi_failure_reason());
+			CORE_LOG_TRACE("====================TEXTURE==================");
+		}
+
+		stbi_set_flip_vertically_on_load(false);
+
+		return textureData;
+	}
+
+	void OpenGLResourceManager::FreeImageData(void* data) {
+		if (data == nullptr) return;
+
+		stbi_image_free(data);
 	}
 }

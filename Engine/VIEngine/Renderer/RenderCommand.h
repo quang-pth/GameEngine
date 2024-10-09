@@ -6,6 +6,7 @@
 
 namespace VIEngine {
 	struct VI_API RenderData {
+		bool IsEnable = false;
 		ERendererState EnableRendererState = ERendererState::None;
 		ERendererBlendEquation BlendEquation = ERendererBlendEquation::Add;
 		ERendererBlendFunction BlendSource = ERendererBlendFunction::None;
@@ -18,14 +19,12 @@ namespace VIEngine {
 	public:
 		static void ClearColor(float r, float g, float b, float w) { sInstance->ClearColorImpl(r, g, b, w); }
 		static void DrawIndexed(uint32_t nums, ERendererPrimitive primitive, uint32_t offset) { sInstance->DrawIndexedImpl(nums, primitive, offset); }
-		static void EnableBlending(ERendererBlendFunction source, ERendererBlendFunction destination, ERendererBlendEquation blendEquation) { sInstance->EnableBlendingImpl(source, destination, blendEquation); }
-		static void DisableBlending() { sInstance->DisableBlendingImpl(); }
+		static void SetAlphaState(bool enable, ERendererBlendFunction source, ERendererBlendFunction destination, ERendererBlendEquation blendEquation) { sInstance->SetAlphaStateImpl(enable, source, destination, blendEquation); }
 
 	protected:
 		virtual void ClearColorImpl(float r, float g, float b, float w) = 0;
 		virtual void DrawIndexedImpl(uint32_t nums, ERendererPrimitive primitive, uint32_t offset) = 0;
-		virtual void EnableBlendingImpl(ERendererBlendFunction source, ERendererBlendFunction destination, ERendererBlendEquation blendEquation) = 0;
-		virtual void DisableBlendingImpl() = 0;
+		virtual void SetAlphaStateImpl(bool enable, ERendererBlendFunction source, ERendererBlendFunction destination, ERendererBlendEquation blendEquation) = 0;
 
 	public:
 		static void OnInit(ERendererSpec rendererSpec);
@@ -48,8 +47,7 @@ namespace VIEngine {
 	protected:
 		virtual void ClearColorImpl(float r, float g, float b, float w = 1.0f) override;
 		virtual void DrawIndexedImpl(uint32_t nums, ERendererPrimitive primitive, uint32_t offset) override;
-		virtual void EnableBlendingImpl(ERendererBlendFunction source, ERendererBlendFunction destination, ERendererBlendEquation blendEquation) override;
-		virtual void DisableBlendingImpl() override;
+		virtual void SetAlphaStateImpl(bool enable, ERendererBlendFunction source, ERendererBlendFunction destination, ERendererBlendEquation blendEquation) override;
 	private:
 		RenderData mRenderData;
 	};

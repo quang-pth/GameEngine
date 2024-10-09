@@ -5,6 +5,7 @@
 #include<Resource/VertexBuffer.h>
 #include<Resource/IndexBuffer.h>
 #include<Resource/Shader.h>
+#include<Resource/Texture2D.h>
 
 class GameplayLayer : public VIEngine::Layer {
 public:
@@ -19,4 +20,6 @@ private:
 	VIEngine::VertexArray* mFirstQuad;
 	VIEngine::VertexArray* mSecondQuad;
 	VIEngine::Shader* mShader;
+	VIEngine::Texture2D* mTexture;
+	VIEngine::Texture2D* mTexture2;
 };

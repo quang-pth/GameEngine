@@ -7,6 +7,7 @@
 #include"OpenGLVertexBuffer.h"
 #include"OpenGLIndexBuffer.h"
 #include"OpenGLShader.h"
+#include"OpenGLTexture2D.h"
 
 namespace VIEngine {
 	class OpenGLResourceManager : public ResourceManager {
@@ -21,12 +22,16 @@ namespace VIEngine {
 		virtual VertexArray* NewVertexArray() override;
 		virtual void FreeVertexArray(VertexArray* memory) override;
 		virtual class VertexBuffer* NewVertexBuffer() override;
-		virtual void FreeVertexBuffer(void* memory) override;
+		virtual void FreeVertexBuffer(class VertexBuffer* memory) override;
 		virtual class IndexBuffer* NewIndexBuffer() override;
-		virtual void FreeIndexBuffer(void* memory) override;
+		virtual void FreeIndexBuffer(class IndexBuffer* memory) override;
 		virtual class Shader* NewShader(const char* filepath) override;
-		virtual void FreeShader(void* memory) override;
+		virtual void FreeShader(class Shader* memory) override;
 		virtual void* AllocatePerFrame(uint32_t size, uint8_t alignment) override;
+		virtual class Texture2D* NewTexture2D(const std::string& filepath, bool alpha) override;
+		virtual void FreeTexture2D(class Texture2D* memory) override;
+		virtual TextureData LoadImageFromFile(const char* filepath, bool alpha = true) override;
+		virtual void FreeImageData(void* data) override;
 	private:
 		std::unordered_map<std::string, std::string> ParseGLSL(const char* shaderSource);
 		std::string ReadFromFile(const char* filepath);
@@ -36,6 +41,8 @@ namespace VIEngine {
 		MemoryChunkManager<OpenGLVertexBuffer, 100> mVertexBufferMemoryManager;
 		MemoryChunkManager<OpenGLIndexBuffer, 100> mIndexBufferMemoryManager;
 		MemoryChunkManager<OpenGLShader, 100> mShaderMemoryManager;
+		MemoryChunkManager<OpenGLTexture2D, 100> mTexture2DMemoryManager;
 		std::unordered_map<const char*, OpenGLShader*> mShaderMap;
+		std::unordered_map<const char*, Texture2D*> mTexture2DMap;
 	};
 }

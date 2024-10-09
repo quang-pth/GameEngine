@@ -11,5 +11,8 @@ namespace VIEngine {
 		static uint32_t ToOpenGLState(ERendererState renderState);
 		static uint32_t ToOpenGLBlendFunction(ERendererBlendFunction function);
 		static uint32_t ToOpenGLBlendEquation(ERendererBlendEquation equation);
+		static uint32_t ToOpenGLFormat(ETextureFormat format);
+		static uint32_t ToOpenGLWrapMode(ETextureWrapMode mode);
+		static uint32_t ToOpenGLTextureFilter(ETextureFilter filter);
 	};
 }

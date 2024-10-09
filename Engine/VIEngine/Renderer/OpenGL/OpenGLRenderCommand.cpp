@@ -24,7 +24,22 @@ namespace VIEngine {
 		glDrawElements(OpenGLFactory::ToOpenGLPrimitive(primitive), nums, GL_UNSIGNED_INT, (void*)offset);
 	}
 
-	void OpenGLRenderCommand::EnableBlendingImpl(ERendererBlendFunction source, ERendererBlendFunction destination, ERendererBlendEquation blendEquation) {
+	void OpenGLRenderCommand::SetAlphaStateImpl(bool enable, ERendererBlendFunction source, ERendererBlendFunction destination, ERendererBlendEquation blendEquation) {
+		if (enable == false && mRenderData.IsEnable == false) {
+			return;
+		}
+
+		if (enable == false && mRenderData.IsEnable == true) {
+			glDisable(GL_BLEND);
+			mRenderData.IsEnable = false;
+			return;
+		}
+
+		if (enable == true && mRenderData.IsEnable == false) {
+			glEnable(GL_BLEND);
+			mRenderData.IsEnable = true;
+		}
+
 		if (mRenderData.EnableRendererState != ERendererState::Blending) {
 			glEnable(OpenGLFactory::ToOpenGLState(ERendererState::Blending));
 			mRenderData.EnableRendererState = ERendererState::Blending;
@@ -40,12 +55,5 @@ namespace VIEngine {
 			mRenderData.BlendSource = source;
 			mRenderData.BlendDestination = destination;
 		}
-	}
-
-	void OpenGLRenderCommand::DisableBlendingImpl() {
-		if (mRenderData.DisableRendererState == ERendererState::Blending) return;
-
-		glDisable(OpenGLFactory::ToOpenGLState(ERendererState::Blending));
-		mRenderData.DisableRendererState = ERendererState::Blending;
 	}
 }

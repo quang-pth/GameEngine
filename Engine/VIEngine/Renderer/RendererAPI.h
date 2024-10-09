@@ -53,4 +53,26 @@ namespace VIEngine {
 		OneMinusDestionaAlpha,
 		None
 	};
+
+	enum class ETextureFormat {
+		RED,
+		RGB,
+		RGBA
+	};
+
+	enum class ETextureWrapMode {
+		Repeat,
+		Clamp,
+		Mirror,
+		Border
+	};
+
+	enum class ETextureFilter {
+		Linear,
+		Nearest,
+		NearestMipMapNearest,
+		NearestMipMapLinear,
+		LinearMipMapLinear,
+		LinearMipMapNearest
+	};
 }
