@@ -11,7 +11,7 @@
 namespace VIEngine {
 	DEFINE_RTTI(OpenGLShader, Shader::RunTimeType)
 
-	OpenGLShader::OpenGLShader(const char* name, const char* vertexSource, const char* fragmentSource) : 
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSource, const std::string& fragmentSource) : 
 		mName(name), mVertexSource(vertexSource), mFragmentSource(fragmentSource)
 	{
 		Renderer::Submit([this]() {

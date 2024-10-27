@@ -27,7 +27,7 @@ namespace VIEngine {
 		return mPerFrameAllocator.Allocate(memorySize, alignment);
 	}
 
-	void* MemoryManager::AllocateOnStack(const char* usage, size_t memorySize, uint8_t alignment) {
+	void* MemoryManager::AllocateOnStack(const std::string& usage, size_t memorySize, uint8_t alignment) {
 		void* address = mStackAllocator.Allocate(memorySize, alignment);
 		mActiveMemories.push_back({ usage, address });
 		return address;

@@ -88,4 +88,6 @@ namespace VIEngine {
 		static UUID uuid = GetUUID();
 		return uuid;
 	}
+
+	UUID GetHashID(const std::string& nameID);
 }

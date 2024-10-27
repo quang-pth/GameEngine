@@ -1,10 +1,10 @@
 #pragma once
 
-#include"Actor.h"
 #include"ECS/IComponent.h"
+#include"Core/Type/Actor.h"
 
 namespace VIEngine {
-	class TransformComponent : public ECS::Component<TransformComponent, Actor> {
+	class VI_API TransformComponent : public ECS::Component<TransformComponent, Actor> {
 	public:
 		DECLARE_RTTI
 	public:
@@ -19,6 +19,4 @@ namespace VIEngine {
 	private:
 		float mX, mY;
 	};
-
-	DEFINE_RTTI_NO_PARENT(TransformComponent)
 }

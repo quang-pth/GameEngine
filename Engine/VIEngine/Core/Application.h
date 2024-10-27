@@ -10,7 +10,7 @@
 namespace VIEngine {
 	struct VI_API ApplicationConfiguration {
 		uint16_t Width, Height;
-		const char* Title;
+		std::string Title;
 		EWindowPlatformSpec WindowSpec;
 		uint16_t MaxFPS;
 		ERendererSpec RendererSpec;
@@ -41,6 +41,7 @@ namespace VIEngine {
 		void Shutdown();
 		VI_FORCE_INLINE const PerFrameData& GetPerFrameData() const { return mPerFrameData; }
 		VI_FORCE_INLINE const ApplicationConfiguration& GetConfig() const { return mConfig; }
+		VI_FORCE_INLINE ECS::Coordinator* GetCoordinator() const { return mCoordinator; }
 	protected:
 		Application() = default;
 		Application(const ApplicationConfiguration&);
@@ -73,4 +74,5 @@ namespace VIEngine {
 	};
 
 	extern Application* CreateApplication();
+	class Actor* CreateActor();
 }

@@ -8,13 +8,13 @@ namespace VIEngine {
 	public:
 		DECLARE_RTTI
 	public:
-		OpenGLShader(const char* name, const char* vertexSource, const char* fragmentSource);
+		OpenGLShader(const std::string& name, const std::string& vertexSource, const std::string& fragmentSource);
 		~OpenGLShader();
 		virtual void Release() override;
 		virtual void Bind() override;
 		virtual void Unbind() override;
 		VI_FORCE_INLINE virtual uint32_t GetID() const override { return mID; }
-		VI_FORCE_INLINE virtual const char* GetName() const override { return mName.c_str(); }
+		VI_FORCE_INLINE virtual const std::string& GetName() const override { return mName; }
 		virtual void SetBool(const std::string& name, bool value) override;
 		virtual void SetInt(const std::string& name, int32_t value) override;
 		virtual void SetInts(const std::string& name, int32_t* value, uint32_t count) override;

@@ -7,6 +7,11 @@
 #include<Resource/Shader.h>
 #include<Resource/Texture2D.h>
 
+namespace VIEngine {
+	class Animation;
+	class Actor;
+}
+
 class GameplayLayer : public VIEngine::Layer {
 public:
 	GameplayLayer();
@@ -22,4 +27,5 @@ private:
 	VIEngine::Shader* mShader;
 	VIEngine::Texture2D* mTexture;
 	VIEngine::Texture2D* mTexture2;
+	class VIEngine::Actor* mActor;
 };

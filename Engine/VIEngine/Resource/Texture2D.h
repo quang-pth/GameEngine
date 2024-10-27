@@ -5,7 +5,7 @@
 
 namespace VIEngine {
 	struct VI_API TextureData {
-		const char* Name;
+		std::string Name;
 		uint32_t Width, Height;
 		void* Data;
 		ETextureFormat InternalFormat, ImageFormat;
@@ -29,8 +29,8 @@ namespace VIEngine {
 		virtual void Bind() = 0;
 		virtual void Unbind() = 0;
 		virtual uint32_t GetID() const = 0;
-		virtual const char* GetName() const = 0;
-		virtual void SetName(const char* name) = 0;
+		virtual const std::string& GetName() const = 0;
+		virtual void SetName(const std::string& name) = 0;
 		virtual const TextureData& GetTextureData() const = 0;
 		virtual void SetWrapMode(ETextureWrapMode horizontal, ETextureWrapMode vertical) = 0;
 		// Set border color for a texture. This option only affects if texture wrap mode is set to ETextureWrapMode::Border

@@ -6,9 +6,10 @@
 #include"GlobalMemory.h"
 #include"ECS/SystemManager.h"
 #include"ECS/Coordinator.h"
-#include"Core/System/System.h"
 #include"Renderer/Renderer.h"
 #include"Resource/ResourceManager.h"
+#include"Core/System/SpriteAnimationSystem.h"
+#include"Core/Type/Actor.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
 	if ((*iter)->On##eventType(eventContext)) {\
@@ -23,13 +24,17 @@ namespace VIEngine {
 		return *sInstance;
 	}
 
+	Actor* CreateActor() {
+		return new Actor(Application::Get().GetCoordinator());
+	}
+
 	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher(), 
 			mIsRunning(true), mInputState(nullptr), mTime(), mPerFrameData()
 	{
 		mNativeWindow.reset(WindowPlatform::Create(config.WindowSpec));
 		mLayerStack = GlobalMemoryUsage::Get().NewOnStack<LayerStack>(LayerStack::RunTimeType.GetTypeName());
-		mSystemManager = GlobalMemoryUsage::Get().NewOnStack<ECS::SystemManager>(ECS::SystemManager::RunTimeType.GetTypeName());
 		mCoordinator = GlobalMemoryUsage::Get().NewOnStack<ECS::Coordinator>(ECS::Coordinator::RunTimeType.GetTypeName());
+		mSystemManager = GlobalMemoryUsage::Get().NewOnStack<ECS::SystemManager>(ECS::SystemManager::RunTimeType.GetTypeName(), mCoordinator);
 
 		sInstance = this;
     }
@@ -53,15 +58,7 @@ namespace VIEngine {
 		mEventDispatcher.AddEventListener<MouseButtonHeldEvent>(BIND_EVENT_FUNCTION(OnMouseButtonHeldEvent));
 		mEventDispatcher.AddEventListener<MouseButtonReleasedEvent>(BIND_EVENT_FUNCTION(OnMouseButtonReleasedEvent));
 
-
-		//auto& collisionSystem = mSystemManager->AddSystem<CollisionResolver>();
-		//auto& animationSystem = mSystemManager->AddSystem<AnimationSystem>();
-		//auto& renderer2D = mSystemManager->AddSystem<Renderer2D>();
-
-		//mSystemManager->AddSystemDependency(&animationSystem, &collisionSystem);
-		//mSystemManager->AddSystemDependency(&renderer2D, &collisionSystem, &animationSystem);
-
-		//collisionSystem.SetUpdateInterval(1.5f);
+		mSystemManager->AddSystem<SpriteAnimationSystem>();
 
 		mSystemManager->OnInit();
 		Renderer::OnInit(mConfig);

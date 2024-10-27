@@ -4,7 +4,7 @@
 namespace VIEngine {
 	DEFINE_RTTI(Shader, Object::RunTimeType)
 
-	Shader* Shader::Create(const char* filepath) {
+	Shader* Shader::Create(const std::string& filepath) {
 		return ResourceManager::Get().NewShader(filepath);
 	}
 }

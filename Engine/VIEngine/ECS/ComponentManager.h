@@ -23,7 +23,7 @@ namespace VIEngine {
 			class ComponentArray : public MemoryChunkManager<T, MAX_COMPONENT_PER_ARRAY>, public IComponentArray {
 			public:
 				ComponentArray() = default;
-				ComponentArray(const char* resourceName) : MemoryChunkManager(resourceName) {}
+				ComponentArray(const std::string& resourceName) : MemoryChunkManager(resourceName) {}
 				~ComponentArray() {
 					Reset();
 				}

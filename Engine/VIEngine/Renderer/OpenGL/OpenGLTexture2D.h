@@ -7,15 +7,15 @@ namespace VIEngine {
 	public:
 		DECLARE_RTTI
 	public:
-		OpenGLTexture2D(const char* filepath, bool alpha);
+		OpenGLTexture2D(const std::string& filepath, bool alpha);
 		~OpenGLTexture2D();
 		
 		virtual void Release() override;
 		virtual void Bind() override;
 		virtual void Unbind() override;
 		VI_FORCE_INLINE virtual uint32_t GetID() const override { return mID; }
-		VI_FORCE_INLINE virtual const char* GetName() const override { return mData.Name; }
-		VI_FORCE_INLINE virtual void SetName(const char* name) override { mData.Name = name; }
+		VI_FORCE_INLINE virtual const std::string& GetName() const override { return mData.Name; }
+		VI_FORCE_INLINE virtual void SetName(const std::string& name) override { mData.Name = name; }
 		virtual const TextureData& GetTextureData() const override { return mData; }
 		virtual void SetWrapMode(ETextureWrapMode horizontal, ETextureWrapMode vertical) override;
 		virtual void SetBorderColor(float r, float g, float b, float w = 1.0f) override;

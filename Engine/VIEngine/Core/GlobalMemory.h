@@ -22,7 +22,7 @@ namespace VIEngine {
 		}
 
 		template<typename T, typename... Args>
-		T* NewOnStack(const char* usage, Args&&... args) {
+		T* NewOnStack(const std::string& usage, Args&&... args) {
 			return mMemoryManager.NewOnStack<T>(usage, std::forward<Args>(args)...);
 		}
 

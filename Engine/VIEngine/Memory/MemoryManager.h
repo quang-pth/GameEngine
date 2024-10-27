@@ -11,7 +11,7 @@ namespace VIEngine {
 	};
 
 	struct MemoryUsage {
-		const char* ResouceName;
+		std::string ResouceName;
 		void* ResouceAddress;
 	};
 
@@ -28,7 +28,7 @@ namespace VIEngine {
 
 		// Allocate temporary memory that will be automatically freed at the end of a frame
 		void* AllocatePerFrame(size_t memorySize, uint8_t alignment);
-		void* AllocateOnStack(const char* usage, size_t memorySize, uint8_t alignment);
+		void* AllocateOnStack(const std::string& usage, size_t memorySize, uint8_t alignment);
 		void FreeOnStack(void* memory);
 		void ClearOnStack();
 		void DetecMemoryLeaks();
@@ -41,7 +41,7 @@ namespace VIEngine {
 		}
 
 		template<typename T, typename... Args>
-		T* NewOnStack(const char* usage, Args&&... args) {
+		T* NewOnStack(const std::string& usage, Args&&... args) {
 			void* address = AllocateOnStack(usage, sizeof(T), alignof(T));
 			return new (address)T(std::forward<Args>(args)...);
 		}

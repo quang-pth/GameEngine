@@ -106,7 +106,7 @@ namespace VIEngine {
 		};
 
 	public:
-		MemoryChunkManager(const char* usage, const MemoryConfiguration& config = MemoryConfiguration()) : mUsage(usage), MemoryManager(config) {
+		MemoryChunkManager(const std::string& usage, const MemoryConfiguration& config = MemoryConfiguration()) : mUsage(usage), MemoryManager(config) {
 
 		}
 
@@ -172,6 +172,6 @@ namespace VIEngine {
 		VI_FORCE_INLINE Iterator end() { return Iterator(mMemoryChunkList.end(), mMemoryChunkList.end()); }
 	private:
 		MemoryChunkList mMemoryChunkList;
-		const char* mUsage;
+		std::string mUsage;
 	};
 }

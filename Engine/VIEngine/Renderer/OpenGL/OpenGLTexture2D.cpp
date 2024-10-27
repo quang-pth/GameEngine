@@ -8,7 +8,7 @@
 namespace VIEngine {
 	DEFINE_RTTI(OpenGLTexture2D, Texture2D::RunTimeType)
 
-	OpenGLTexture2D::OpenGLTexture2D(const char* filepath, bool alpha) : mID(), mData() {
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& filepath, bool alpha) : mID(), mData() {
 		mData = ResourceManager::Get().LoadImageFromFile(filepath, alpha);
 		Renderer::Submit([this, filepath, alpha]() {
 			glGenTextures(1, &mID);

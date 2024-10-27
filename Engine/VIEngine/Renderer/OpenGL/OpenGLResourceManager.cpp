@@ -60,14 +60,14 @@ namespace VIEngine {
 		mIndexBufferMemoryManager.FreeObject(memory);
 	}
 
-	Shader* OpenGLResourceManager::NewShader(const char* filepath)
+	Shader* OpenGLResourceManager::NewShader(const std::string& filepath)
 	{
 		if (mShaderMap.count(filepath)) {
 			return mShaderMap.at(filepath);
 		}
 
 		auto shaderSources = ParseGLSL(filepath);
-		OpenGLShader* shader = mShaderMemoryManager.NewObject(filepath, shaderSources["vertex"].c_str(), shaderSources["fragment"].c_str());
+		OpenGLShader* shader = mShaderMemoryManager.NewObject(filepath, shaderSources["vertex"], shaderSources["fragment"]);
 		mShaderMap[filepath] = shader;
 		return shader;
 	}
@@ -85,12 +85,12 @@ namespace VIEngine {
 
 	Texture2D* OpenGLResourceManager::NewTexture2D(const std::string& filepath, bool alpha)
 	{
-		if (mTexture2DMap.count(filepath.c_str()) > 0) {
-			return mTexture2DMap.at(filepath.c_str());
+		if (mTexture2DMap.count(filepath) > 0) {
+			return mTexture2DMap.at(filepath);
 		}
 
-		Texture2D* texture2D = mTexture2DMemoryManager.NewObject(filepath.c_str(), alpha);
-		mTexture2DMap[filepath.c_str()] = texture2D;
+		Texture2D* texture2D = mTexture2DMemoryManager.NewObject(filepath, alpha);
+		mTexture2DMap[filepath] = texture2D;
 
 		return texture2D;
 	}
@@ -98,15 +98,15 @@ namespace VIEngine {
 	void OpenGLResourceManager::FreeTexture2D(Texture2D* memory)
 	{
 		auto& textureData = memory->GetTextureData();
-		if (textureData.Data) {
-			CORE_LOG_WARN("Image {0} is not free before get released in resouce manager, possible memory leaks detected", textureData.Name);
-			FreeImageData(textureData.Data);
-		}
-		mTexture2DMemoryManager.FreeObject(memory);
+		//if (textureData.Data) {
+		//	CORE_LOG_WARN("Image {0} is not free before get released in resouce manager, possible memory leaks detected", textureData.Name);
+		//	FreeImageData(textureData.Data);
+		//}
 		mTexture2DMap.erase(memory->GetName());
+		mTexture2DMemoryManager.FreeObject(memory);
 	}
 
-	std::unordered_map<std::string, std::string> OpenGLResourceManager::ParseGLSL(const char* shaderSource)
+	std::unordered_map<std::string, std::string> OpenGLResourceManager::ParseGLSL(const std::string& shaderSource)
 	{
 		std::string source = ReadFromFile(shaderSource);
 		std::unordered_map<std::string, std::string> shaderSources;
@@ -131,7 +131,7 @@ namespace VIEngine {
 		return shaderSources;
 	}
 
-	std::string OpenGLResourceManager::ReadFromFile(const char* filepath)
+	std::string OpenGLResourceManager::ReadFromFile(const std::string& filepath)
 	{
 		std::string result;
 		std::ifstream in(filepath, std::ios::in | std::ios::binary);
@@ -146,13 +146,13 @@ namespace VIEngine {
 		}
 		else
 		{
-			CORE_LOG_WARN("Could not read shader file {0}", filepath);
+			CORE_LOG_WARN("Could not read shader file {0}", filepath.c_str());
 		}
 
 		return result;
 	}
 
-	TextureData OpenGLResourceManager::LoadImageFromFile(const char* filepath, bool alpha) {
+	TextureData OpenGLResourceManager::LoadImageFromFile(const std::string& filepath, bool alpha) {
 		TextureData textureData;
 		textureData.Alpha = alpha;
 		textureData.Name = filepath;
@@ -160,7 +160,7 @@ namespace VIEngine {
 		int width, height, nrChannels;
 		stbi_set_flip_vertically_on_load(true);
 
-		void* data = stbi_load(filepath, &width, &height, &nrChannels, 0);
+		void* data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0);
 		if (data) {
 			textureData.Width = width;
 			textureData.Height= height;

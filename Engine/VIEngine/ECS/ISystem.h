@@ -53,7 +53,7 @@ namespace VIEngine {
 			VI_FORCE_INLINE virtual void SetCoordinator(class Coordinator* coordinator) override { mCoordinator = coordinator; }
 		private:
 			static SystemTypeID sStaticType;
-		private:
+		protected:
 			SystemID mID = INVALID_ID;
 			float mUpdateInterval = -1.0f;
 			float mLastUpdateTime = 0.0f;

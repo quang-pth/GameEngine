@@ -18,7 +18,7 @@ namespace VIEngine {
 	class VI_API RenderCommand {
 	public:
 		static void ClearColor(float r, float g, float b, float w) { sInstance->ClearColorImpl(r, g, b, w); }
-		static void DrawIndexed(uint32_t nums, ERendererPrimitive primitive, uint32_t offset) { sInstance->DrawIndexedImpl(nums, primitive, offset); }
+		static void DrawIndexed(uint32_t nums, ERendererPrimitive primitive = ERendererPrimitive::Triangles, uint32_t offset = 0) { sInstance->DrawIndexedImpl(nums, primitive, offset); }
 		static void SetAlphaState(bool enable, ERendererBlendFunction source, ERendererBlendFunction destination, ERendererBlendEquation blendEquation) { sInstance->SetAlphaStateImpl(enable, source, destination, blendEquation); }
 
 	protected:

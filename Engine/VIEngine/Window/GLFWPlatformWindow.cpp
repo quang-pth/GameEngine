@@ -27,7 +27,7 @@ namespace VIEngine {
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-		mWindow = glfwCreateWindow(config.Width, config.Height, config.Title, nullptr, nullptr);
+		mWindow = glfwCreateWindow(config.Width, config.Height, config.Title.c_str(), nullptr, nullptr);
 		if (!mWindow) {
 			CORE_LOG_CRITICAL("Window created failed");
 			glfwTerminate();
