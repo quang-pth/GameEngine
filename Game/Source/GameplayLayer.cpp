@@ -34,7 +34,6 @@ void GameplayLayer::OnAttach() {
 	walkBlend->AddTexture("Assets/Sprite/Zero/walk/walk-blend.png");
 
 	Animation* walkAnimation = Animation::Create("ZeroWalk");
-	//walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk00.png");
 	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk01.png");
 	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk02.png");
 	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk03.png");
@@ -48,10 +47,6 @@ void GameplayLayer::OnAttach() {
 	// actor.GetCompnent<AnimatorComponent>().AddAnimation(anim);
 	// actor.GetCompnent<AnimatorComponent>().GetAnimation("ZeroIdle").SetFPS(60);
 	mActor = CreateActor();
-	TransformComponent& transformComponent = mActor->GetComponent<TransformComponent>();
-	transformComponent.SetPositionX(80.0f);
-	transformComponent.SetPositionY(100.0f);
-	//transformComponent.SetScaleX(1.0f);
 
 	AnimatorComponent& animator = mActor->AddComponent<AnimatorComponent>();
 	animator.AddAnimation(idleAnimation);
@@ -93,6 +88,28 @@ void GameplayLayer::OnDetach() {
 	LOG_TRACE("GameplayLayer is detached");
 }
 
+void GameplayLayer::OnProcessInput(const VIEngine::InputState& inputState) {
+	using namespace VIEngine;
+
+	mMoveHorizontal = 0;
+	mMoveVertical = 0;
+
+	if (inputState.Keyboard->IsPressed(EKeyCode::LEFT) || inputState.Keyboard->IsPressed(EKeyCode::A)) {
+		mMoveHorizontal += -1;
+	}
+	if (inputState.Keyboard->IsPressed(EKeyCode::RIGHT) || inputState.Keyboard->IsPressed(EKeyCode::D)) {
+		mMoveHorizontal += 1;
+	}
+	if (inputState.Keyboard->IsPressed(EKeyCode::DOWN) || inputState.Keyboard->IsPressed(EKeyCode::S)) {
+		mMoveVertical += -1;
+	}
+	if (inputState.Keyboard->IsPressed(EKeyCode::UP) || inputState.Keyboard->IsPressed(EKeyCode::W)) {
+		mMoveVertical += 1;
+	}
+
+	mActor->GetComponent<AnimatorComponent>().SetFlipHorizontal(mMoveHorizontal < 0);
+}
+
 void GameplayLayer::OnUpdate(VIEngine::Time time) {
 	using namespace VIEngine;
 
@@ -102,6 +119,10 @@ void GameplayLayer::OnUpdate(VIEngine::Time time) {
 	temp += time.GetDeltaTime();
 	
 	Renderer::SetAlphaState(true);
+
+	TransformComponent& transform = mActor->GetComponent<TransformComponent>();
+	transform.SetPositionX(transform.GetPosition().x + mMoveHorizontal * mSpeed * time.GetDeltaTime());
+	transform.SetPositionY(transform.GetPosition().y + mMoveVertical * mSpeed * time.GetDeltaTime());
 
 	//mShader->Bind();
 	/*mShader->SetVector3("tempColor", glm::vec3(glm::cos(temp) + 1.0f, 1.0f, glm::sin(temp) + 1.0f));
