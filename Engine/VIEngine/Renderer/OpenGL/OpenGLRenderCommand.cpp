@@ -56,4 +56,12 @@ namespace VIEngine {
 			mRenderData.BlendDestination = destination;
 		}
 	}
+
+	void OpenGLRenderCommand::ActivateTextureImpl(uint8_t index) {
+		glActiveTexture(GL_TEXTURE0 + index);
+	}
+
+	void OpenGLRenderCommand::BindTexture2DImpl(uint8_t textureID) {
+		glBindTexture(GL_TEXTURE_2D, textureID);
+	}
 }

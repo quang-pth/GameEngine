@@ -50,28 +50,30 @@ namespace VIEngine {
 
 	void OpenGLVertexArray::SetVertexBuffer(void* data, uint32_t size, ERendererMode mode)
 	{
-		mVertexBuffer->SetSize(size);
 		void* submitData = ResourceManager::Get().AllocatePerFrame(size, alignof(uint32_t));
-		memcpy(submitData, data, mVertexBuffer->GetSize());
+		memcpy(submitData, data, size);
+		mVertexBuffer->SetData(submitData, size);
+		mVertexBuffer->SetMode(mode);
 
-		Renderer::Submit([submitData, mode, this]() {
+		Renderer::Submit([this]() {
 			glBindVertexArray(mID);
 			glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer->GetID());
-			glBufferData(GL_ARRAY_BUFFER, mVertexBuffer->GetSize(), submitData, OpenGLFactory::ToOpenGLMode(mode));
+			glBufferData(GL_ARRAY_BUFFER, mVertexBuffer->GetSize(), mVertexBuffer->GetData(), OpenGLFactory::ToOpenGLMode(mVertexBuffer->GetMode()));
 		});
 	}
 
 	void OpenGLVertexArray::SetIndexBuffer(void* data, uint32_t size, uint32_t nums, ERendererMode mode)
 	{
-		mIndexBuffer->SetSize(size);
-		mIndexBuffer->SetNums(nums);
-
 		void* submitData = ResourceManager::Get().AllocatePerFrame(size, alignof(uint32_t));
 		memcpy(submitData, data, size);
-		Renderer::Submit([submitData, mode, this]() {
+		mIndexBuffer->SetData(submitData, size);
+		mIndexBuffer->SetNums(nums);
+		mIndexBuffer->SetMode(mode);
+		
+		Renderer::Submit([this]() {
 			glBindVertexArray(mID);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer->GetID());
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer->GetSize(), submitData, OpenGLFactory::ToOpenGLMode(mode));
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer->GetSize(), mIndexBuffer->GetData(), OpenGLFactory::ToOpenGLMode(mIndexBuffer->GetMode()));
 		});
 	}
 

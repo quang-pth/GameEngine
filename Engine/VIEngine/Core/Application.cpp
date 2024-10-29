@@ -41,12 +41,14 @@ namespace VIEngine {
 
 	bool Application::Init() {
 		Logger::Init();
+		ResourceManager::OnInit(mConfig.RendererSpec);
 
 		if (!mNativeWindow->Init(mConfig, &mEventDispatcher)) {
 			return false;
 		}
 
 		mInputState = mNativeWindow->GetInputState();
+
 
 		mEventDispatcher.AddEventListener<WindowResizedEvent>(BIND_EVENT_FUNCTION(OnWindowResizedEvent));
 		mEventDispatcher.AddEventListener<KeyPressedEvent>(BIND_EVENT_FUNCTION(OnKeyPressedEvent));
@@ -62,7 +64,6 @@ namespace VIEngine {
 
 		mSystemManager->OnInit();
 		Renderer::OnInit(mConfig);
-		ResourceManager::OnInit(mConfig.RendererSpec);
 
 		return true;
 	}

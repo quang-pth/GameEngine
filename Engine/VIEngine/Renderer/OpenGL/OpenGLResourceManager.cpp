@@ -83,6 +83,11 @@ namespace VIEngine {
 		return mGeneralMemoryManager.AllocatePerFrame(size, alignment);
 	}
 
+	void* OpenGLResourceManager::AllocateOnStack(const std::string& usage, uint32_t size, uint8_t alignment)
+	{
+		return mGeneralMemoryManager.AllocateOnStack(usage, size, alignment);
+	}
+
 	Texture2D* OpenGLResourceManager::NewTexture2D(const std::string& filepath, bool alpha)
 	{
 		if (mTexture2DMap.count(filepath) > 0) {

@@ -9,13 +9,13 @@ namespace VIEngine {
 	public:
 		DECLARE_RTTI
 	public:
-		SpriteAnimationSystem() = default;
+		SpriteAnimationSystem();
 		SpriteAnimationSystem(ECS::SystemID id, ECS::ESystemPriority priority = ECS::ESystemPriority::Low);
-		~SpriteAnimationSystem() = default;
+		~SpriteAnimationSystem();
 		virtual void OnInit() override;
 		virtual void OnUpdate(Time) override;
 		virtual void OnShutdown() override;
 	private:
-		BatchRenderer mBatchRenderer;
+		BatchRenderer mRenderBatch;
 	};
 }

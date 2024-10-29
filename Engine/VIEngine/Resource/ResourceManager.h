@@ -26,6 +26,7 @@ namespace VIEngine {
 		virtual class Shader* NewShader(const std::string& filepath) = 0;
 		virtual void FreeShader(class Shader* memory) = 0;
 		virtual void* AllocatePerFrame(uint32_t size, uint8_t alignment) = 0;
+		virtual void* AllocateOnStack(const std::string& usage, uint32_t size, uint8_t alignment) = 0;
 		virtual class Texture2D* NewTexture2D(const std::string& filepath, bool alpha) = 0;
 		virtual void FreeTexture2D(class Texture2D* memory) = 0;
 		virtual TextureData LoadImageFromFile(const std::string& filepath, bool alpha = true) = 0;

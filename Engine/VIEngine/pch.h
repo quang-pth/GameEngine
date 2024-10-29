@@ -7,6 +7,7 @@
 #include<random>
 #include<limits>
 #include<vector>
+#include<array>
 #include<string>
 #include<bitset>
 #include<cassert>

@@ -21,7 +21,7 @@ void GameplayLayer::OnAttach() {
 	mShader = Shader::Create("Assets/Shader/quad.glsl");
 	mTexture = Texture2D::Create("Assets/Sprite/Zero/idle/idle00.png");
 	mTexture2 = Texture2D::Create("Assets/test-zero.png");
-	
+
 	Animation* idleAnimation = Animation::Create("ZeroIdle");
 	idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle00.png");
 	idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle01.png");
@@ -48,6 +48,11 @@ void GameplayLayer::OnAttach() {
 	// actor.GetCompnent<AnimatorComponent>().AddAnimation(anim);
 	// actor.GetCompnent<AnimatorComponent>().GetAnimation("ZeroIdle").SetFPS(60);
 	mActor = CreateActor();
+	TransformComponent& transformComponent = mActor->GetComponent<TransformComponent>();
+	transformComponent.SetPositionX(80.0f);
+	transformComponent.SetPositionY(100.0f);
+	//transformComponent.SetScaleX(1.0f);
+
 	AnimatorComponent& animator = mActor->AddComponent<AnimatorComponent>();
 	animator.AddAnimation(idleAnimation);
 	animator.AddAnimation(walkBlend);
@@ -55,27 +60,27 @@ void GameplayLayer::OnAttach() {
 	animator.SetFPS(60);
 	animator.SetActiveAnimation("ZeroWalk");
 
-	Vertex vertices[4] = {
-		{glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)}, // top-left
-		{glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)}, // bottom-left
-		{glm::vec3(0.5f, -0.5f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)}, // bottom-right
-		{glm::vec3(0.5f, 0.5f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f)} // top-right
-	};
-	uint32_t indicies[6] = {
-		0, 1, 2, // left-bottom triangle
-		2, 3, 0 // right-top triangle
-	};
-	mFirstQuad->SetVertexBuffer(vertices, sizeof(vertices));
-	mFirstQuad->SetIndexBuffer(indicies, sizeof(indicies), sizeof(indicies) / sizeof(uint32_t));
+	//Vertex vertices[4] = {
+	//	{glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)}, // top-left
+	//	{glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)}, // bottom-left
+	//	{glm::vec3(0.5f, -0.5f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)}, // bottom-right
+	//	{glm::vec3(0.5f, 0.5f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f)} // top-right
+	//};
+	//uint32_t indicies[6] = {
+	//	0, 1, 2, // left-bottom triangle
+	//	2, 3, 0 // right-top triangle
+	//};
+	//mFirstQuad->SetVertexBuffer(vertices, sizeof(vertices));
+	//mFirstQuad->SetIndexBuffer(indicies, sizeof(indicies), sizeof(indicies) / sizeof(uint32_t));
 
-	Vertex quadVertices[4] = {
-		{glm::vec3(0.0f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f)}, // top-left
-		{glm::vec3(0.0f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)}, // bottom-left
-		{glm::vec3(1.0f, -0.5f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f)}, // bottom-right
-		{glm::vec3(1.0f, 0.5f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)} // top-right
-	};
-	mSecondQuad->SetVertexBuffer(quadVertices, sizeof(quadVertices));
-	mSecondQuad->SetIndexBuffer(indicies, sizeof(indicies), sizeof(indicies) / sizeof(uint32_t));
+	//Vertex quadVertices[4] = {
+	//	{glm::vec3(0.0f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f)}, // top-left
+	//	{glm::vec3(0.0f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)}, // bottom-left
+	//	{glm::vec3(1.0f, -0.5f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec4(1.0f, 1.0f, 0.0f, 1.0f)}, // bottom-right
+	//	{glm::vec3(1.0f, 0.5f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)} // top-right
+	//};
+	//mSecondQuad->SetVertexBuffer(quadVertices, sizeof(quadVertices));
+	//mSecondQuad->SetIndexBuffer(indicies, sizeof(indicies), sizeof(indicies) / sizeof(uint32_t));
 }
 
 void GameplayLayer::OnDetach() {
