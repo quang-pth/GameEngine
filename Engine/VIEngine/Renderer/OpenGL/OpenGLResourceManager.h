@@ -19,7 +19,7 @@ namespace VIEngine {
 		~OpenGLResourceManager();
 
 		virtual void OnReset() override;
-		virtual VertexArray* NewVertexArray() override;
+		virtual VertexArray* NewVertexArray(bool useBatchVertex) override;
 		virtual void FreeVertexArray(VertexArray* memory) override;
 		virtual class VertexBuffer* NewVertexBuffer() override;
 		virtual void FreeVertexBuffer(class VertexBuffer* memory) override;

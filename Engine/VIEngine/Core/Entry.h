@@ -9,7 +9,6 @@ int main() {
 
 	application->Shutdown();
 	VI_FREE_MEMORY(application);
-	
-	std::cin.get();
+
 	return 0;
 }

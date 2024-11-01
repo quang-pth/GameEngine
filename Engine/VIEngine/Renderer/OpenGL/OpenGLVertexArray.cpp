@@ -10,22 +10,36 @@
 namespace VIEngine {
 	DEFINE_RTTI(OpenGLVertexArray, VertexArray::RunTimeType)
 
-	OpenGLVertexArray::OpenGLVertexArray() : 
+	OpenGLVertexArray::OpenGLVertexArray(bool useBatchedVertex) : 
 			mID(), mVertexBuffer(VertexBuffer::Create()), mIndexBuffer(IndexBuffer::Create())
 	{
-		Renderer::Submit([this]() {
+		Renderer::Submit([this, useBatchedVertex]() {
 			glGenVertexArrays(1, &mID);
 			glBindVertexArray(mID);
 			// Vertex Buffer
 			uint32_t vertexBufferID;
 			glGenBuffers(1, &vertexBufferID);
 			glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Position));
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
-			glEnableVertexAttribArray(2);
+			if (!useBatchedVertex) {
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Position));
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+				glEnableVertexAttribArray(1);
+				glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
+				glEnableVertexAttribArray(2);
+			}
+			else {
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(BatchedVertex), (void*)offsetof(BatchedVertex, Position));
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(BatchedVertex), (void*)offsetof(BatchedVertex, TexCoords));
+				glEnableVertexAttribArray(1);
+				glVertexAttribIPointer(2, 1, GL_INT, sizeof(BatchedVertex), (void*)offsetof(BatchedVertex, TextureID));
+				glEnableVertexAttribArray(2);
+				glVertexAttribIPointer(3, 1, GL_INT, sizeof(BatchedVertex), (void*)offsetof(BatchedVertex, FlipVertical));
+				glEnableVertexAttribArray(3);
+				glVertexAttribIPointer(4, 1, GL_INT, sizeof(BatchedVertex), (void*)offsetof(BatchedVertex, FlipHorizontal));
+				glEnableVertexAttribArray(4);
+			}
 			mVertexBuffer->SetID(vertexBufferID);
 			// Index Buffer
 			uint32_t indexBufferID;

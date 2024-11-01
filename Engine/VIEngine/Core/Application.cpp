@@ -24,8 +24,8 @@ namespace VIEngine {
 		return *sInstance;
 	}
 
-	Actor* CreateActor() {
-		return new Actor(Application::Get().GetCoordinator());
+	Actor CreateActor() {
+		return Actor(Application::Get().GetCoordinator());
 	}
 
 	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher(), 
@@ -135,7 +135,7 @@ namespace VIEngine {
 		mNativeWindow->Shutdown();
 		ResourceManager::OnShutdown();
 		MemoryMonitor::Get().Clear();
-		MemoryMonitor::Get().DectecMemoryLeaks();
+		// MemoryMonitor::Get().DectecMemoryLeaks();
 	}
 
 	bool Application::OnWindowResizedEvent(const WindowResizedEvent& eventContext) {

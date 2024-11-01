@@ -30,9 +30,9 @@ namespace VIEngine {
 		mTexture2DMemoryManager.Reset();
 	}
 
-	VertexArray* OpenGLResourceManager::NewVertexArray()
+	VertexArray* OpenGLResourceManager::NewVertexArray(bool useBatchVertex)
 	{
-		return mVertexArrayMemoryManager.NewObject();
+		return mVertexArrayMemoryManager.NewObject(useBatchVertex);
 	}
 
 	void OpenGLResourceManager::FreeVertexArray(VertexArray* memory)

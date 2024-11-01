@@ -6,6 +6,7 @@
 #include<Resource/IndexBuffer.h>
 #include<Resource/Shader.h>
 #include<Resource/Texture2D.h>
+#include<Core/Type/Actor.h>
 
 namespace VIEngine {
 	class Animation;
@@ -28,7 +29,7 @@ private:
 	VIEngine::Shader* mShader;
 	VIEngine::Texture2D* mTexture;
 	VIEngine::Texture2D* mTexture2;
-	class VIEngine::Actor* mActor;
+	class VIEngine::Actor mActor;
 	int8_t mMoveHorizontal = 0, mMoveVertical = 0;
-	float mSpeed = 20.0f;
+	float mSpeed = 5.0f;
 };

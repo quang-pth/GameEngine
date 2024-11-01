@@ -7,7 +7,7 @@ namespace VIEngine {
 	public:
 		DECLARE_RTTI
 	public:
-		OpenGLVertexArray();
+		OpenGLVertexArray(bool useBatchedVertex = false);
 		~OpenGLVertexArray();
 		VI_FORCE_INLINE virtual class VertexBuffer* GetVertexBuffer() override { return mVertexBuffer; }
 		VI_FORCE_INLINE virtual class IndexBuffer* GetIndexBuffer() override { return mIndexBuffer; }

@@ -4,7 +4,7 @@
 namespace VIEngine {
 	DEFINE_RTTI(VertexArray, Object::RunTimeType)
 	
-	VertexArray* VertexArray::Create() {
-		return ResourceManager::Get().NewVertexArray();
+	VertexArray* VertexArray::Create(bool useBatchedVertex) {
+		return ResourceManager::Get().NewVertexArray(useBatchedVertex);
 	}
 }

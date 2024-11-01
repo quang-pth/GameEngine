@@ -6,6 +6,7 @@
 #include"Core/Layer/LayerStack.h"
 #include"Core/Time/Time.h"
 #include"Renderer/RendererAPI.h"
+#include"Core/Type/Actor.h"
 
 namespace VIEngine {
 	struct VI_API ApplicationConfiguration {
@@ -74,5 +75,5 @@ namespace VIEngine {
 	};
 
 	extern Application* CreateApplication();
-	class Actor* CreateActor();
+	class Actor CreateActor();
 }

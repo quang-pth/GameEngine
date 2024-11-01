@@ -11,6 +11,14 @@ namespace VIEngine {
 		glm::vec4 Color;
 	};
 
+	struct VI_API BatchedVertex {
+		glm::vec3 Position;
+		glm::vec2 TexCoords;
+		int TextureID;
+		int FlipVertical;
+		int FlipHorizontal;
+	};
+
 	class VI_API VertexBuffer : public Object {
 	public:
 		DECLARE_RTTI

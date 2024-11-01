@@ -1,7 +1,7 @@
 #include"GameplayLayer.h"
-#include<VIEngine/Base.h>
 #include<Renderer/Renderer.h>
 #include<Core/Component/AnimatorComponent.h>
+#include<Core/Component/TransformComponent.h>
 
 GameplayLayer::GameplayLayer() {
 
@@ -48,12 +48,20 @@ void GameplayLayer::OnAttach() {
 	// actor.GetCompnent<AnimatorComponent>().GetAnimation("ZeroIdle").SetFPS(60);
 	mActor = CreateActor();
 
-	AnimatorComponent& animator = mActor->AddComponent<AnimatorComponent>();
-	animator.AddAnimation(idleAnimation);
-	animator.AddAnimation(walkBlend);
+	AnimatorComponent& animator = mActor.AddComponent<AnimatorComponent>();
+	// animator.AddAnimation(idleAnimation);
+	// animator.AddAnimation(walkBlend);
 	animator.AddAnimation(walkAnimation);
 	animator.SetFPS(60);
-	animator.SetActiveAnimation("ZeroWalk");
+	animator.SetActiveAnimation(walkAnimation->GetName());
+
+	Actor actor2 = CreateActor();
+	AnimatorComponent& animator2 = actor2.AddComponent<AnimatorComponent>();
+	animator2.AddAnimation(idleAnimation);
+	animator2.SetFPS(24);
+	animator2.SetFlipVertical(true);
+	animator2.SetFlipHorizontal(true);
+	animator2.SetActiveAnimation(idleAnimation->GetName());
 
 	//Vertex vertices[4] = {
 	//	{glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)}, // top-left
@@ -96,9 +104,11 @@ void GameplayLayer::OnProcessInput(const VIEngine::InputState& inputState) {
 
 	if (inputState.Keyboard->IsPressed(EKeyCode::LEFT) || inputState.Keyboard->IsPressed(EKeyCode::A)) {
 		mMoveHorizontal += -1;
+		mActor.GetComponent<AnimatorComponent>().SetFlipHorizontal(true);
 	}
 	if (inputState.Keyboard->IsPressed(EKeyCode::RIGHT) || inputState.Keyboard->IsPressed(EKeyCode::D)) {
 		mMoveHorizontal += 1;
+		mActor.GetComponent<AnimatorComponent>().SetFlipHorizontal(false);
 	}
 	if (inputState.Keyboard->IsPressed(EKeyCode::DOWN) || inputState.Keyboard->IsPressed(EKeyCode::S)) {
 		mMoveVertical += -1;
@@ -106,8 +116,6 @@ void GameplayLayer::OnProcessInput(const VIEngine::InputState& inputState) {
 	if (inputState.Keyboard->IsPressed(EKeyCode::UP) || inputState.Keyboard->IsPressed(EKeyCode::W)) {
 		mMoveVertical += 1;
 	}
-
-	mActor->GetComponent<AnimatorComponent>().SetFlipHorizontal(mMoveHorizontal < 0);
 }
 
 void GameplayLayer::OnUpdate(VIEngine::Time time) {
@@ -120,7 +128,7 @@ void GameplayLayer::OnUpdate(VIEngine::Time time) {
 	
 	Renderer::SetAlphaState(true);
 
-	TransformComponent& transform = mActor->GetComponent<TransformComponent>();
+	TransformComponent& transform = mActor.GetComponent<TransformComponent>();
 	transform.SetPositionX(transform.GetPosition().x + mMoveHorizontal * mSpeed * time.GetDeltaTime());
 	transform.SetPositionY(transform.GetPosition().y + mMoveVertical * mSpeed * time.GetDeltaTime());
 
@@ -144,7 +152,7 @@ void GameplayLayer::OnUpdate(VIEngine::Time time) {
 
 bool GameplayLayer::OnKeyPressedEvent(const VIEngine::KeyPressedEvent& eventContext) {
 	using namespace VIEngine;
-	AnimatorComponent& animator = mActor->GetComponent<AnimatorComponent>();
+	AnimatorComponent& animator = mActor.GetComponent<AnimatorComponent>();
 	if (eventContext.IsKey(EKeyCode::NUM_1)) {
 		animator.SetActiveAnimation("ZeroIdle");
 	}
@@ -153,7 +161,6 @@ bool GameplayLayer::OnKeyPressedEvent(const VIEngine::KeyPressedEvent& eventCont
 	}
 	else if (eventContext.IsKey(EKeyCode::NUM_3)) {
 		animator.SetActiveAnimation("ZeroWalk");
-		//animator.SetFlipHorizontal(!animator.GetFlipHorizontal());
 	}
 	return false;
 }

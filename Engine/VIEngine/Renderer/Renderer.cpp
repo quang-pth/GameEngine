@@ -29,6 +29,18 @@ namespace VIEngine {
 		});
 	}
 
+	void Renderer::ActivateTexture(uint8_t index) {
+		Submit([index]() {
+			RenderCommand::ActivateTexture(index);
+		});
+	}
+
+	void Renderer::BindTexture2D(uint8_t textureID) {
+		Submit([textureID]() {
+			RenderCommand::BindTexture2D(textureID);
+		});
+	}
+
 	void Renderer::OnInit(const ApplicationConfiguration& appConfig) {
 		Submit([rendererSpec = appConfig.RendererSpec]() {
 			RenderCommand::OnInit(rendererSpec);

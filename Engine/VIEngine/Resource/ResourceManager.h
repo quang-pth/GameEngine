@@ -17,7 +17,7 @@ namespace VIEngine {
 		virtual ~ResourceManager() = default;
 
 		virtual void OnReset() = 0;
-		virtual class VertexArray* NewVertexArray() = 0;
+		virtual class VertexArray* NewVertexArray(bool useBatchVertex) = 0;
 		virtual void FreeVertexArray(class VertexArray* memory) = 0;
 		virtual class VertexBuffer* NewVertexBuffer() = 0;
 		virtual void FreeVertexBuffer(class VertexBuffer* memory) = 0;

@@ -69,7 +69,7 @@ namespace VIEngine {
 			// RenderBatch::Draw(vertexBuffer, indexBuffer);
 			Vertex* vertices = (Vertex*)animator->GetVertexArray()->GetVertexBuffer()->GetData();
 			uint32_t* indices = (uint32_t*)animator->GetVertexArray()->GetIndexBuffer()->GetData();
-			mRenderBatch.InsertBatch(transform.GetTransform(), vertices, indices, texture);
+			mRenderBatch.InsertBatch(transform.GetTransform(), vertices, indices, texture, animator->GetFlipVertical(), animator->GetFlipHorizontal());
 		}
 
 		mRenderBatch.Submit();
