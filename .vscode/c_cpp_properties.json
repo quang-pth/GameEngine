@@ -1,0 +1,18 @@
+{
+    "configurations": [
+        {
+            "name": "configs",
+            "includePath": [
+                "${workspaceFolder}/Vendors/include/**",
+                "${workspaceFolder}/Vendors/glfw/**",
+                "${workspaceFolder}/Vendors/glm/**",
+                "${workspaceFolder}/Engine/VIEngine/**"
+            ],
+            "defines": ["_DEBUG", "VI_API"],
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "${default}"
+        }
+    ],
+    "version": 4
+}

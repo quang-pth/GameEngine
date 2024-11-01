@@ -147,12 +147,13 @@ namespace VIEngine {
 			result.resize(in.tellg());
 			in.seekg(0, std::ios::beg);
 			in.read(&result[0], result.size());
-			in.close();
 		}
 		else
 		{
 			CORE_LOG_WARN("Could not read shader file {0}", filepath.c_str());
 		}
+
+		in.close();
 
 		return result;
 	}
