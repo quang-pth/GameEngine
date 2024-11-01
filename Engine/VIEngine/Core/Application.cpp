@@ -9,6 +9,7 @@
 #include"Renderer/Renderer.h"
 #include"Resource/ResourceManager.h"
 #include"Core/System/SpriteAnimationSystem.h"
+#include"Core/System/DirtySpriteValidateSystem.h"
 #include"Core/Type/Actor.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
@@ -60,7 +61,9 @@ namespace VIEngine {
 		mEventDispatcher.AddEventListener<MouseButtonHeldEvent>(BIND_EVENT_FUNCTION(OnMouseButtonHeldEvent));
 		mEventDispatcher.AddEventListener<MouseButtonReleasedEvent>(BIND_EVENT_FUNCTION(OnMouseButtonReleasedEvent));
 
-		mSystemManager->AddSystem<SpriteAnimationSystem>();
+		auto& dirtySpriteSystem = mSystemManager->AddSystem<DirtySpriteValidateSystem>();
+		auto& spriteAnimationSystem = mSystemManager->AddSystem<SpriteAnimationSystem>();
+		mSystemManager->AddSystemDependency(&spriteAnimationSystem, &dirtySpriteSystem);
 
 		mSystemManager->OnInit();
 		Renderer::OnInit(mConfig);

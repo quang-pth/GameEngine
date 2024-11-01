@@ -8,7 +8,7 @@ namespace VIEngine {
 	DEFINE_RTTI_NO_PARENT(AnimatorComponent)
 
 	AnimatorComponent::AnimatorComponent() : 
-		mActiveAnimation(nullptr), mFPS(24), mRuntime(0.0f), mVertexArray(nullptr), mShader(),
+		mActiveAnimationID(), mFPS(24), mFrameTime(0.0f), mVertexArray(nullptr), mShader(),
 		mFlipHorizontal(false), mFlipVertical(false)
 	{
 		mVertexArray = VertexArray::Create();
@@ -32,21 +32,20 @@ namespace VIEngine {
 	}
 
 	void AnimatorComponent::AddAnimation(Animation* animation) {
-		VI_ASSERT(animation != nullptr && "Adding invalid animation");
-
 		UUID nameHashID = GetHashID(animation->GetName());
 		if (mAnimationMap.count(nameHashID)) {
 			CORE_LOG_WARN("Adding duplicated animation name, replace the already existed!");
 		}
 
 		mAnimationMap[nameHashID] = animation;
+		SetActiveAnimation(animation->GetName());
 	}
 
 	void AnimatorComponent::SetActiveAnimation(const std::string& name)
 	{
 		UUID nameHashID = GetHashID(name);
 		if (mAnimationMap.count(nameHashID)) {
-			mActiveAnimation = mAnimationMap.at(nameHashID);
+			mActiveAnimationID = nameHashID;
 		}
 		else {
 			CORE_LOG_WARN("Invalid animation name has been set {0}", name.c_str());
@@ -56,7 +55,7 @@ namespace VIEngine {
 	void AnimatorComponent::SetActiveAnimation(UUID hashNameID)
 	{
 		if (mAnimationMap.count(hashNameID)) {
-			mActiveAnimation = mAnimationMap.at(hashNameID);
+			mActiveAnimationID = hashNameID;
 		}
 		else {
 			CORE_LOG_WARN("Invalid animation hash name id has been set");
@@ -66,19 +65,13 @@ namespace VIEngine {
 	Animation* AnimatorComponent::GetAnimation(const std::string& name) const
 	{
 		UUID nameHashID = GetHashID(name);
-		if (mAnimationMap.count(nameHashID)) {
-			return mAnimationMap.at(nameHashID);
-		}
-
-		return nullptr;
+		VI_ASSERT(mAnimationMap.count(nameHashID) > 0 && "Invalid animation name");
+		return mAnimationMap.at(nameHashID);
 	}
 
 	Animation* AnimatorComponent::GetAnimation(UUID hashNameID) const
 	{
-		if (mAnimationMap.count(hashNameID)) {
-			return mAnimationMap.at(hashNameID);
-		}
-
-		return nullptr;
+		VI_ASSERT(mAnimationMap.count(hashNameID) > 0 && "Invalid animation hash name");
+		return mAnimationMap.at(hashNameID);
 	}
 }

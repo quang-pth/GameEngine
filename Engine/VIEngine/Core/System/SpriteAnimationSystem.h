@@ -16,6 +16,6 @@ namespace VIEngine {
 		virtual void OnUpdate(Time) override;
 		virtual void OnShutdown() override;
 	private:
-		BatchRenderer mRenderBatch;
+		BatchRenderer mBatchRenderer;
 	};
 }

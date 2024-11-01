@@ -30,9 +30,6 @@ void GameplayLayer::OnAttach() {
 	idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle04.png");
 	idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle05.png");
 
-	Animation* walkBlend = Animation::Create("ZeroWalkBlend");
-	walkBlend->AddTexture("Assets/Sprite/Zero/walk/walk-blend.png");
-
 	Animation* walkAnimation = Animation::Create("ZeroWalk");
 	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk01.png");
 	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk02.png");
@@ -44,24 +41,46 @@ void GameplayLayer::OnAttach() {
 	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk08.png");
 	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk09.png");
 	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk10.png");
-	// actor.GetCompnent<AnimatorComponent>().AddAnimation(anim);
-	// actor.GetCompnent<AnimatorComponent>().GetAnimation("ZeroIdle").SetFPS(60);
+
 	mActor = CreateActor();
 
 	AnimatorComponent& animator = mActor.AddComponent<AnimatorComponent>();
-	// animator.AddAnimation(idleAnimation);
-	// animator.AddAnimation(walkBlend);
+	animator.AddAnimation(idleAnimation);
 	animator.AddAnimation(walkAnimation);
-	animator.SetFPS(60);
+	animator.SetFPS(120);
 	animator.SetActiveAnimation(walkAnimation->GetName());
 
-	Actor actor2 = CreateActor();
-	AnimatorComponent& animator2 = actor2.AddComponent<AnimatorComponent>();
-	animator2.AddAnimation(idleAnimation);
-	animator2.SetFPS(24);
-	animator2.SetFlipVertical(true);
-	animator2.SetFlipHorizontal(true);
-	animator2.SetActiveAnimation(idleAnimation->GetName());
+	for (uint8_t i = 0; i < 10; i++) {
+		for (uint8_t j = 0; j < 10; j++) {
+			Animation* idleAnimation = Animation::Create("ZeroIdle[" + std::to_string(i) + ", " + std::to_string(j) + "]");
+			idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle00.png");
+			idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle01.png");
+			idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle02.png");
+			idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle03.png");
+			idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle04.png");
+			idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle05.png");
+
+			Animation* walkAnimation = Animation::Create("ZeroWalk[" + std::to_string(i) + ", " + std::to_string(j) + "]");
+			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk01.png");
+			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk02.png");
+			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk03.png");
+			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk04.png");
+			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk05.png");
+			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk06.png");
+			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk07.png");
+			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk08.png");
+			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk09.png");
+			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk10.png");
+
+			Actor actor2 = CreateActor();
+			TransformComponent& transformComponent = actor2.GetComponent<TransformComponent>();
+			transformComponent.SetPositionX(-10.0f + j * 2.0f + 1.0f);
+			transformComponent.SetPositionY(10.0f - i * 2.0f - 1.0f);
+			AnimatorComponent& animator2 = actor2.AddComponent<AnimatorComponent>();
+			animator2.AddAnimation(walkAnimation);
+			animator2.SetFPS(120);
+		}
+	}
 
 	//Vertex vertices[4] = {
 	//	{glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)}, // top-left
@@ -102,19 +121,29 @@ void GameplayLayer::OnProcessInput(const VIEngine::InputState& inputState) {
 	mMoveHorizontal = 0;
 	mMoveVertical = 0;
 
+	AnimatorComponent& animator = mActor.GetComponent<AnimatorComponent>();
 	if (inputState.Keyboard->IsPressed(EKeyCode::LEFT) || inputState.Keyboard->IsPressed(EKeyCode::A)) {
 		mMoveHorizontal += -1;
-		mActor.GetComponent<AnimatorComponent>().SetFlipHorizontal(true);
+		animator.SetFlipHorizontal(true);
 	}
 	if (inputState.Keyboard->IsPressed(EKeyCode::RIGHT) || inputState.Keyboard->IsPressed(EKeyCode::D)) {
 		mMoveHorizontal += 1;
-		mActor.GetComponent<AnimatorComponent>().SetFlipHorizontal(false);
+		animator.SetFlipHorizontal(false);
 	}
 	if (inputState.Keyboard->IsPressed(EKeyCode::DOWN) || inputState.Keyboard->IsPressed(EKeyCode::S)) {
 		mMoveVertical += -1;
 	}
 	if (inputState.Keyboard->IsPressed(EKeyCode::UP) || inputState.Keyboard->IsPressed(EKeyCode::W)) {
 		mMoveVertical += 1;
+	}
+
+	if (mMoveHorizontal == 0) {
+		animator.SetActiveAnimation("ZeroIdle");
+		animator.SetFPS(24);
+	}
+	else {
+		animator.SetActiveAnimation("ZeroWalk");
+		animator.SetFPS(60);
 	}
 }
 
@@ -151,17 +180,6 @@ void GameplayLayer::OnUpdate(VIEngine::Time time) {
 }
 
 bool GameplayLayer::OnKeyPressedEvent(const VIEngine::KeyPressedEvent& eventContext) {
-	using namespace VIEngine;
-	AnimatorComponent& animator = mActor.GetComponent<AnimatorComponent>();
-	if (eventContext.IsKey(EKeyCode::NUM_1)) {
-		animator.SetActiveAnimation("ZeroIdle");
-	}
-	else if (eventContext.IsKey(EKeyCode::NUM_2)) {
-		animator.SetActiveAnimation("ZeroWalkBlend");
-	}
-	else if (eventContext.IsKey(EKeyCode::NUM_3)) {
-		animator.SetActiveAnimation("ZeroWalk");
-	}
 	return false;
 }
 
