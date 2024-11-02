@@ -20,6 +20,7 @@ namespace VIEngine {
 
 		virtual void OnReset() override;
 		virtual VertexArray* NewVertexArray(bool useBatchVertex) override;
+		virtual VertexArray* NewVertexArray(const VertexFormat& vertexFormat) override;
 		virtual void FreeVertexArray(VertexArray* memory) override;
 		virtual class VertexBuffer* NewVertexBuffer() override;
 		virtual void FreeVertexBuffer(class VertexBuffer* memory) override;

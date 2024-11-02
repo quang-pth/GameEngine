@@ -4,6 +4,7 @@
 #include"Shader.h"
 #include"Texture2D.h"
 #include"ResourceManager.h"
+#include"VertexFormat.h"
 
 namespace VIEngine {
 	Sprite* Sprite::Create(const std::string& filepath) {
@@ -11,6 +12,14 @@ namespace VIEngine {
 	}
 
     Sprite::Sprite(const std::string& filepath) : mFilePath(filepath), mName(filepath) {
+		VertexFormat vertexFormat;
+		vertexFormat.AddAttribute(EVertexAttributeType::Float3, "aPosition");
+		vertexFormat.AddAttribute(EVertexAttributeType::Float2, "aTexCoords");
+		vertexFormat.AddAttribute(EVertexAttributeType::Int, "aTextureID");
+		vertexFormat.AddAttribute(EVertexAttributeType::Int, "aFlipVertical");
+		vertexFormat.AddAttribute(EVertexAttributeType::Int, "aFlipHorizontal");
+		vertexFormat.AddAttribute(EVertexAttributeType::Float4, "aColor");
+
 	    mVertexArray = VertexArray::Create();
 		Vertex vertices[4] = {
 			{glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f), mColor}, // top-left

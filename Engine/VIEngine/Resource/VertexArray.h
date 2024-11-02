@@ -3,6 +3,7 @@
 #include"pch.h"
 #include"Core/Type/Object.h"
 #include"Renderer/RendererAPI.h"
+#include"VertexFormat.h"
 
 namespace VIEngine {
 	class VI_API VertexArray : public Object {
@@ -10,6 +11,7 @@ namespace VIEngine {
 		DECLARE_RTTI
 	public:
 		static VertexArray* Create(bool useBatchedVertex = false);
+		static VertexArray* Create(const VertexFormat& vertexFormat);
 	public:
 		virtual ~VertexArray() = default;
 		virtual class VertexBuffer* GetVertexBuffer() = 0;

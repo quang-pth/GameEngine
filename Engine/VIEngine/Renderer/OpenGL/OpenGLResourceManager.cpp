@@ -35,6 +35,11 @@ namespace VIEngine {
 	{
 		return mVertexArrayMemoryManager.NewObject(useBatchVertex);
 	}
+	
+	VertexArray* OpenGLResourceManager::NewVertexArray(const VertexFormat& vertexFormat)
+	{
+		return mVertexArrayMemoryManager.NewObject(vertexFormat);
+	}
 
 	void OpenGLResourceManager::FreeVertexArray(VertexArray* memory)
 	{

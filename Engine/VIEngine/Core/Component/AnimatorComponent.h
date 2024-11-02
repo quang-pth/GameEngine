@@ -3,6 +3,7 @@
 #include"ECS/IComponent.h"
 #include"Core/Type/Actor.h"
 #include"Animation/Animation.h"
+#include<glm/glm.hpp>
 
 namespace VIEngine {
 	class VI_API AnimatorComponent : public ECS::Component<AnimatorComponent, Actor> {
@@ -23,6 +24,7 @@ namespace VIEngine {
 		VI_FORCE_INLINE float GetFrameTime() const { return mFrameTime; }
 		void SetFlipHorizontal(bool flip);
 		void SetFlipVertical(bool flip);
+		void SetColor(const glm::vec4& color);
 	private:
 		std::unordered_map<UUID, Animation*> mAnimationMap;
 		UUID mActiveAnimationID;

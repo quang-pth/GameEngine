@@ -5,6 +5,7 @@
 #include"Texture2D.h"
 #include"Memory/MemoryChunkManager.h"
 #include"Sprite.h"
+#include"VertexFormat.h"
 
 namespace VIEngine {
 	class VI_API ResourceManager {
@@ -20,6 +21,7 @@ namespace VIEngine {
 
 		virtual void OnReset();
 		virtual class VertexArray* NewVertexArray(bool useBatchVertex) = 0;
+		virtual class VertexArray* NewVertexArray(const VertexFormat& vertexFormat) = 0;
 		virtual void FreeVertexArray(class VertexArray* memory) = 0;
 		virtual class VertexBuffer* NewVertexBuffer() = 0;
 		virtual void FreeVertexBuffer(class VertexBuffer* memory) = 0;

@@ -77,4 +77,12 @@ namespace VIEngine {
 			}
 		}
 	}
+
+	void AnimatorComponent::SetColor(const glm::vec4& color) {
+		for (auto& [_, animation] : mAnimationMap) {
+			for (Sprite* sprite : animation->GetSprites()) {
+				sprite->SetColor(color);
+			}
+		}
+	}
 }
