@@ -6,6 +6,7 @@
 #include"Resource/Shader.h"
 #include"Resource/VertexArray.h"
 #include"Resource/IndexBuffer.h"
+#include"Resource/Sprite.h"
 #include"Core/Component/TransformComponent.h"
 #include"Core/Logger/Logger.h"
 
@@ -48,10 +49,7 @@ namespace VIEngine {
 
 			TransformComponent& transform = animator->GetOwner().GetComponent<TransformComponent>();
 			
-			Texture2D* texture = activeAnimation->CurrentFrame();
-			Vertex* vertices = (Vertex*)animator->GetVertexArray()->GetVertexBuffer()->GetData();
-			uint32_t* indices = (uint32_t*)animator->GetVertexArray()->GetIndexBuffer()->GetData();
-			mBatchRenderer.InsertBatch(transform.GetTransform(), vertices, indices, texture, animator->GetFlipVertical(), animator->GetFlipHorizontal());
+			mBatchRenderer.InsertBatch(transform.GetTransform(), activeAnimation->CurrentFrame());
 		}
 		mBatchRenderer.Submit();
 	}

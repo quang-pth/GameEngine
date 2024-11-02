@@ -17,6 +17,7 @@ namespace VIEngine {
 		int TextureID;
 		int FlipVertical;
 		int FlipHorizontal;
+		glm::vec4 Color;
 	};
 
 	class VI_API VertexBuffer : public Object {

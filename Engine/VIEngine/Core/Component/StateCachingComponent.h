@@ -5,14 +5,12 @@
 #include<glm/glm.hpp>
 
 namespace VIEngine {
-    class VI_API DirtySpriteComponent : public ECS::Component<DirtySpriteComponent, Actor> {
+    class VI_API StateCachingComponent : public ECS::Component<StateCachingComponent, Actor> {
         public:
             DECLARE_RTTI
         public:
-            DirtySpriteComponent();
-            ~DirtySpriteComponent();
-            VI_FORCE_INLINE bool GetIsDirty() const { return mIsDirty; }
-            VI_FORCE_INLINE void SetIsDirty(bool isDirty) { mIsDirty = isDirty; }
+            StateCachingComponent();
+            ~StateCachingComponent();
             VI_FORCE_INLINE const glm::vec3& GetPosition() const { return mPreviousPosition; }
             VI_FORCE_INLINE void SetPosition(const glm::vec3& position) { mPreviousPosition = position; }
             VI_FORCE_INLINE const glm::vec3& GetScale() const { return mPreviousScale; }
@@ -23,6 +21,5 @@ namespace VIEngine {
             glm::vec3 mPreviousPosition;           
             glm::vec3 mPreviousScale;           
             glm::vec3 mPreviousRotation;           
-            bool mIsDirty;
     };
 }

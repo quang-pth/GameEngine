@@ -1,9 +1,10 @@
 #include"BatchRenderer.h"
 #include"Resource/Texture2D.h"
+#include"Resource/Sprite.h"
 
 namespace VIEngine {
 	BatchRenderer::BatchRenderer() : mRenderBatches() {
-		mRenderBatches.push_back(RenderBatch());
+		mRenderBatches.emplace_back();
 	}
 
 	BatchRenderer::~BatchRenderer() {
@@ -18,17 +19,18 @@ namespace VIEngine {
 	
 	void BatchRenderer::Clear() {
 		mRenderBatches.clear();
-		mRenderBatches.push_back(RenderBatch());
+		mRenderBatches.emplace_back();
 	}
 
-	void BatchRenderer::InsertBatch(const Transform& transform, Vertex* vertices, uint32_t* indices, Texture2D* texture, bool flipVertical, bool flipHorizontal)
+	void BatchRenderer::InsertBatch(const Transform& transform, Sprite* sprite)
 	{
 		RenderBatch* batch = &mRenderBatches.back();
 		if (!batch->HasSlot()) {
-			mRenderBatches.push_back(RenderBatch());
+			mRenderBatches.emplace_back();
 			batch = &mRenderBatches.back();
 		}
 
-		batch->Insert(transform, vertices, indices, texture, flipVertical, flipHorizontal);
+		// TODO: Cache not need update vertices and indicies data
+		batch->Insert(transform, sprite);
 	}
 }

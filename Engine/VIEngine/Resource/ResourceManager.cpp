@@ -33,4 +33,20 @@ namespace VIEngine {
 	{
 		sInstance->OnReset();
 	}
+
+	ResourceManager::ResourceManager() : mSpriteMemoryManager("SpriteMemoryManager") {
+
+	}
+
+	void ResourceManager::OnReset() {
+		mSpriteMemoryManager.Reset();
+	}
+
+	Sprite* ResourceManager::NewSprite(const std::string& filepath) {
+		return mSpriteMemoryManager.NewObject(filepath);
+	}
+
+	void ResourceManager::FreeSprite(Sprite* sprite) {
+		mSpriteMemoryManager.FreeObject(sprite);
+	}
 }

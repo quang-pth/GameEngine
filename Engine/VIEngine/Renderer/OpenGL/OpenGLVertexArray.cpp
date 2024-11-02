@@ -39,6 +39,8 @@ namespace VIEngine {
 				glEnableVertexAttribArray(3);
 				glVertexAttribIPointer(4, 1, GL_INT, sizeof(BatchedVertex), (void*)offsetof(BatchedVertex, FlipHorizontal));
 				glEnableVertexAttribArray(4);
+				glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(BatchedVertex), (void*)offsetof(BatchedVertex, Color));
+				glEnableVertexAttribArray(5);
 			}
 			mVertexBuffer->SetID(vertexBufferID);
 			// Index Buffer

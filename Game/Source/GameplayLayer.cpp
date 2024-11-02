@@ -2,6 +2,7 @@
 #include<Renderer/Renderer.h>
 #include<Core/Component/AnimatorComponent.h>
 #include<Core/Component/TransformComponent.h>
+#include<Resource/Sprite.h>
 
 GameplayLayer::GameplayLayer() {
 
@@ -23,24 +24,24 @@ void GameplayLayer::OnAttach() {
 	mTexture2 = Texture2D::Create("Assets/test-zero.png");
 
 	Animation* idleAnimation = Animation::Create("ZeroIdle");
-	idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle00.png");
-	idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle01.png");
-	idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle02.png");
-	idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle03.png");
-	idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle04.png");
-	idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle05.png");
+	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle00.png");
+	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle01.png");
+	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle02.png");
+	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle03.png");
+	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle04.png");
+	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle05.png");
 
 	Animation* walkAnimation = Animation::Create("ZeroWalk");
-	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk01.png");
-	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk02.png");
-	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk03.png");
-	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk04.png");
-	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk05.png");
-	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk06.png");
-	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk07.png");
-	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk08.png");
-	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk09.png");
-	walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk10.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk01.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk02.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk03.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk04.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk05.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk06.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk07.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk08.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk09.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk10.png");
 
 	mActor = CreateActor();
 
@@ -53,32 +54,41 @@ void GameplayLayer::OnAttach() {
 	for (uint8_t i = 0; i < 10; i++) {
 		for (uint8_t j = 0; j < 10; j++) {
 			Animation* idleAnimation = Animation::Create("ZeroIdle[" + std::to_string(i) + ", " + std::to_string(j) + "]");
-			idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle00.png");
-			idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle01.png");
-			idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle02.png");
-			idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle03.png");
-			idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle04.png");
-			idleAnimation->AddTexture("Assets/Sprite/Zero/idle/idle05.png");
+			idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle00.png")->SetColor(glm::vec4(0.5f));
+			idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle01.png")->SetColor(glm::vec4(0.5f));
+			idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle02.png")->SetColor(glm::vec4(0.5f));
+			idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle03.png")->SetColor(glm::vec4(0.5f));
+			idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle04.png")->SetColor(glm::vec4(0.5f));
+			idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle05.png")->SetColor(glm::vec4(0.5f));
 
 			Animation* walkAnimation = Animation::Create("ZeroWalk[" + std::to_string(i) + ", " + std::to_string(j) + "]");
-			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk01.png");
-			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk02.png");
-			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk03.png");
-			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk04.png");
-			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk05.png");
-			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk06.png");
-			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk07.png");
-			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk08.png");
-			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk09.png");
-			walkAnimation->AddTexture("Assets/Sprite/Zero/walk/walk10.png");
+			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk01.png");
+			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk02.png");
+			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk03.png");
+			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk04.png");
+			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk05.png");
+			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk06.png");
+			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk07.png");
+			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk08.png");
+			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk09.png");
+			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk10.png");
 
 			Actor actor2 = CreateActor();
 			TransformComponent& transformComponent = actor2.GetComponent<TransformComponent>();
 			transformComponent.SetPositionX(-10.0f + j * 2.0f + 1.0f);
 			transformComponent.SetPositionY(10.0f - i * 2.0f - 1.0f);
 			AnimatorComponent& animator2 = actor2.AddComponent<AnimatorComponent>();
-			animator2.AddAnimation(walkAnimation);
-			animator2.SetFPS(120);
+			
+			if (j % 2 == 0) {
+				animator2.AddAnimation(walkAnimation);
+				animator2.SetFPS(120);
+			}
+			else {
+				animator2.AddAnimation(idleAnimation);
+				animator2.SetFPS(12);
+				animator2.SetFlipHorizontal(true);
+				animator2.SetFlipVertical(true);
+			}
 		}
 	}
 

@@ -1,12 +1,13 @@
 #include"Animation.h"
 #include"AnimationResourceManager.h"
+#include"Resource/Sprite.h"
 
 namespace VIEngine {
 	Animation* Animation::Create(const std::string& name) {
 		return AnimationResourceManager::Get().NewAnimation(name);
 	}
 
-	Animation::Animation(const std::string& name) : mName(name), mTextures(), mNameHashID(GetHashID(name)), mCurrentFrameIdx(0), mIsLoop(true)
+	Animation::Animation(const std::string& name) : mName(name), mSprites(), mNameHashID(GetHashID(name)), mCurrentFrameIdx(0), mIsLoop(true)
 	{
 
 	}
@@ -16,81 +17,68 @@ namespace VIEngine {
 	}
 
 	void Animation::NextFrame() {
-		if (!mIsLoop && mCurrentFrameIdx == mTextures.size() - 1) {
+		if (!mIsLoop && mCurrentFrameIdx == mSprites.size() - 1) {
 			return;
 		}
 
 		mCurrentFrameIdx++;
 
-		if (mCurrentFrameIdx >= mTextures.size()) {
-			mCurrentFrameIdx -= mTextures.size();
+		if (mCurrentFrameIdx >= mSprites.size()) {
+			mCurrentFrameIdx -= mSprites.size();
 		}
 	}
 
-	void Animation::AddTexture(Texture2D* texture)
+	Sprite* Animation::AddSprite(const std::string& filepath)
 	{
-		mTextures.emplace_back(texture);
+		mSprites.emplace_back(Sprite::Create(filepath));
+		return mSprites.back();
 	}
 
 	void Animation::Release() {
-		for (Texture2D* texture : mTextures) {
-			texture->Release();
+		for (Sprite* sprite : mSprites) {
+			sprite->Release();
 		}
-		mTextures.clear();
+		mSprites.clear();
 		//AnimationResourceManager::Get().FreeAnimation(this);
 	}
 
-	Texture2D* Animation::AddTexture(const std::string& filepath)
+	void Animation::RemoveSprite(const std::string& name)
 	{
-		Texture2D* texture = Texture2D::Create(filepath);
-		mTextures.emplace_back(texture);
-
-		return texture;
-	}
-
-	void Animation::RemoveTexture(Texture2D* texture)
-	{
-		auto iter = std::find(mTextures.begin(), mTextures.end(), texture);
-		if (iter != mTextures.end()) {
-			mTextures.erase(iter);
-		}
-	}
-
-	void Animation::RemoveTexture(const std::string& name)
-	{
-		auto iter = mTextures.begin();
-		for (; iter != mTextures.end(); iter++) {
+		auto iter = mSprites.begin();
+		for (; iter != mSprites.end(); iter++) {
 			if ((*iter)->GetName() == name) {
 				break;
 			}
 		}
 
-		if (iter != mTextures.end()) {
-			mTextures.erase(iter);
+		if (iter != mSprites.end()) {
+			(*iter)->Release();
+			mSprites.erase(iter);
 		}
 	}
 	
-	void Animation::RemoveTexture(UUID nameHashID)
+	void Animation::RemoveSprite(UUID nameHashID)
 	{
-		auto iter = mTextures.begin();
-		for (; iter != mTextures.end(); iter++) {
+		auto iter = mSprites.begin();
+		for (; iter != mSprites.end(); iter++) {
 			if (GetHashID((*iter)->GetName()) == nameHashID) {
 				break;
 			}
 		}
 
-		if (iter != mTextures.end()) {
-			mTextures.erase(iter);
+		if (iter != mSprites.end()) {
+			(*iter)->Release();
+			mSprites.erase(iter);
 		}
 	}
 
-	Texture2D* Animation::GetTexture(uint16_t idx) const
+	Sprite* Animation::GetSprite(uint16_t idx) const
 	{
-		if (idx >= mTextures.size()) {
-			CORE_LOG_WARN("Animation {0} has {1} frames, but accessed at an invalid index {2}", mName, mTextures.size(), idx);
+		if (idx >= mSprites.size()) {
+			CORE_LOG_WARN("Animation {0} has {1} frames, but accessed at an invalid index {2}", mName, mSprites.size(), idx);
 			return nullptr;
 		}
 
-		return mTextures[idx];
+		return mSprites[idx];
 	}
 }

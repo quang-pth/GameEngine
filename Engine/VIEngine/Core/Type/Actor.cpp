@@ -1,7 +1,7 @@
 #include"Actor.h"
 #include"Core/Component/InfoComponent.h"
 #include"Core/Component/TransformComponent.h"
-#include"Core/Component/DirtySpriteComponent.h"
+#include"Core/Component/StateCachingComponent.h"
 
 namespace VIEngine {
 	DEFINE_RTTI(Actor, Object::RunTimeType)
@@ -10,7 +10,7 @@ namespace VIEngine {
 		mID = mCoordinator->AddEntity();
 		AddComponent<TransformComponent>();
 		AddComponent<InfoComponent>("Actor");
-		AddComponent<DirtySpriteComponent>();
+		AddComponent<StateCachingComponent>();
 	}
 	
 	Actor::Actor(ECS::EntityID id, ECS::Coordinator* coordinator) : mID(id), mCoordinator(coordinator) {

@@ -2,29 +2,16 @@
 #include"Resource/VertexBuffer.h"
 #include"Resource/VertexArray.h"
 #include"Resource/Shader.h"
+#include"Resource/Sprite.h"
 #include<glm/glm.hpp>
 
 namespace VIEngine {
 	DEFINE_RTTI_NO_PARENT(AnimatorComponent)
 
 	AnimatorComponent::AnimatorComponent() : 
-		mActiveAnimationID(), mFPS(24), mFrameTime(0.0f), mVertexArray(nullptr), mShader(),
-		mFlipHorizontal(false), mFlipVertical(false)
+		mActiveAnimationID(), mFPS(24), mFrameTime(0.0f) 
 	{
-		mVertexArray = VertexArray::Create();
-		Vertex vertices[4] = {
-			{glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec4(1.0f, 0.0f, 0.0f, 1.0f)}, // top-left
-			{glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f)}, // bottom-left
-			{glm::vec3(0.5f, -0.5f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec4(0.0f, 1.0f, 0.0f, 1.0f)}, // bottom-right
-			{glm::vec3(0.5f, 0.5f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec4(0.0f, 1.0f, 1.0f, 1.0f)} // top-right
-		};
-		uint32_t indicies[6] = {
-			0, 1, 2, // left-bottom triangle
-			2, 3, 0 // right-top triangle
-		};
-		mVertexArray->SetVertexBuffer(vertices, sizeof(vertices));
-		mVertexArray->SetIndexBuffer(indicies, sizeof(indicies), sizeof(indicies) / sizeof(uint32_t));
-		mShader = Shader::Create("Assets/Shader/sprite.glsl");
+		
 	}
 
 	AnimatorComponent::~AnimatorComponent() {
@@ -73,5 +60,21 @@ namespace VIEngine {
 	{
 		VI_ASSERT(mAnimationMap.count(hashNameID) > 0 && "Invalid animation hash name");
 		return mAnimationMap.at(hashNameID);
+	}
+
+	void AnimatorComponent::SetFlipHorizontal(bool flip) {
+		for (auto& [_, animation] : mAnimationMap) {
+			for (Sprite* sprite : animation->GetSprites()) {
+				sprite->SetFlipHorizontal(flip);
+			}
+		}
+	}
+
+	void AnimatorComponent::SetFlipVertical(bool flip) {
+		for (auto& [_, animation] : mAnimationMap) {
+			for (Sprite* sprite : animation->GetSprites()) {
+				sprite->SetFlipVertical(flip);
+			}
+		}
 	}
 }

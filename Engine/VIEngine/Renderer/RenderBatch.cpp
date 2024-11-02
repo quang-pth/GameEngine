@@ -5,6 +5,7 @@
 #include"Resource/IndexBuffer.h"
 #include"Resource/Texture2D.h"
 #include"Resource/Shader.h"
+#include"Resource/Sprite.h"
 
 #include"Renderer/Camera/Camera.h"
 #include<glm/gtc/matrix_transform.hpp>
@@ -16,8 +17,8 @@ namespace VIEngine {
     }
 
     RenderBatch::~RenderBatch() {
-
-    }
+		mVertexArray->Release();
+	}
 
     void RenderBatch::Submit() {
 		// TODO: Make camera configurable later
@@ -44,15 +45,18 @@ namespace VIEngine {
         return mBatchCount < MAX_BATCH_SIZE && mTextureCount < MAX_TEXTURE_UNITS;
     }
 
-    void RenderBatch::Insert(const Transform& transform, Vertex* vertices, uint32_t* indices, Texture2D* texture, bool flipVertical, bool flipHorizontal) 
+    void RenderBatch::Insert(const Transform& transform, Sprite* sprite) 
 	{
+		Texture2D* texture = sprite->GetTexture();
+		VertexBuffer* vertexBuffer = sprite->GetVertexArray()->GetVertexBuffer();
+		IndexBuffer* indexBuffer = sprite->GetVertexArray()->GetIndexBuffer();
+
 		int8_t selectedTextureID = mTextureCount - 1;
 		for (int8_t i = 0; i < mTextureCount; i++) {
 			if (mTextures[i]->GetName() == texture->GetName()) {
 				selectedTextureID = i;
 				break;
 			}
-
 		}
 
 		if (selectedTextureID == mTextureCount - 1) {
@@ -66,12 +70,16 @@ namespace VIEngine {
 		// TODO: Add rotation later
 		//model = glm::rotate(model, transform.Rotation.y, glm::vec3());
 
+		Vertex* vertices = (Vertex*)vertexBuffer->GetData();
+		uint32_t* indices = (uint32_t*)indexBuffer->GetData();
+
 		for (uint8_t i = 0; i < 4; i++) {
 			mVertices[mBatchCount * 4 + i].Position = glm::vec3(model * glm::vec4(vertices[i].Position, 1.0f));
 			mVertices[mBatchCount * 4 + i].TexCoords = vertices[i].TexCoords;
 			mVertices[mBatchCount * 4 + i].TextureID = selectedTextureID;
-			mVertices[mBatchCount * 4 + i].FlipVertical = flipVertical;
-			mVertices[mBatchCount * 4 + i].FlipHorizontal = flipHorizontal;
+			mVertices[mBatchCount * 4 + i].FlipVertical = sprite->GetFlipVertical();
+			mVertices[mBatchCount * 4 + i].FlipHorizontal = sprite->GetFlipHorizontal();
+			mVertices[mBatchCount * 4 + i].Color = sprite->GetColor();
 		}
 
 		for (uint8_t i = 0; i < 6; i++) {

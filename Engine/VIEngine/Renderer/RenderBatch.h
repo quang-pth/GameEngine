@@ -14,7 +14,7 @@ namespace VIEngine {
 			~RenderBatch();
 			void Submit();
 			bool HasSlot() const;
-			void Insert(const Transform& transform, class Vertex* vertices, uint32_t* indices, class Texture2D* texture, bool flipVertical, bool flipHorizontal);
+			void Insert(const Transform& transform, class Sprite* sprite);
 		private:
 			std::array<BatchedVertex, MAX_BATCH_SIZE * 4> mVertices;
 			std::array<uint32_t, MAX_BATCH_SIZE * 6> mIndices;
@@ -23,6 +23,7 @@ namespace VIEngine {
 			int8_t mBatchCount;
 			class VertexArray* mVertexArray;
             class Shader* mShader;
+			std::vector<uint16_t> mFreeSlots;
 	};
 
 }

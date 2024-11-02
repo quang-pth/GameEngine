@@ -23,6 +23,7 @@ namespace VIEngine {
 
 	void OpenGLResourceManager::OnReset()
 	{
+		ResourceManager::OnReset();
 		mVertexArrayMemoryManager.Reset();
 		mVertexBufferMemoryManager.Reset();
 		mIndexBufferMemoryManager.Reset();

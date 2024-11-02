@@ -13,7 +13,7 @@ namespace VIEngine {
 
 		void Submit();
 		void Clear();
-		void InsertBatch(const Transform& transform, Vertex* vertices, uint32_t* indices, class Texture2D*, bool flipVertical, bool flipHorizontal);
+		void InsertBatch(const Transform& transform, class Sprite* sprite);
 	private:
 		std::vector<RenderBatch> mRenderBatches;
 	};

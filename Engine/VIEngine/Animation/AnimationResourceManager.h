@@ -2,6 +2,7 @@
 
 #include"Memory/MemoryChunkManager.h"
 #include"Animation.h"
+#include"Core/Type/RTTI.h"
 
 namespace VIEngine {
 	class VI_API AnimationResourceManager {

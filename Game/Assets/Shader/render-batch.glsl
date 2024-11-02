@@ -6,11 +6,13 @@ layout(location = 1) in vec2 aTexCoords;
 layout(location = 2) in int aTextureID;
 layout(location = 3) in int aFlipVertical;
 layout(location = 4) in int aFlipHorizontal;
+layout(location = 5) in vec4 aColor;
 
 out vec2 TexCoords;
 out flat int TextureID;
 out flat int FlipVertical;
 out flat int FlipHorizontal;
+out vec4 Color;
 
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
@@ -20,6 +22,7 @@ void main() {
 	TextureID = aTextureID;
 	FlipVertical = aFlipVertical;
 	FlipHorizontal = aFlipHorizontal;
+	Color = aColor;
 
 	gl_Position = projectionMatrix * viewMatrix * vec4(aPosition, 1.0);
 }
@@ -34,6 +37,7 @@ in vec2 TexCoords;
 in flat int TextureID;
 in flat int FlipVertical;
 in flat int FlipHorizontal;
+in vec4 Color;
 
 uniform sampler2D textures[16];
 
@@ -48,5 +52,5 @@ void main() {
 		sampleCoords.x = 1.0 - sampleCoords.x;
 	}
 
-	finalColor = texture(textures[TextureID], sampleCoords);
+	finalColor = texture(textures[TextureID], sampleCoords) * Color;
 }
