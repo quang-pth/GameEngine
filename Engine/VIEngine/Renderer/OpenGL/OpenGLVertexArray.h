@@ -1,13 +1,15 @@
 #pragma once
 
 #include"Resource/VertexArray.h"
+#include"Resource/VertexFormat.h"
+#include"Memory/MemoryManager.h"
 
 namespace VIEngine {
 	class VI_API OpenGLVertexArray : public VertexArray {
 	public:
 		DECLARE_RTTI
 	public:
-		OpenGLVertexArray(bool useBatchedVertex = false);
+		OpenGLVertexArray(const VertexFormat& vertexFormat);
 		~OpenGLVertexArray();
 		VI_FORCE_INLINE virtual class VertexBuffer* GetVertexBuffer() override { return mVertexBuffer; }
 		VI_FORCE_INLINE virtual class IndexBuffer* GetIndexBuffer() override { return mIndexBuffer; }
@@ -20,5 +22,7 @@ namespace VIEngine {
 		uint32_t mID;
 		class VertexBuffer* mVertexBuffer;
 		class IndexBuffer* mIndexBuffer;
+		VertexFormat mVertexFormat;
+		MemoryManager mMemoryManager;
 	};
 }

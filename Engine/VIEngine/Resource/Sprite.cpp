@@ -4,23 +4,18 @@
 #include"Shader.h"
 #include"Texture2D.h"
 #include"ResourceManager.h"
-#include"VertexFormat.h"
 
 namespace VIEngine {
 	Sprite* Sprite::Create(const std::string& filepath) {
 		return ResourceManager::Get().NewSprite(filepath);
 	}
 
-    Sprite::Sprite(const std::string& filepath) : mFilePath(filepath), mName(filepath) {
-		VertexFormat vertexFormat;
-		vertexFormat.AddAttribute(EVertexAttributeType::Float3, "aPosition");
-		vertexFormat.AddAttribute(EVertexAttributeType::Float2, "aTexCoords");
-		vertexFormat.AddAttribute(EVertexAttributeType::Int, "aTextureID");
-		vertexFormat.AddAttribute(EVertexAttributeType::Int, "aFlipVertical");
-		vertexFormat.AddAttribute(EVertexAttributeType::Int, "aFlipHorizontal");
-		vertexFormat.AddAttribute(EVertexAttributeType::Float4, "aColor");
+    Sprite::Sprite(const std::string& filepath) : mFilePath(filepath), mName(filepath), mVertexFormat() {
+		mVertexFormat.AddAttribute(EVertexAttributeType::Float3, "aPosition");
+		mVertexFormat.AddAttribute(EVertexAttributeType::Float2, "aTexCoords");
+		mVertexFormat.AddAttribute(EVertexAttributeType::Float4, "aColor");
 
-	    mVertexArray = VertexArray::Create();
+	    mVertexArray = VertexArray::Create(mVertexFormat);
 		Vertex vertices[4] = {
 			{glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f), mColor}, // top-left
 			{glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f), mColor}, // bottom-left

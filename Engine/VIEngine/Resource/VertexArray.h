@@ -10,7 +10,6 @@ namespace VIEngine {
 	public:
 		DECLARE_RTTI
 	public:
-		static VertexArray* Create(bool useBatchedVertex = false);
 		static VertexArray* Create(const VertexFormat& vertexFormat);
 	public:
 		virtual ~VertexArray() = default;

@@ -11,46 +11,48 @@ namespace VIEngine {
     }
 
     void VertexFormat::AddAttribute(EVertexAttributeType type, const std::string& name, bool normalize) {
-        mVertexAttributes.push_back({type, normalize, mStride, mLocation, name});
-        mLocation++;
+        uint8_t numsComponent = 0;
+        uint8_t offset = mStride;
         switch (type)
         {
         case EVertexAttributeType::Int:
             mStride += sizeof(int);
+            numsComponent = 1;
             break;
         case EVertexAttributeType::Int2:
             mStride += sizeof(glm::ivec2);
+            numsComponent = 2;
             break;
         case EVertexAttributeType::Int3:
             mStride += sizeof(glm::ivec3);
+            numsComponent = 3;
             break;
         case EVertexAttributeType::Int4:
             mStride += sizeof(glm::ivec4);
+            numsComponent = 4;
             break;
         case EVertexAttributeType::Float:
             mStride += sizeof(float);
+            numsComponent = 1;
             break;
         case EVertexAttributeType::Float2:
             mStride += sizeof(glm::vec2);
+            numsComponent = 2;
             break;
         case EVertexAttributeType::Float3:
             mStride += sizeof(glm::vec3);
+            numsComponent = 3;
             break;
         case EVertexAttributeType::Float4:
             mStride += sizeof(glm::vec4);
-            break;
-        case EVertexAttributeType::Mat2:
-            mStride += sizeof(glm::mat2);
-            break;
-        case EVertexAttributeType::Mat3:
-            mStride += sizeof(glm::mat3);
-            break;
-        case EVertexAttributeType::Mat4:
-            mStride += sizeof(glm::mat4);
+            numsComponent = 4;
             break;
         default:
             VI_ASSERT(false && "Invalid vertex attribute type");
             break;
         }
+
+        mVertexAttributes.push_back({ type, normalize, offset, mLocation, name, numsComponent });
+        mLocation++;
     }
 }

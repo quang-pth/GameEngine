@@ -11,7 +11,7 @@ namespace VIEngine {
 	}
 
 	MemoryManager::~MemoryManager() {
-
+		MemoryMonitor::Get().Remove(this);
 	}
 
 	void MemoryManager::Update() {

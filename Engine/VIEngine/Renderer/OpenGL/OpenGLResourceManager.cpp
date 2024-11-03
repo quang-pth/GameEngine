@@ -13,7 +13,6 @@ namespace VIEngine {
 		mShaderMemoryManager("ShaderMemoryManager"),
 		mTexture2DMemoryManager("Texture2DMemoryManager")
 	{
-
 	}
 
 	OpenGLResourceManager::~OpenGLResourceManager()
@@ -29,11 +28,6 @@ namespace VIEngine {
 		mIndexBufferMemoryManager.Reset();
 		mShaderMemoryManager.Reset();
 		mTexture2DMemoryManager.Reset();
-	}
-
-	VertexArray* OpenGLResourceManager::NewVertexArray(bool useBatchVertex)
-	{
-		return mVertexArrayMemoryManager.NewObject(useBatchVertex);
 	}
 	
 	VertexArray* OpenGLResourceManager::NewVertexArray(const VertexFormat& vertexFormat)

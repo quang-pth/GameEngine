@@ -3,6 +3,7 @@
 #include"pch.h"
 #include"Core/Component/TransformComponent.h"
 #include"Resource/VertexBuffer.h"
+#include"Resource/VertexFormat.h"
 
 namespace VIEngine {
     constexpr uint8_t MAX_BATCH_SIZE = 50;
@@ -24,6 +25,7 @@ namespace VIEngine {
 			class VertexArray* mVertexArray;
             class Shader* mShader;
 			std::vector<uint16_t> mFreeSlots;
+			VertexFormat mVertexFormat;
 	};
 
 }

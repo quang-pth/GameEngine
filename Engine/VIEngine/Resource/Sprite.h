@@ -2,6 +2,7 @@
 
 #include"pch.h"
 #include<glm/glm.hpp>
+#include"VertexFormat.h"
 
 namespace VIEngine {
     class VI_API Sprite {
@@ -43,5 +44,6 @@ namespace VIEngine {
             std::string mFilePath;
             std::string mName;
             glm::vec4 mColor = glm::vec4(1.0f);
+            VertexFormat mVertexFormat;
     };
 }

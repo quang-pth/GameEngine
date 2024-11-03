@@ -11,10 +11,7 @@ namespace VIEngine {
         Float,
         Float2,
         Float3,
-        Float4,
-        Mat2,
-        Mat3,
-        Mat4
+        Float4
     };
 
     struct VI_API VertexAttribute {
@@ -23,6 +20,7 @@ namespace VIEngine {
         uint16_t Offset;
         uint16_t Location;
         std::string Name;
+        uint16_t NumsComponent;
     };
 
     class VI_API VertexFormat {

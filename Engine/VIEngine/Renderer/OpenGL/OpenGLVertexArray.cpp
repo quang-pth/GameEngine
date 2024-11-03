@@ -9,38 +9,32 @@
 
 namespace VIEngine {
 	DEFINE_RTTI(OpenGLVertexArray, VertexArray::RunTimeType)
-
-	OpenGLVertexArray::OpenGLVertexArray(bool useBatchedVertex) : 
-			mID(), mVertexBuffer(VertexBuffer::Create()), mIndexBuffer(IndexBuffer::Create())
+	
+	OpenGLVertexArray::OpenGLVertexArray(const VertexFormat& vertexFormat) 
+		: mID(), mVertexFormat(vertexFormat), mVertexBuffer(VertexBuffer::Create()), mIndexBuffer(IndexBuffer::Create()), mMemoryManager()
 	{
-		Renderer::Submit([this, useBatchedVertex]() {
+		Renderer::Submit([this]() {
 			glGenVertexArrays(1, &mID);
 			glBindVertexArray(mID);
 			// Vertex Buffer
 			uint32_t vertexBufferID;
 			glGenBuffers(1, &vertexBufferID);
 			glBindBuffer(GL_ARRAY_BUFFER, vertexBufferID);
-			if (!useBatchedVertex) {
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Position));
-				glEnableVertexAttribArray(0);
-				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
-				glEnableVertexAttribArray(1);
-				glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Color));
-				glEnableVertexAttribArray(2);
-			}
-			else {
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(BatchedVertex), (void*)offsetof(BatchedVertex, Position));
-				glEnableVertexAttribArray(0);
-				glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(BatchedVertex), (void*)offsetof(BatchedVertex, TexCoords));
-				glEnableVertexAttribArray(1);
-				glVertexAttribIPointer(2, 1, GL_INT, sizeof(BatchedVertex), (void*)offsetof(BatchedVertex, TextureID));
-				glEnableVertexAttribArray(2);
-				glVertexAttribIPointer(3, 1, GL_INT, sizeof(BatchedVertex), (void*)offsetof(BatchedVertex, FlipVertical));
-				glEnableVertexAttribArray(3);
-				glVertexAttribIPointer(4, 1, GL_INT, sizeof(BatchedVertex), (void*)offsetof(BatchedVertex, FlipHorizontal));
-				glEnableVertexAttribArray(4);
-				glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(BatchedVertex), (void*)offsetof(BatchedVertex, Color));
-				glEnableVertexAttribArray(5);
+			for (const VertexAttribute& attribute : mVertexFormat.GetVertexAttributes()) {
+				if (
+					attribute.Type == EVertexAttributeType::Int ||
+					attribute.Type == EVertexAttributeType::Int2 ||
+					attribute.Type == EVertexAttributeType::Int3 ||
+					attribute.Type == EVertexAttributeType::Int4
+				)
+				{
+					glVertexAttribIPointer(attribute.Location, attribute.NumsComponent, GL_INT, mVertexFormat.GetStride(), (void*)attribute.Offset);
+					glEnableVertexAttribArray(attribute.Location);
+				}
+				else {
+					glVertexAttribPointer(attribute.Location, attribute.NumsComponent, GL_FLOAT, attribute.Normalized ? GL_TRUE : GL_FALSE, mVertexFormat.GetStride(), (void*)attribute.Offset);
+					glEnableVertexAttribArray(attribute.Location);
+				}
 			}
 			mVertexBuffer->SetID(vertexBufferID);
 			// Index Buffer
@@ -49,7 +43,7 @@ namespace VIEngine {
 			mIndexBuffer->SetID(indexBufferID);
 		});
 	}
-
+	
 	OpenGLVertexArray::~OpenGLVertexArray() {
 
 	}

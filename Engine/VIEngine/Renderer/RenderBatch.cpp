@@ -11,9 +11,16 @@
 #include<glm/gtc/matrix_transform.hpp>
 
 namespace VIEngine {
-    RenderBatch::RenderBatch() : mTextureCount(0), mBatchCount(0), mVertices(), mIndices() {
+    RenderBatch::RenderBatch() : mTextureCount(0), mBatchCount(0), mVertices(), mIndices(), mVertexFormat() {
+		mVertexFormat.AddAttribute(EVertexAttributeType::Float3, "aPosition");
+		mVertexFormat.AddAttribute(EVertexAttributeType::Float2, "aTexCoords");
+		mVertexFormat.AddAttribute(EVertexAttributeType::Int, "aTextureID");
+		mVertexFormat.AddAttribute(EVertexAttributeType::Int, "aFlipVertical");
+		mVertexFormat.AddAttribute(EVertexAttributeType::Int, "aFlipHorizontal");
+		mVertexFormat.AddAttribute(EVertexAttributeType::Float4, "aColor");
+
+		mVertexArray = VertexArray::Create(mVertexFormat);
 		mShader = Shader::Create("Assets/Shader/render-batch.glsl");
-		mVertexArray = VertexArray::Create(true);
     }
 
     RenderBatch::~RenderBatch() {
@@ -26,7 +33,7 @@ namespace VIEngine {
 		static Camera camera = Camera(projection);
 		camera.Update();
 
-		mVertexArray->SetVertexBuffer(mVertices.data(), sizeof(BatchedVertex) * mBatchCount * 4);
+		mVertexArray->SetVertexBuffer(mVertices.data(), mVertexFormat.GetStride() * mBatchCount * 4);
 		mVertexArray->SetIndexBuffer(mIndices.data(), sizeof(uint32_t) * mBatchCount * 6, mBatchCount* 6);
 		
 		mShader->Bind();

@@ -68,7 +68,7 @@ namespace VIEngine {
 		ECS::SystemManager* mSystemManager;
 		ECS::Coordinator* mCoordinator;
 		EventDispatcher mEventDispatcher;
-		class InputState* mInputState;
+		struct InputState* mInputState;
 		Time mTime;
 		bool mIsRunning;
 		PerFrameData mPerFrameData;
