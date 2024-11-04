@@ -23,6 +23,5 @@ namespace VIEngine {
 		class VertexBuffer* mVertexBuffer;
 		class IndexBuffer* mIndexBuffer;
 		VertexFormat mVertexFormat;
-		MemoryManager mMemoryManager;
 	};
 }

@@ -11,7 +11,8 @@ namespace VIEngine {
 		mVertexBufferMemoryManager("VertexBufferMemoryManager"),
 		mIndexBufferMemoryManager("IndexBufferMemoryManager"),
 		mShaderMemoryManager("ShaderMemoryManager"),
-		mTexture2DMemoryManager("Texture2DMemoryManager")
+		mTexture2DMemoryManager("Texture2DMemoryManager"),
+		mGeneralMemoryManager()
 	{
 	}
 

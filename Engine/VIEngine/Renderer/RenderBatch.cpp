@@ -33,8 +33,8 @@ namespace VIEngine {
 		static Camera camera = Camera(projection);
 		camera.Update();
 
-		mVertexArray->SetVertexBuffer(mVertices.data(), mVertexFormat.GetStride() * mBatchCount * 4);
-		mVertexArray->SetIndexBuffer(mIndices.data(), sizeof(uint32_t) * mBatchCount * 6, mBatchCount* 6);
+		mVertexArray->SetVertexBuffer(mVertices.data(), sizeof(BatchedVertex) * mBatchCount * 4);
+		mVertexArray->SetIndexBuffer(mIndices.data(), sizeof(int) * mBatchCount * 6, mBatchCount * 6);
 		
 		mShader->Bind();
 		mShader->SetMatrix4("viewMatrix", camera.GetViewMatrix());
@@ -77,8 +77,8 @@ namespace VIEngine {
 		// TODO: Add rotation later
 		//model = glm::rotate(model, transform.Rotation.y, glm::vec3());
 
-		Vertex* vertices = (Vertex*)vertexBuffer->GetData();
-		uint32_t* indices = (uint32_t*)indexBuffer->GetData();
+		Vertex* vertices = Sprite::GetSharedVertexBuffer();
+		uint32_t* indices = Sprite::GetSharedIndexBuffer();
 
 		for (uint8_t i = 0; i < 4; i++) {
 			mVertices[mBatchCount * 4 + i].Position = glm::vec3(model * glm::vec4(vertices[i].Position, 1.0f));

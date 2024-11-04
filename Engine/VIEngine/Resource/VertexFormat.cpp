@@ -11,8 +11,8 @@ namespace VIEngine {
     }
 
     void VertexFormat::AddAttribute(EVertexAttributeType type, const std::string& name, bool normalize) {
-        uint8_t numsComponent = 0;
-        uint8_t offset = mStride;
+        uint16_t numsComponent = 0;
+        uint16_t offset = mStride;
         switch (type)
         {
         case EVertexAttributeType::Int:

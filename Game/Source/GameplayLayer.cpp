@@ -47,25 +47,25 @@ void GameplayLayer::OnAttach() {
 
 	for (uint8_t i = 0; i < 10; i++) {
 		for (uint8_t j = 0; j < 10; j++) {
-			Animation* idleAnimation = Animation::Create("ZeroIdle[" + std::to_string(i) + ", " + std::to_string(j) + "]");
-			idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle00.png");
-			idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle01.png");
-			idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle02.png");
-			idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle03.png");
-			idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle04.png");
-			idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle05.png");
+			Animation* idleAnimation2 = Animation::Create("ZeroIdle[" + std::to_string(i) + ", " + std::to_string(j) + "]");
+			idleAnimation2->AddSprite("Assets/Sprite/Zero/idle/idle00.png");
+			idleAnimation2->AddSprite("Assets/Sprite/Zero/idle/idle01.png");
+			idleAnimation2->AddSprite("Assets/Sprite/Zero/idle/idle02.png");
+			idleAnimation2->AddSprite("Assets/Sprite/Zero/idle/idle03.png");
+			idleAnimation2->AddSprite("Assets/Sprite/Zero/idle/idle04.png");
+			idleAnimation2->AddSprite("Assets/Sprite/Zero/idle/idle05.png");
 
-			Animation* walkAnimation = Animation::Create("ZeroWalk[" + std::to_string(i) + ", " + std::to_string(j) + "]");
-			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk01.png");
-			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk02.png");
-			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk03.png");
-			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk04.png");
-			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk05.png");
-			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk06.png");
-			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk07.png");
-			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk08.png");
-			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk09.png");
-			walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk10.png");
+			Animation* walkAnimation2 = Animation::Create("ZeroWalk[" + std::to_string(i) + ", " + std::to_string(j) + "]");
+			walkAnimation2->AddSprite("Assets/Sprite/Zero/walk/walk01.png");
+			walkAnimation2->AddSprite("Assets/Sprite/Zero/walk/walk02.png");
+			walkAnimation2->AddSprite("Assets/Sprite/Zero/walk/walk03.png");
+			walkAnimation2->AddSprite("Assets/Sprite/Zero/walk/walk04.png");
+			walkAnimation2->AddSprite("Assets/Sprite/Zero/walk/walk05.png");
+			walkAnimation2->AddSprite("Assets/Sprite/Zero/walk/walk06.png");
+			walkAnimation2->AddSprite("Assets/Sprite/Zero/walk/walk07.png");
+			walkAnimation2->AddSprite("Assets/Sprite/Zero/walk/walk08.png");
+			walkAnimation2->AddSprite("Assets/Sprite/Zero/walk/walk09.png");
+			walkAnimation2->AddSprite("Assets/Sprite/Zero/walk/walk10.png");
 
 			Actor actor2 = CreateActor();
 			TransformComponent& transformComponent = actor2.GetComponent<TransformComponent>();
@@ -74,14 +74,14 @@ void GameplayLayer::OnAttach() {
 			AnimatorComponent& animator2 = actor2.AddComponent<AnimatorComponent>();
 			
 			if (j % 2 == 0) {
-				animator2.AddAnimation(walkAnimation);
+				animator2.AddAnimation(walkAnimation2);
 				animator2.SetFPS(120);
-				animator2.SetFlipHorizontal(true);
+				animator2.SetFlipVertical(true);
 			}
 			else {
-				animator2.AddAnimation(idleAnimation); 
-				animator2.SetFPS(12);
-				animator2.SetFlipVertical(true);
+				animator2.AddAnimation(idleAnimation2);
+				animator2.SetFPS(24);
+				animator2.SetFlipHorizontal(true);
 			}
 		}
 	}
@@ -119,7 +119,7 @@ void GameplayLayer::OnProcessInput(const VIEngine::InputState& inputState) {
 	}
 	else {
 		animator.SetActiveAnimation("ZeroWalk");
-		animator.SetFPS(60);
+		animator.SetFPS(120);
 	}
 }
 

@@ -24,7 +24,6 @@ namespace VIEngine {
 			int8_t mBatchCount;
 			class VertexArray* mVertexArray;
             class Shader* mShader;
-			std::vector<uint16_t> mFreeSlots;
 			VertexFormat mVertexFormat;
 	};
 
