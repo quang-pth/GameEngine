@@ -16,34 +16,6 @@ void GameplayLayer::OnAttach() {
 	LOG_TRACE("GameplayLayer is attached");
 
 	using namespace VIEngine;
-		
-	Animation* idleAnimation = Animation::Create("ZeroIdle");
-	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle00.png");
-	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle01.png");
-	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle02.png");
-	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle03.png");
-	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle04.png");
-	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle05.png");
-
-	Animation* walkAnimation = Animation::Create("ZeroWalk");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk01.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk02.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk03.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk04.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk05.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk06.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk07.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk08.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk09.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk10.png");
-
-	mActor = CreateActor();
-
-	AnimatorComponent& animator = mActor.AddComponent<AnimatorComponent>();
-	animator.AddAnimation(idleAnimation);
-	animator.AddAnimation(walkAnimation);
-	animator.SetFPS(60);
-	animator.SetActiveAnimation(walkAnimation->GetName());
 
 	for (uint8_t i = 0; i < 10; i++) {
 		for (uint8_t j = 0; j < 10; j++) {
@@ -74,17 +46,43 @@ void GameplayLayer::OnAttach() {
 			AnimatorComponent& animator2 = actor2.AddComponent<AnimatorComponent>();
 			
 			if (j % 2 == 0) {
-				animator2.AddAnimation(walkAnimation2);
-				animator2.SetFPS(120);
-				animator2.SetFlipVertical(true);
-			}
-			else {
 				animator2.AddAnimation(idleAnimation2);
 				animator2.SetFPS(24);
-				animator2.SetFlipHorizontal(true);
+			}
+			else {
+				animator2.AddAnimation(walkAnimation2);
+				animator2.SetFPS(120);
 			}
 		}
 	}
+
+	Animation* idleAnimation = Animation::Create("ZeroIdle");
+	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle00.png");
+	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle01.png");
+	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle02.png");
+	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle03.png");
+	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle04.png");
+	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle05.png");
+
+	Animation* walkAnimation = Animation::Create("ZeroWalk");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk01.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk02.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk03.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk04.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk05.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk06.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk07.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk08.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk09.png");
+	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk10.png");
+
+	mActor = CreateActor();
+
+	AnimatorComponent& animator = mActor.AddComponent<AnimatorComponent>();
+	animator.AddAnimation(idleAnimation);
+	animator.AddAnimation(walkAnimation);
+	animator.SetFPS(120);
+	animator.SetActiveAnimation(walkAnimation->GetName());
 }
 
 void GameplayLayer::OnDetach() {
@@ -113,14 +111,14 @@ void GameplayLayer::OnProcessInput(const VIEngine::InputState& inputState) {
 		mMoveVertical += 1;
 	}
 
-	if (mMoveHorizontal == 0) {
-		animator.SetActiveAnimation("ZeroIdle");
-		animator.SetFPS(24);
-	}
-	else {
-		animator.SetActiveAnimation("ZeroWalk");
-		animator.SetFPS(120);
-	}
+	//if (mMoveHorizontal == 0) {
+	//	animator.SetActiveAnimation("ZeroIdle");
+	//	animator.SetFPS(24);
+	//}
+	//else {
+	//	animator.SetActiveAnimation("ZeroWalk");
+	//	animator.SetFPS(120);
+	//}
 }
 
 void GameplayLayer::OnUpdate(VIEngine::Time time) {

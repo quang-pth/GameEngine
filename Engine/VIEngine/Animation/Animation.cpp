@@ -17,7 +17,7 @@ namespace VIEngine {
 	}
 
 	void Animation::NextFrame() {
-		if (!mIsLoop && mCurrentFrameIdx == mSprites.size() - 1) {
+		if (!mIsLoop && mCurrentFrameIdx > mSprites.size() - 1) {
 			return;
 		}
 

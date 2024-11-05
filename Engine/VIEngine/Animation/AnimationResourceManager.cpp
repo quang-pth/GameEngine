@@ -32,7 +32,7 @@ namespace VIEngine {
 
 	Animation* AnimationResourceManager::NewAnimation(const std::string& name)
 	{
-		if (mAnimationMap.count(name)) {
+ 		if (mAnimationMap.count(name)) {
 			CORE_LOG_WARN("Create duplicated animation {0}, using the already existed one!", name);
 			return mAnimationMap.at(name);
 		}

@@ -61,6 +61,7 @@ namespace VIEngine {
 	void OpenGLVertexArray::SetVertexBuffer(void* data, uint32_t size, ERendererMode mode)
 	{
 		void* submitData = ResourceManager::Get().AllocatePerFrame(size, alignof(uint32_t));
+		//void* submitData = malloc(size);
 		memcpy(submitData, data, size);
 		mVertexBuffer->SetData(submitData, size);
 		mVertexBuffer->SetMode(mode);
@@ -75,6 +76,7 @@ namespace VIEngine {
 	void OpenGLVertexArray::SetIndexBuffer(void* data, uint32_t size, uint32_t nums, ERendererMode mode)
 	{
 		void* submitData = ResourceManager::Get().AllocatePerFrame(size, alignof(uint32_t));
+		//void* submitData = malloc(size);
 		memcpy(submitData, data, size);
 		mIndexBuffer->SetData(submitData, size);
 		mIndexBuffer->SetNums(nums);

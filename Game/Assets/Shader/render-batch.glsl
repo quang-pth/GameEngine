@@ -39,7 +39,7 @@ in flat int FlipVertical;
 in flat int FlipHorizontal;
 in vec4 Color;
 
-uniform sampler2D textures[16];
+uniform sampler2D textures[32];
 
 void main() {
 	vec2 sampleCoords = TexCoords;

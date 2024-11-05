@@ -21,7 +21,7 @@ namespace VIEngine {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glBindTexture(GL_TEXTURE_2D, 0);
-			ResourceManager::Get().FreeImageData(mData.Data);
+			ResourceManager::Get().FreeImageData(mData.Data); 
 		});
 	}
 

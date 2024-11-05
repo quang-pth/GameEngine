@@ -8,8 +8,6 @@ namespace VIEngine {
     class VI_API Sprite {
     public:
         static Sprite* Create(const std::string& filepath);
-        static class Vertex* GetSharedVertexBuffer();
-        static uint32_t* GetSharedIndexBuffer();
     public:
         Sprite() = default;
         Sprite(const std::string& filepath);

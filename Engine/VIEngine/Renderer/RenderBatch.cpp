@@ -11,7 +11,7 @@
 #include<glm/gtc/matrix_transform.hpp>
 
 namespace VIEngine {
-    RenderBatch::RenderBatch() : mTextureCount(0), mBatchCount(0), mVertices(), mIndices(), mVertexFormat() {
+    RenderBatch::RenderBatch() : mBatchCount(0), mVertices(), mIndices(), mVertexFormat() {
 		mVertexFormat.AddAttribute(EVertexAttributeType::Float3, "aPosition");
 		mVertexFormat.AddAttribute(EVertexAttributeType::Float2, "aTexCoords");
 		mVertexFormat.AddAttribute(EVertexAttributeType::Int, "aTextureID");
@@ -20,77 +20,54 @@ namespace VIEngine {
 		mVertexFormat.AddAttribute(EVertexAttributeType::Float4, "aColor");
 
 		mVertexArray = VertexArray::Create(mVertexFormat);
-		mShader = Shader::Create("Assets/Shader/render-batch.glsl");
     }
 
     RenderBatch::~RenderBatch() {
 		mVertexArray->Release();
 	}
 
-    void RenderBatch::Submit() {
-		// TODO: Make camera configurable later
-        static glm::mat4 projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -1.0f, 10.f);
-		static Camera camera = Camera(projection);
-		camera.Update();
-
+    void RenderBatch::SubmitVertexAndIndexBuffer() {
+		mVertexArray->Bind();
 		mVertexArray->SetVertexBuffer(mVertices.data(), sizeof(BatchedVertex) * mBatchCount * 4);
 		mVertexArray->SetIndexBuffer(mIndices.data(), sizeof(int) * mBatchCount * 6, mBatchCount * 6);
-		
-		mShader->Bind();
-		mShader->SetMatrix4("viewMatrix", camera.GetViewMatrix());
-		mShader->SetMatrix4("projectionMatrix", projection);
-		for (uint8_t i = 0; i < mTextureCount; i++) {
-			Renderer::ActivateTexture(i);
-			Renderer::BindTexture2D(mTextures[i]->GetID());
-			mShader->SetInt("textures[" + std::to_string(i) + "]", i);
-		}
-		mVertexArray->Bind();
 		Renderer::DrawIndexed(mVertexArray->GetIndexBuffer()->GetNums());
     }
 
     bool RenderBatch::HasSlot() const {
-        return mBatchCount < MAX_BATCH_SIZE && mTextureCount < MAX_TEXTURE_UNITS;
+        return mBatchCount < MAX_BATCH_SIZE;
     }
 
     void RenderBatch::Insert(const Transform& transform, Sprite* sprite) 
 	{
-		Texture2D* texture = sprite->GetTexture();
-		VertexBuffer* vertexBuffer = sprite->GetVertexArray()->GetVertexBuffer();
-		IndexBuffer* indexBuffer = sprite->GetVertexArray()->GetIndexBuffer();
-
-		int8_t selectedTextureID = mTextureCount - 1;
-		for (int8_t i = 0; i < mTextureCount; i++) {
-			if (mTextures[i]->GetName() == texture->GetName()) {
-				selectedTextureID = i;
-				break;
-			}
-		}
-
-		if (selectedTextureID == mTextureCount - 1) {
-			selectedTextureID = mTextureCount;
-			mTextures[mTextureCount++] = texture;
-		}
-
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::scale(model, transform.Scale);
 		model = glm::translate(model, transform.Position);
 		// TODO: Add rotation later
 		//model = glm::rotate(model, transform.Rotation.y, glm::vec3());
 
-		Vertex* vertices = Sprite::GetSharedVertexBuffer();
-		uint32_t* indices = Sprite::GetSharedIndexBuffer();
+		Vertex vertices[4] = {
+			{glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec4(1.0f)}, // top-left
+			{glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(1.0f)}, // bottom-left
+			{glm::vec3(0.5f, -0.5f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec4(1.0f)}, // bottom-right
+			{glm::vec3(0.5f, 0.5f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec4(1.0f)} // top-right
+		};
+
+		uint32_t indicies[6] = {
+			0, 1, 2, // left-bottom triangle
+			2, 3, 0 // right-top triangle
+		};
 
 		for (uint8_t i = 0; i < 4; i++) {
 			mVertices[mBatchCount * 4 + i].Position = glm::vec3(model * glm::vec4(vertices[i].Position, 1.0f));
 			mVertices[mBatchCount * 4 + i].TexCoords = vertices[i].TexCoords;
-			mVertices[mBatchCount * 4 + i].TextureID = selectedTextureID;
+			mVertices[mBatchCount * 4 + i].TextureID = sprite->GetSampleTextureID();
 			mVertices[mBatchCount * 4 + i].FlipVertical = sprite->GetFlipVertical();
 			mVertices[mBatchCount * 4 + i].FlipHorizontal = sprite->GetFlipHorizontal();
 			mVertices[mBatchCount * 4 + i].Color = sprite->GetColor();
 		}
 
 		for (uint8_t i = 0; i < 6; i++) {
-			mIndices[mBatchCount * 6 + i] = indices[i] + mBatchCount * 4;
+			mIndices[mBatchCount * 6 + i] = indicies[i] + mBatchCount * 4;
 		}
 
 		mBatchCount++;
