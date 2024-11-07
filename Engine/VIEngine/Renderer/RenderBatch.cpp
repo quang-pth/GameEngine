@@ -8,7 +8,10 @@
 #include"Resource/Sprite.h"
 
 #include"Renderer/Camera/Camera.h"
+#define GLM_ENABLE_EXPERIMENTAL
 #include<glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 
 namespace VIEngine {
     RenderBatch::RenderBatch() : mBatchCount(0), mVertices(), mIndices(), mVertexFormat() {
@@ -26,9 +29,9 @@ namespace VIEngine {
 		mVertexArray->Release();
 	}
 
-    void RenderBatch::SubmitVertexAndIndexBuffer() {
+    void RenderBatch::SubmitVerticesAndIndices() {
 		mVertexArray->Bind();
-		mVertexArray->SetVertexBuffer(mVertices.data(), sizeof(BatchedVertex) * mBatchCount * 4);
+		mVertexArray->SetVertexBuffer(mVertices.data(), mVertexFormat.GetStride() * mBatchCount * 4);
 		mVertexArray->SetIndexBuffer(mIndices.data(), sizeof(int) * mBatchCount * 6, mBatchCount * 6);
 		Renderer::DrawIndexed(mVertexArray->GetIndexBuffer()->GetNums());
     }
@@ -39,8 +42,12 @@ namespace VIEngine {
 
     void RenderBatch::Insert(const Transform& transform, Sprite* sprite) 
 	{
+		// Default order to apply rotation is z (roll), y (pitch), x (yaw)
+		glm::quat rotation = glm::quat(glm::vec3(glm::radians(transform.Rotation.x), glm::radians(transform.Rotation.y), glm::radians(transform.Rotation.z)));
+
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::scale(model, transform.Scale);
+		model = glm::toMat4(rotation) * model;
 		model = glm::translate(model, transform.Position);
 		// TODO: Add rotation later
 		//model = glm::rotate(model, transform.Rotation.y, glm::vec3());
@@ -60,9 +67,9 @@ namespace VIEngine {
 		for (uint8_t i = 0; i < 4; i++) {
 			mVertices[mBatchCount * 4 + i].Position = glm::vec3(model * glm::vec4(vertices[i].Position, 1.0f));
 			mVertices[mBatchCount * 4 + i].TexCoords = vertices[i].TexCoords;
-			mVertices[mBatchCount * 4 + i].TextureID = sprite->GetSampleTextureID();
-			mVertices[mBatchCount * 4 + i].FlipVertical = sprite->GetFlipVertical();
-			mVertices[mBatchCount * 4 + i].FlipHorizontal = sprite->GetFlipHorizontal();
+			mVertices[mBatchCount * 4 + i].TextureID = (int)sprite->GetSampleTextureID();
+			mVertices[mBatchCount * 4 + i].FlipVertical = (int)sprite->GetFlipVertical();
+			mVertices[mBatchCount * 4 + i].FlipHorizontal = (int)sprite->GetFlipHorizontal();
 			mVertices[mBatchCount * 4 + i].Color = sprite->GetColor();
 		}
 

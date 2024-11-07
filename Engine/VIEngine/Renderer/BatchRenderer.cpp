@@ -2,6 +2,8 @@
 #include"Resource/Texture2D.h"
 #include"Resource/Sprite.h"
 #include"Resource/Shader.h"
+#include"Resource/VertexArray.h"
+#include"Resource/IndexBuffer.h"
 #include"Renderer.h"
 #include"Renderer/Camera/Camera.h"
 #include<glm/gtc/matrix_transform.hpp>
@@ -24,20 +26,20 @@ namespace VIEngine {
 		mShader->Bind();
 		mShader->SetMatrix4("viewMatrix", camera.GetViewMatrix());
 		mShader->SetMatrix4("projectionMatrix", projection);
-		for (uint8_t i = 0; i < mTextureCount; i++) {
+		for (int8_t i = 0; i < mTextureCount; i++) {
 			Renderer::ActivateTexture(i);
 			Renderer::BindTexture2D(mTextures[i]->GetID());
 			mShader->SetInt("textures[" + std::to_string(i) + "]", i);
 		}
 
 		for (auto& renderBatch : mRenderBatches) {
-			renderBatch.SubmitVertexAndIndexBuffer();
+			renderBatch.SubmitVerticesAndIndices();
+			Renderer::DrawIndexed(renderBatch.GetVertexArray()->GetIndexBuffer()->GetNums());
 		}
 	}
 	
 	void BatchRenderer::Clear() {
 		mRenderBatches.clear();
-		mRenderBatches.emplace_back();
 		mTextureCount = 0;
 	}
 
@@ -54,10 +56,17 @@ namespace VIEngine {
 		}
 
 		if (selectedTextureID == -1) {
+			if (mTextureCount >= MAX_TEXTURE_UNITS) {
+				Submit();
+			}
 			selectedTextureID = mTextureCount;
 			mTextures[mTextureCount++] = texture;
 		}
 		sprite->SetSampleTextureID(selectedTextureID);
+
+		if (!mRenderBatches.size()) {
+			mRenderBatches.emplace_back();
+		}
 
 		RenderBatch* batch = &mRenderBatches.back();
 		if (!batch->HasSlot()) {

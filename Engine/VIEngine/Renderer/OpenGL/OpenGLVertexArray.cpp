@@ -4,6 +4,7 @@
 #include"Renderer/Renderer.h"
 #include"Resource/ResourceManager.h"
 #include"OpenGLFactory.h"
+#include"Core/Application.h"
 
 #include<glad/gl.h>
 
@@ -67,7 +68,6 @@ namespace VIEngine {
 		mVertexBuffer->SetMode(mode);
 
 		Renderer::Submit([this]() {
-			glBindVertexArray(mID);
 			glBindBuffer(GL_ARRAY_BUFFER, mVertexBuffer->GetID());
 			glBufferData(GL_ARRAY_BUFFER, mVertexBuffer->GetSize(), mVertexBuffer->GetData(), OpenGLFactory::ToOpenGLMode(mVertexBuffer->GetMode()));
 		});
@@ -83,7 +83,6 @@ namespace VIEngine {
 		mIndexBuffer->SetMode(mode);
 		
 		Renderer::Submit([this]() {
-			glBindVertexArray(mID);
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer->GetID());
 			glBufferData(GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer->GetSize(), mIndexBuffer->GetData(), OpenGLFactory::ToOpenGLMode(mIndexBuffer->GetMode()));
 		});

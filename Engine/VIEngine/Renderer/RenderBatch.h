@@ -12,13 +12,14 @@ namespace VIEngine {
 		public:
 			RenderBatch();
 			~RenderBatch();
-			void SubmitVertexAndIndexBuffer();
+			void SubmitVerticesAndIndices();
 			bool HasSlot() const;
 			void Insert(const Transform& transform, class Sprite* sprite);
+			VI_FORCE_INLINE class VertexArray* GetVertexArray() const { return mVertexArray; }
 		private:
 			std::array<BatchedVertex, MAX_BATCH_SIZE * 4> mVertices;
 			std::array<uint32_t, MAX_BATCH_SIZE * 6> mIndices;
-			int8_t mBatchCount;
+			int mBatchCount;
 			class VertexArray* mVertexArray;
             class Shader* mShader;
 			VertexFormat mVertexFormat;

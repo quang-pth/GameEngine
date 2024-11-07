@@ -43,15 +43,19 @@ void GameplayLayer::OnAttach() {
 			TransformComponent& transformComponent = actor2.GetComponent<TransformComponent>();
 			transformComponent.SetPositionX(-10.0f + j * 2.0f + 1.0f);
 			transformComponent.SetPositionY(10.0f - i * 2.0f - 1.0f);
+			transformComponent.SetRotationX(180.0f);
+			transformComponent.SetRotationY(180.0f);
 			AnimatorComponent& animator2 = actor2.AddComponent<AnimatorComponent>();
 			
 			if (j % 2 == 0) {
 				animator2.AddAnimation(idleAnimation2);
-				animator2.SetFPS(24);
+				animator2.SetFPS(60);
+				animator2.SetFlipHorizontal(true);
 			}
 			else {
 				animator2.AddAnimation(walkAnimation2);
 				animator2.SetFPS(120);
+				animator2.SetFlipVertical(true);
 			}
 		}
 	}
@@ -111,14 +115,14 @@ void GameplayLayer::OnProcessInput(const VIEngine::InputState& inputState) {
 		mMoveVertical += 1;
 	}
 
-	//if (mMoveHorizontal == 0) {
-	//	animator.SetActiveAnimation("ZeroIdle");
-	//	animator.SetFPS(24);
-	//}
-	//else {
-	//	animator.SetActiveAnimation("ZeroWalk");
-	//	animator.SetFPS(120);
-	//}
+	if (mMoveHorizontal == 0) {
+		animator.SetActiveAnimation("ZeroIdle");
+		animator.SetFPS(24);
+	}
+	else {
+		animator.SetActiveAnimation("ZeroWalk");
+		animator.SetFPS(120);
+	}
 }
 
 void GameplayLayer::OnUpdate(VIEngine::Time time) {
@@ -134,23 +138,6 @@ void GameplayLayer::OnUpdate(VIEngine::Time time) {
 	TransformComponent& transform = mActor.GetComponent<TransformComponent>();
 	transform.SetPositionX(transform.GetPosition().x + mMoveHorizontal * mSpeed * time.GetDeltaTime());
 	transform.SetPositionY(transform.GetPosition().y + mMoveVertical * mSpeed * time.GetDeltaTime());
-
-	//mShader->Bind();
-	/*mShader->SetVector3("tempColor", glm::vec3(glm::cos(temp) + 1.0f, 1.0f, glm::sin(temp) + 1.0f));
-	mShader->SetFloat("alpha", glm::sin(temp) + 1.0f);
-	*/
-	//mShader->SetVector3("tempColor", glm::vec3(1.0f));
-	//mShader->SetFloat("alpha", 0.5f);
-	//mShader->SetInt("image", 0);
-	//mFirstQuad->Bind();
-	//mTexture->Bind();
-	//mTexture->SetWrapMode(ETextureWrapMode::Clamp, ETextureWrapMode::Clamp);
-	//mTexture->SetBorderColor(1.0f, 0.0f, 0.0f);
-	//Renderer::DrawIndexed(mFirstQuad->GetIndexBuffer()->GetNums());
-
-	//mSecondQuad->Bind();
-	//mTexture2->Bind();
-	//Renderer::DrawIndexed(mSecondQuad->GetIndexBuffer()->GetNums());
 }
 
 bool GameplayLayer::OnKeyPressedEvent(const VIEngine::KeyPressedEvent& eventContext) {

@@ -3,6 +3,8 @@
 #include"Renderer/Renderer.h"
 #include"Resource/ResourceManager.h"
 #include"OpenGLFactory.h"
+#include"Core/Logger/Logger.h"
+#include"Core/Application.h"
 #include<glad/gl.h>
 	
 namespace VIEngine {

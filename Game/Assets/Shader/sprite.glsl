@@ -7,10 +7,14 @@ layout(location = 2) in vec4 aColor;
 
 out vec2 TexCoords;
 
+uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+
 void main() {
 	TexCoords = aTexCoords;
 
-	gl_Position = vec4(aPosition, 1.0);
+	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(aPosition, 1.0);
 }
 
 

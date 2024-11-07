@@ -7,8 +7,11 @@
 #include"Resource/VertexArray.h"
 #include"Resource/IndexBuffer.h"
 #include"Resource/Sprite.h"
+#include"Resource/Texture2D.h"
 #include"Core/Component/TransformComponent.h"
 #include"Core/Logger/Logger.h"
+#include"Renderer/Camera/Camera.h"
+#include<glm/gtc/matrix_transform.hpp>
 
 namespace VIEngine {
 	DEFINE_RTTI_NO_PARENT(SpriteAnimationSystem)
@@ -32,7 +35,10 @@ namespace VIEngine {
 	}
 
 	void SpriteAnimationSystem::OnUpdate(Time time) {
-		mBatchRenderer.Clear();
+		static glm::mat4 projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -1.0f, 10.f);
+		static Camera camera = Camera(projection);
+		camera.Update();
+
 		for (AnimatorComponent* animator : mCoordinator->GetComponentArray<AnimatorComponent>()) {
 			Animation* activeAnimation = animator->GetActiveAnimation();
 
@@ -48,10 +54,28 @@ namespace VIEngine {
 			}
 
 			TransformComponent& transform = animator->GetOwner().GetComponent<TransformComponent>();
-			
+			Sprite* sprite = activeAnimation->CurrentFrame();
+			//Shader* shader = sprite->GetShader();
+			//shader->Bind();
+			//shader->SetInt("image", 0);
+			//shader->SetInt("flipHorizontal", sprite->GetFlipHorizontal());
+			//shader->SetInt("flipVertical", sprite->GetFlipVertical());
+
+			//glm::mat4 model = glm::mat4(1.0f);
+			//model = glm::scale(model, transform.GetScale());
+			//model = glm::translate(model, transform.GetPosition());
+			//shader->SetMatrix4("modelMatrix", model);
+			//shader->SetMatrix4("viewMatrix", camera.GetViewMatrix());
+			//shader->SetMatrix4("projectionMatrix", camera.GetProjectionMatrix());
+			//Renderer::ActivateTexture(0);
+			//sprite->GetVertexArray()->Bind();
+			//sprite->GetTexture()->Bind();
+			//Renderer::DrawIndexed(sprite->GetVertexArray()->GetIndexBuffer()->GetNums());
+
 			mBatchRenderer.InsertBatch(transform.GetTransform(), activeAnimation->CurrentFrame());
 		}
 		mBatchRenderer.Submit();
+		mBatchRenderer.Clear();
 	}
 
 	void SpriteAnimationSystem::OnShutdown() {
