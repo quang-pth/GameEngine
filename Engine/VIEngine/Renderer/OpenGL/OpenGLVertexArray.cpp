@@ -27,7 +27,7 @@ namespace VIEngine {
 					attribute.Type == EVertexAttributeType::Int2 ||
 					attribute.Type == EVertexAttributeType::Int3 ||
 					attribute.Type == EVertexAttributeType::Int4
-				)
+					)
 				{
 					glVertexAttribIPointer(attribute.Location, attribute.NumsComponent, GL_INT, mVertexFormat.GetStride(), (void*)attribute.Offset);
 					glEnableVertexAttribArray(attribute.Location);

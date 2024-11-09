@@ -78,14 +78,14 @@ namespace VIEngine {
 		});
 	}
 
-	void OpenGLShader::SetInt(const std::string& name, int32_t value)
+	void OpenGLShader::SetInt(const std::string& name, int value)
 	{
 		Renderer::Submit([name, value, this]() {
 			glUniform1i(glGetUniformLocation(mID, name.c_str()), value);
 		});
 	}
 
-	void OpenGLShader::SetInts(const std::string& name, int32_t* value, uint32_t count)
+	void OpenGLShader::SetInts(const std::string& name, int* value, int count)
 	{
 		Renderer::Submit([name, value, count, this]() {
 			glUniform1iv(glGetUniformLocation(mID, name.c_str()), count, value);
@@ -99,14 +99,14 @@ namespace VIEngine {
 		});
 	}
 
-	void OpenGLShader::SetFloats(const std::string& name, float* value, uint32_t count)
+	void OpenGLShader::SetFloats(const std::string& name, float* value, int count)
 	{
 		Renderer::Submit([name, value, count, this]() {
 			glUniform1fv(glGetUniformLocation(mID, name.c_str()), count, value);
 		});
 	}
 
-	void OpenGLShader::SetFloats2(const std::string& name, float* value, uint32_t count)
+	void OpenGLShader::SetFloats2(const std::string& name, float* value, int count)
 	{
 		Renderer::Submit([name, value, count, this]() {
 			glUniform2fv(glGetUniformLocation(mID, name.c_str()), count, value);

@@ -20,8 +20,8 @@ namespace VIEngine {
         VI_FORCE_INLINE class Texture2D* GetTexture() const { return mTexture; }
         VI_FORCE_INLINE class VertexArray* GetVertexArray() const { return mVertexArray; }
         VI_FORCE_INLINE class Shader* GetShader() const { return mShader; }
-        VI_FORCE_INLINE int GetSampleTextureID() const { return mSampleTextureID; }
-        VI_FORCE_INLINE void SetSampleTextureID(int value) { mSampleTextureID = value; }
+        VI_FORCE_INLINE uint8_t GetSampleTextureID() const { return mSampleTextureID; }
+        VI_FORCE_INLINE void SetSampleTextureID(uint8_t value) { mSampleTextureID = value; }
         VI_FORCE_INLINE int16_t GetBatchSlot() const { return mBatchSlot; }
         VI_FORCE_INLINE void SetBatchSlot(int16_t value) { mBatchSlot = value; }
         VI_FORCE_INLINE bool GetIsDirty() const { return mIsDirty; }
@@ -38,7 +38,7 @@ namespace VIEngine {
         class Texture2D* mTexture;
         class VertexArray* mVertexArray;
         class Shader* mShader;
-        int mSampleTextureID = 0;
+        uint8_t mSampleTextureID = 0;
         int16_t mBatchSlot = 0;
         bool mIsDirty = false;
         std::string mFilePath;

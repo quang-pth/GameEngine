@@ -17,11 +17,11 @@ namespace VIEngine {
 		virtual uint32_t GetID() const = 0;
 		virtual const std::string& GetName() const = 0;
 		virtual void SetBool(const std::string& name, bool value) = 0;
-		virtual void SetInt(const std::string& name, int32_t value) = 0;
-		virtual void SetInts(const std::string& name, int32_t* value, uint32_t count) = 0;
+		virtual void SetInt(const std::string& name, int value) = 0;
+		virtual void SetInts(const std::string& name, int* value, int count) = 0;
 		virtual void SetFloat(const std::string& name, float value) = 0;
-		virtual void SetFloats(const std::string& name, float* value, uint32_t count) = 0;
-		virtual void SetFloats2(const std::string& name, float* value, uint32_t count) = 0;
+		virtual void SetFloats(const std::string& name, float* value, int count) = 0;
+		virtual void SetFloats2(const std::string& name, float* value, int count) = 0;
 		virtual void SetVector2(const std::string& name, float x, float y) = 0;
 		virtual void SetVector2(const std::string& name, const glm::vec2& value) = 0;
 		virtual void SetVector3(const std::string& name, float x, float y, float z) = 0;

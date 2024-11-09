@@ -46,7 +46,7 @@ namespace VIEngine {
 	void BatchRenderer::InsertBatch(const Transform& transform, Sprite* sprite)
 	{
 		Texture2D* texture = sprite->GetTexture();
-
+			
 		int8_t selectedTextureID = -1;
 		for (int8_t i = 0; i < mTextureCount; i++) {
 			if (mTextures[i]->GetName() == texture->GetName()) {
@@ -58,6 +58,7 @@ namespace VIEngine {
 		if (selectedTextureID == -1) {
 			if (mTextureCount >= MAX_TEXTURE_UNITS) {
 				Submit();
+				Clear();
 			}
 			selectedTextureID = mTextureCount;
 			mTextures[mTextureCount++] = texture;
