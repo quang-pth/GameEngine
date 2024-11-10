@@ -44,6 +44,9 @@ void GameplayLayer::OnAttach() {
 	animator.AddAnimation(walkAnimation);
 	animator.SetFPS(120);
 	animator.SetActiveAnimation(walkAnimation->GetName());
+	animator.SetFlipVertical(true);
+	mActor.GetComponent<TransformComponent>().SetPositionX(10.0f);
+	mActor.GetComponent<TransformComponent>().SetPositionY(10.0f);
 
 	for (uint8_t i = 0; i < 10; i++) {
 		for (uint8_t j = 0; j < 10; j++) {
@@ -69,19 +72,22 @@ void GameplayLayer::OnAttach() {
 
 			Actor actor2 = CreateActor();
 			TransformComponent& transformComponent = actor2.GetComponent<TransformComponent>();
-			transformComponent.SetPositionX(-10.0f + j * 2.0f + 1.0f);
-			transformComponent.SetPositionY(10.0f - i * 2.0f - 1.0f);
-			transformComponent.SetRotationX(180.0f);
-			transformComponent.SetRotationY(180.0f);
+			transformComponent.SetPositionX(j * 2.0f + 1.0f);
+			transformComponent.SetPositionY(i * 2.0f + 1.0f);
+			//transformComponent.SetRotationZ(90.0f);
+			//transformComponent.SetRotationX(180.0f);
+			//transformComponent.SetRotationY(180.0f);
 			AnimatorComponent& animator2 = actor2.AddComponent<AnimatorComponent>();
-			
+
 			if (j % 2 == 0) {
 				animator2.AddAnimation(idleAnimation2);
 				animator2.SetFPS(60);
+				animator2.SetFlipVertical(true);
 			}
 			else {
 				animator2.AddAnimation(walkAnimation2);
 				animator2.SetFPS(120);
+				animator2.SetFlipHorizontal(true);
 			}
 		}
 	}
@@ -107,10 +113,10 @@ void GameplayLayer::OnProcessInput(const VIEngine::InputState& inputState) {
 		animator.SetFlipHorizontal(false);
 	}
 	if (inputState.Keyboard->IsPressed(EKeyCode::DOWN) || inputState.Keyboard->IsPressed(EKeyCode::S)) {
-		mMoveVertical += -1;
+		mMoveVertical += 1;
 	}
 	if (inputState.Keyboard->IsPressed(EKeyCode::UP) || inputState.Keyboard->IsPressed(EKeyCode::W)) {
-		mMoveVertical += 1;
+		mMoveVertical += -1;
 	}
 
 	if (mMoveHorizontal == 0) {

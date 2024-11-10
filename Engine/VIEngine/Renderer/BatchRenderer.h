@@ -14,7 +14,7 @@ namespace VIEngine {
 
 		void Submit();
 		void Clear();
-		void InsertBatch(const Transform& transform, class Sprite* sprite);
+		void InsertBatch(const SpriteBatch& spriteBatch);
 	private:
 		std::vector<RenderBatch> mRenderBatches;
 		class Shader* mShader;

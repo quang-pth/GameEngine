@@ -10,8 +10,7 @@
 #include"Resource/Texture2D.h"
 #include"Core/Component/TransformComponent.h"
 #include"Core/Logger/Logger.h"
-#include"Renderer/Camera/Camera.h"
-#include<glm/gtc/matrix_transform.hpp>
+#include"Core/Application.h"
 
 namespace VIEngine {
 	DEFINE_RTTI_NO_PARENT(SpriteAnimationSystem)
@@ -35,9 +34,9 @@ namespace VIEngine {
 	}
 
 	void SpriteAnimationSystem::OnUpdate(Time time) {
-		static glm::mat4 projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -1.0f, 10.f);
-		static Camera camera = Camera(projection);
-		camera.Update();
+		std::multimap<float, SpriteBatch> sortedSpriteBatches;
+
+		Application& application = Application::Get();
 
 		for (AnimatorComponent* animator : mCoordinator->GetComponentArray<AnimatorComponent>()) {
 			Animation* activeAnimation = animator->GetActiveAnimation();
@@ -72,8 +71,16 @@ namespace VIEngine {
 			//sprite->GetTexture()->Bind();
 			//Renderer::DrawIndexed(sprite->GetVertexArray()->GetIndexBuffer()->GetNums());
 
-			mBatchRenderer.InsertBatch(transform.GetTransform(), activeAnimation->CurrentFrame());
+			SpriteBatch spriteBatch(transform.GetTransform(), activeAnimation->CurrentFrame());
+			spriteBatch.FlipHorizontal = animator->GetFlipHorizontal();
+			spriteBatch.FlipVertical = animator->GetFlipVertical();
+			sortedSpriteBatches.insert({ transform.GetPosition().y, spriteBatch}); // TODO: Divide by window height to get sprite depth
 		}
+
+		for (auto& [_, spriteBatch] : sortedSpriteBatches) {
+			mBatchRenderer.InsertBatch(spriteBatch);
+		}
+
 		mBatchRenderer.Submit();
 		mBatchRenderer.Clear();
 	}

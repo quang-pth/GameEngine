@@ -5,6 +5,7 @@
 #include"Resource/VertexArray.h"
 #include"Resource/IndexBuffer.h"
 #include"Renderer.h"
+#include"Core/Application.h"
 #include"Renderer/Camera/Camera.h"
 #include<glm/gtc/matrix_transform.hpp>
 
@@ -19,9 +20,9 @@ namespace VIEngine {
 
 	void BatchRenderer::Submit() {
 		// TODO: Make camera configurable later
-		static glm::mat4 projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, -1.0f, 10.f);
+		static glm::mat4 projection = glm::ortho(0.0f, 20.0f, 20.0f, 0.0f, -1.0f, 10.f);
 		static Camera camera = Camera(projection);
-		camera.Update();
+		camera.Update();	
 
 		mShader->Bind();
 		mShader->SetMatrix4("viewMatrix", camera.GetViewMatrix());
@@ -43,9 +44,9 @@ namespace VIEngine {
 		mTextureCount = 0;
 	}
 
-	void BatchRenderer::InsertBatch(const Transform& transform, Sprite* sprite)
+	void BatchRenderer::InsertBatch(const SpriteBatch& spriteBatch)
 	{
-		Texture2D* texture = sprite->GetTexture();
+		Texture2D* texture = spriteBatch.SpriteContext->GetTexture();
 			
 		int8_t selectedTextureID = -1;
 		for (int8_t i = 0; i < mTextureCount; i++) {
@@ -63,7 +64,7 @@ namespace VIEngine {
 			selectedTextureID = mTextureCount;
 			mTextures[mTextureCount++] = texture;
 		}
-		sprite->SetSampleTextureID(selectedTextureID);
+		spriteBatch.SpriteContext->SetSampleTextureID(selectedTextureID);
 
 		if (!mRenderBatches.size()) {
 			mRenderBatches.emplace_back();
@@ -76,6 +77,6 @@ namespace VIEngine {
 		}
 
 		// TODO: Cache not need update vertices and indicies data
-		batch->Insert(transform, sprite);
+		batch->Insert(spriteBatch);
 	}
 }

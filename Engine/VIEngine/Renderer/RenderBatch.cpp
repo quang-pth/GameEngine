@@ -39,15 +39,15 @@ namespace VIEngine {
         return mBatchCount < MAX_BATCH_SIZE;
     }
 
-    void RenderBatch::Insert(const Transform& transform, Sprite* sprite) 
+	void RenderBatch::Insert(const SpriteBatch& spriteBatch)
 	{
-		// Default order to apply rotation is z (roll), y (pitch), x (yaw)
-		glm::quat rotation = glm::quat(glm::vec3(glm::radians(transform.Rotation.x), glm::radians(transform.Rotation.y), glm::radians(transform.Rotation.z)));
-
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::scale(model, transform.Scale);
-		model = glm::toMat4(rotation) * model;
-		model = glm::translate(model, transform.Position);
+		
+		model = glm::translate(model, spriteBatch.SpriteTransform.Position);
+		model = glm::rotate(model, glm::radians(spriteBatch.SpriteTransform.Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+		model = glm::rotate(model, glm::radians(spriteBatch.SpriteTransform.Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(spriteBatch.SpriteTransform.Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::scale(model, spriteBatch.SpriteTransform.Scale);
 
 		Vertex vertices[4] = {
 			{glm::vec3(-0.5f, 0.5f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec4(1.0f)}, // top-left
@@ -64,10 +64,10 @@ namespace VIEngine {
 		for (uint8_t i = 0; i < 4; i++) {
 			mVertices[mBatchCount * 4 + i].Position = glm::vec3(model * glm::vec4(vertices[i].Position, 1.0f));
 			mVertices[mBatchCount * 4 + i].TexCoords = vertices[i].TexCoords;
-			mVertices[mBatchCount * 4 + i].TextureID = sprite->GetSampleTextureID();
-			mVertices[mBatchCount * 4 + i].FlipVertical = sprite->GetFlipVertical();
-			mVertices[mBatchCount * 4 + i].FlipHorizontal = sprite->GetFlipHorizontal();
-			mVertices[mBatchCount * 4 + i].Color = sprite->GetColor();
+			mVertices[mBatchCount * 4 + i].TextureID = spriteBatch.SpriteContext->GetSampleTextureID();
+			mVertices[mBatchCount * 4 + i].FlipVertical = spriteBatch.FlipVertical;
+			mVertices[mBatchCount * 4 + i].FlipHorizontal = spriteBatch.FlipHorizontal;
+			mVertices[mBatchCount * 4 + i].Color = spriteBatch.SpriteContext->GetColor();
 		}
 
 		for (uint8_t i = 0; i < 6; i++) {

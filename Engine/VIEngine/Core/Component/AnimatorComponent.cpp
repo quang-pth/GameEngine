@@ -62,22 +62,6 @@ namespace VIEngine {
 		return mAnimationMap.at(hashNameID);
 	}
 
-	void AnimatorComponent::SetFlipHorizontal(bool flip) {
-		for (auto& [_, animation] : mAnimationMap) {
-			for (Sprite* sprite : animation->GetSprites()) {
-				sprite->SetFlipHorizontal(flip);
-			}
-		}
-	}
-
-	void AnimatorComponent::SetFlipVertical(bool flip) {
-		for (auto& [_, animation] : mAnimationMap) {
-			for (Sprite* sprite : animation->GetSprites()) {
-				sprite->SetFlipVertical(flip);
-			}
-		}
-	}
-
 	void AnimatorComponent::SetColor(const glm::vec4& color) {
 		for (auto& [_, animation] : mAnimationMap) {
 			for (Sprite* sprite : animation->GetSprites()) {

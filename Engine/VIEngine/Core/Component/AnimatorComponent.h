@@ -22,13 +22,17 @@ namespace VIEngine {
 		VI_FORCE_INLINE float GetFPS() const { return mFPS; }
 		VI_FORCE_INLINE void SetFrameTime(float frameTime) { mFrameTime = frameTime; }
 		VI_FORCE_INLINE float GetFrameTime() const { return mFrameTime; }
-		void SetFlipHorizontal(bool flip);
-		void SetFlipVertical(bool flip);
 		void SetColor(const glm::vec4& color);
+		bool GetFlipVertical() const { return mFlipVertical; }
+		void SetFlipVertical(bool value) { mFlipVertical = value; }
+		bool GetFlipHorizontal() const { return mFlipHorizontal; }
+		void SetFlipHorizontal(bool value) { mFlipHorizontal = value; }
 	private:
 		std::unordered_map<UUID, Animation*> mAnimationMap;
 		UUID mActiveAnimationID;
 		float mFPS;
 		float mFrameTime;
+		bool mFlipVertical = false;
+		bool mFlipHorizontal = false;
 	};
 }
