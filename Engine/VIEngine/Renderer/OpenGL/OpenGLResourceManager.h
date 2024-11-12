@@ -3,6 +3,7 @@
 #include"Core/Type/RTTI.h"
 #include"Resource/ResourceManager.h"
 #include"Memory/MemoryChunkManager.h"
+#include"OpenGLVertexArray.h"
 #include"OpenGLVertexBuffer.h"
 #include"OpenGLIndexBuffer.h"
 #include"OpenGLShader.h"
@@ -17,6 +18,8 @@ namespace VIEngine {
 		~OpenGLResourceManager();
 
 		virtual void OnReset() override;
+		virtual VertexArray* NewVertexArray() override;
+		virtual void FreeVertexArray(VertexArray* memory) override;
 		virtual class VertexBuffer* NewVertexBuffer() override;
 		virtual void FreeVertexBuffer(void* memory) override;
 		virtual class IndexBuffer* NewIndexBuffer() override;
@@ -29,6 +32,7 @@ namespace VIEngine {
 		std::string ReadFromFile(const char* filepath);
 	private:
 		MemoryManager mGeneralMemoryManager;
+		MemoryChunkManager<OpenGLVertexArray, 100> mVertexArrayMemoryManager;
 		MemoryChunkManager<OpenGLVertexBuffer, 100> mVertexBufferMemoryManager;
 		MemoryChunkManager<OpenGLIndexBuffer, 100> mIndexBufferMemoryManager;
 		MemoryChunkManager<OpenGLShader, 100> mShaderMemoryManager;

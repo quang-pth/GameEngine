@@ -5,6 +5,7 @@ namespace VIEngine {
 	DEFINE_RTTI_NO_PARENT(OpenGLResourceManager)
 
 	OpenGLResourceManager::OpenGLResourceManager() : 
+		mVertexArrayMemoryManager("VertexArrayMemoryManager"),
 		mVertexBufferMemoryManager("VertexBufferMemoryManager"),
 		mIndexBufferMemoryManager("IndexBufferMemoryManager"),
 		mShaderMemoryManager("ShaderMemoryManager")
@@ -19,9 +20,20 @@ namespace VIEngine {
 
 	void OpenGLResourceManager::OnReset()
 	{
+		mVertexArrayMemoryManager.Reset();
 		mVertexBufferMemoryManager.Reset();
 		mIndexBufferMemoryManager.Reset();
 		mShaderMemoryManager.Reset();
+	}
+
+	VertexArray* OpenGLResourceManager::NewVertexArray()
+	{
+		return mVertexArrayMemoryManager.NewObject();
+	}
+
+	void OpenGLResourceManager::FreeVertexArray(VertexArray* memory)
+	{
+		mVertexArrayMemoryManager.FreeObject(memory);
 	}
 
 	VertexBuffer* OpenGLResourceManager::NewVertexBuffer()

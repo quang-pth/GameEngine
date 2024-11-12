@@ -23,7 +23,8 @@ namespace VIEngine {
 		virtual void Unbind() = 0;
 		virtual uint32_t GetID() const = 0;
 		virtual uint32_t GetSize() const = 0;
-		virtual void SetData(void* data, uint32_t size, ERendererMode mode = ERendererMode::Static) = 0;
+		virtual void SetID(uint32_t id) = 0;
+		virtual void SetSize(uint32_t size) = 0;
 	protected:
 		VertexBuffer() = default;
 	};
