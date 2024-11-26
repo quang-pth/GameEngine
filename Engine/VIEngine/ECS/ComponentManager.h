@@ -79,7 +79,11 @@ namespace VIEngine {
 			ComponentArray<T>& GetComponentArray() {
 				VI_BASE_CLASS_ASSERT(IComponent, T, "Get invalid component");
 				ComponentTypeID typeID = T::GetStaticTypeID();
-				VI_ASSERT(mComponentTypeMap.count(typeID) && "Component array is not registered yet");
+
+				if (!mComponentTypeMap.count(typeID)) {
+					mComponentTypeMap[typeID] = new ComponentArray<T>(T::RunTimeType.GetTypeName());
+				}
+
 				return *StaticCast<ComponentArray<T>*>(mComponentTypeMap.at(typeID));
 			}
 

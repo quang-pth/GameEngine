@@ -93,12 +93,12 @@ namespace VIEngine {
 			VI_FORCE_INLINE T* operator->() const { return *mCurrentObject; }
 
 			bool operator==(const Iterator& other) const {
+				if (mCurrentObject == (*std::prev(other.mEndChunk))->GetObjects().end()) return true;
+
 				return mCurrentChunk == other.mCurrentChunk && mCurrentObject == other.mCurrentObject;
 			}
 			
-			bool operator!=(const Iterator& other) const {
-				return !(*this == other);
-			}
+			VI_FORCE_INLINE bool operator!=(const Iterator& other) const { return !(*this == other); }
 		private:
 			typename MemoryChunkList::iterator mCurrentChunk;
 			typename MemoryChunkList::iterator mEndChunk;
@@ -107,7 +107,14 @@ namespace VIEngine {
 
 	public:
 		MemoryChunkManager(const std::string& usage, const MemoryConfiguration& config = MemoryConfiguration()) : mUsage(usage), MemoryManager(config) {
+			PoolAllocator* allocator = new PoolAllocator(
+				MEMORY_CHUNK_MAX_SIZE,
+				AllocateOnStack(mUsage, MEMORY_CHUNK_MAX_SIZE, alignof(T)),
+				sizeof(T), alignof(T)
+			);
 
+			MemoryChunk* memoryChunk = new MemoryChunk(allocator);
+			mMemoryChunkList.emplace_back(memoryChunk);
 		}
 
 		~MemoryChunkManager() {
