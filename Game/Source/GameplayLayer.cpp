@@ -2,6 +2,7 @@
 #include<Renderer/Renderer.h>
 #include<Core/Component/AnimatorComponent.h>
 #include<Core/Component/TransformComponent.h>
+#include<Core/Component/SpriteComponent.h>
 #include<Resource/Sprite.h>
 
 GameplayLayer::GameplayLayer() {
@@ -48,6 +49,17 @@ void GameplayLayer::OnAttach() {
 	mActor.GetComponent<TransformComponent>().SetPositionX(10.0f);
 	mActor.GetComponent<TransformComponent>().SetPositionY(10.0f);
 
+	GenerateTestingAnimations();
+	GenerateTestingSprites();
+}
+
+void GameplayLayer::OnDetach() {
+	LOG_TRACE("GameplayLayer is detached");
+}
+
+void GameplayLayer::GenerateTestingAnimations() {
+	using namespace VIEngine;
+
 	for (uint8_t i = 0; i < 10; i++) {
 		for (uint8_t j = 0; j < 10; j++) {
 			Animation* idleAnimation2 = Animation::Create("ZeroIdle[" + std::to_string(i) + ", " + std::to_string(j) + "]");
@@ -81,7 +93,7 @@ void GameplayLayer::OnAttach() {
 
 			if (j % 2 == 0) {
 				animator2.AddAnimation(idleAnimation2);
-				animator2.SetFPS(60);
+				animator2.SetFPS(4);
 				animator2.SetFlipVertical(true);
 			}
 			else {
@@ -93,8 +105,29 @@ void GameplayLayer::OnAttach() {
 	}
 }
 
-void GameplayLayer::OnDetach() {
-	LOG_TRACE("GameplayLayer is detached");
+void GameplayLayer::GenerateTestingSprites() {
+	using namespace VIEngine;
+
+	for (uint8_t i = 0; i < 10; i++) {
+		for (uint8_t j = 0; j < 10; j++) {
+			Actor actor2 = CreateActor();
+			TransformComponent& transformComponent = actor2.GetComponent<TransformComponent>();
+			transformComponent.SetPositionX(j * 2.0f + 1.5f);
+			transformComponent.SetPositionY(i * 2.0f + 1.0f);
+			SpriteComponent& spriteComponent =  actor2.AddComponent<SpriteComponent>();
+
+			if (j % 2 == 0) {
+				spriteComponent.SetSprite("Assets/Sprite/Zero/idle/idle00.png");
+				spriteComponent.SetFlipVertical(true);
+				spriteComponent.SetColor({ 0.3f, 0.2f, 0.5f, 1.0f });
+			}
+			else {
+				spriteComponent.SetSprite("Assets/Sprite/Zero/walk/walk01.png");
+				spriteComponent.SetFlipHorizontal(true);
+				spriteComponent.SetColor({ 0.7f, 0.8f, 0.3f, 1.0f });
+			}
+		}
+	}
 }
 
 void GameplayLayer::OnProcessInput(const VIEngine::InputState& inputState) {
@@ -121,11 +154,11 @@ void GameplayLayer::OnProcessInput(const VIEngine::InputState& inputState) {
 
 	if (mMoveHorizontal == 0) {
 		animator.SetActiveAnimation("ZeroIdle");
-		animator.SetFPS(24);
+		animator.SetFPS(4);
 	}
 	else {
 		animator.SetActiveAnimation("ZeroWalk");
-		animator.SetFPS(120);
+		animator.SetFPS(12);
 	}
 }
 

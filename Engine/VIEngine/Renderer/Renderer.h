@@ -3,6 +3,8 @@
 #include"pch.h"
 #include"Core/Application.h"
 #include"RenderCommandQueue.h"
+#include"BatchRenderer.h"
+#include"RenderBatch.h"
 
 namespace VIEngine {
 	struct VI_API RendererData {
@@ -22,8 +24,10 @@ namespace VIEngine {
 		static void Render();
 		static void EndScene();
 		static void OnShutDown();
+		static void SubmitSpriteBatch(const SpriteBatch& spriteBatch);
 	private:
 		static RenderCommandQueue sRenderCommandQueue;
+		static class BatchRenderer* sBatchRenderer;
 	public:
 		~Renderer() = default;
 	protected:

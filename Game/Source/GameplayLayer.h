@@ -24,6 +24,9 @@ public:
 	virtual void OnUpdate(VIEngine::Time time) override;
 	virtual bool OnKeyPressedEvent(const VIEngine::KeyPressedEvent& eventContext) override;
 private:
+	void GenerateTestingAnimations();
+	void GenerateTestingSprites();
+private:
 	class VIEngine::Actor mActor;
 	int8_t mMoveHorizontal = 0, mMoveVertical = 0;
 	float mSpeed = 5.0f;

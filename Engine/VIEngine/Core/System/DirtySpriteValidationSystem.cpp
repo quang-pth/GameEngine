@@ -2,6 +2,7 @@
 #include"Core/Component/StateCachingComponent.h"
 #include"Core/Component/TransformComponent.h"
 #include"Core/Component/AnimatorComponent.h"
+#include"Core/Component/SpriteComponent.h"
 #include"Resource/Sprite.h"
 #include"ECS/Coordinator.h"
 
@@ -35,7 +36,15 @@ namespace VIEngine {
             animator->GetActiveAnimation()->CurrentFrame()->SetIsDirty(diffPosition || diffScale || diffRotation);
         }
 
-        // TODO: Do the same operation as above for SpriteComponent
+        for (SpriteComponent* spriteComponent : mCoordinator->GetComponentArray<SpriteComponent>()) {
+            TransformComponent& transformComponent = spriteComponent->GetOwner().GetComponent<TransformComponent>();
+            StateCachingComponent& stateCachingComponent = spriteComponent->GetOwner().GetComponent<StateCachingComponent>();
+            bool diffPosition = transformComponent.GetPosition() != stateCachingComponent.GetPosition();
+            bool diffScale = transformComponent.GetScale() != stateCachingComponent.GetScale();
+            bool diffRotation = transformComponent.GetRotation() != stateCachingComponent.GetRotation();
+
+            spriteComponent->GetSprite()->SetIsDirty(diffPosition || diffScale || diffRotation);
+        }
     }
 
     void DirtySpriteValidationSystem::OnShutdown() {

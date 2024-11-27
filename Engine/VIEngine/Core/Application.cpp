@@ -9,6 +9,7 @@
 #include"Renderer/Renderer.h"
 #include"Resource/ResourceManager.h"
 #include"Core/System/SpriteAnimationSystem.h"
+#include"Core/System/SpriteRendererSystem.h"
 #include"Core/System/DirtySpriteValidationSystem.h"
 #include"Core/System/ActorStateCachingSystem.h"
 #include"Core/Type/Actor.h"
@@ -65,8 +66,10 @@ namespace VIEngine {
 		auto& dirtySpriteSystem = mSystemManager->AddSystem<DirtySpriteValidationSystem>();
 		auto& spriteAnimationSystem = mSystemManager->AddSystem<SpriteAnimationSystem>();
 		auto& stateCachingSystem = mSystemManager->AddSystem<ActorStateCachingSystem>();
+		auto& spriteRendererSystem = mSystemManager->AddSystem<SpriteRendererSystem>();
+		// Dirty Sprite Validation must be happen before any sprite rendering operations
+		mSystemManager->AddSystemDependency(&spriteRendererSystem, &dirtySpriteSystem);
 		mSystemManager->AddSystemDependency(&spriteAnimationSystem, &dirtySpriteSystem);
-		mSystemManager->AddSystemDependency(&stateCachingSystem, &dirtySpriteSystem);
 
 		mSystemManager->OnInit();
 		Renderer::OnInit(mConfig);

@@ -14,7 +14,7 @@
 #include <glm/gtx/quaternion.hpp>
 
 namespace VIEngine {
-    RenderBatch::RenderBatch() : mBatchCount(0), mVertices(), mIndices(), mVertexFormat() {
+    RenderBatch::RenderBatch() : mBatchCount(0), mVertices(), mIndices(), mVertexFormat(), mTextures() {
 		mVertexFormat.AddAttribute(EVertexAttributeType::Float3, "aPosition");
 		mVertexFormat.AddAttribute(EVertexAttributeType::Float2, "aTexCoords");
 		mVertexFormat.AddAttribute(EVertexAttributeType::Int, "aTextureID");
@@ -26,6 +26,10 @@ namespace VIEngine {
     }
 
     RenderBatch::~RenderBatch() {
+		
+	}
+
+	void RenderBatch::Release() {
 		mVertexArray->Release();
 	}
 
@@ -64,7 +68,7 @@ namespace VIEngine {
 		for (uint8_t i = 0; i < 4; i++) {
 			mVertices[mBatchCount * 4 + i].Position = glm::vec3(model * glm::vec4(vertices[i].Position, 1.0f));
 			mVertices[mBatchCount * 4 + i].TexCoords = vertices[i].TexCoords;
-			mVertices[mBatchCount * 4 + i].TextureID = spriteBatch.SpriteContext->GetSampleTextureID();
+			mVertices[mBatchCount * 4 + i].TextureID = spriteBatch.SampleTextureID;
 			mVertices[mBatchCount * 4 + i].FlipVertical = spriteBatch.FlipVertical;
 			mVertices[mBatchCount * 4 + i].FlipHorizontal = spriteBatch.FlipHorizontal;
 			mVertices[mBatchCount * 4 + i].Color = spriteBatch.SpriteContext->GetColor();
@@ -76,4 +80,26 @@ namespace VIEngine {
 
 		mBatchCount++;
     }
+
+	int32_t RenderBatch::InsertTexture(Texture2D* texture) {
+		if (mCurrentTextureIdx >= MAX_TEXTURE_UNITS) return -1; // -1 as Invalid Texture Slot
+		mTextures[mCurrentTextureIdx] = texture;
+		return mCurrentTextureIdx++;
+	}
+
+	Texture2D* RenderBatch::GetTexture(uint32_t textureSlot) const {
+		if (textureSlot >= MAX_TEXTURE_UNITS) return nullptr;
+
+		return mTextures[textureSlot];
+	}
+	
+	int32_t RenderBatch::GetTextureSlot(uint32_t textureID) const {
+		for (int32_t i = 0; i < mCurrentTextureIdx; i++) {
+			if (mTextures[i]->GetID() == textureID) {
+				return i;
+			}
+		}
+
+		return -1;
+	}
 }

@@ -1,9 +1,11 @@
 #include"Renderer.h"
 #include"Core/Logger/Logger.h"
+#include"Core/Application.h"
 #include"RenderCommand.h"
 
 namespace VIEngine {
 	RenderCommandQueue Renderer::sRenderCommandQueue;
+	BatchRenderer* Renderer::sBatchRenderer = nullptr;
 
 	void Renderer::Submit(const RenderCallback& renderCallback) {
 		if (Application::Get().GetPerFrameData().IsCatchUpPhase) return;
@@ -42,6 +44,7 @@ namespace VIEngine {
 	}
 
 	void Renderer::OnInit(const ApplicationConfiguration& appConfig) {
+		sBatchRenderer = new BatchRenderer();
 		Submit([rendererSpec = appConfig.RendererSpec]() {
 			RenderCommand::OnInit(rendererSpec);
 			CORE_LOG_INFO("Renderer init success");
@@ -49,6 +52,8 @@ namespace VIEngine {
 	}
 
 	bool Renderer::BeginScene() {
+		sBatchRenderer->Begin();
+
 		return true;
 	}
 
@@ -57,7 +62,7 @@ namespace VIEngine {
 	}
 
 	void Renderer::EndScene() {
-
+		sBatchRenderer->End();
 	}
 
 	void Renderer::OnShutDown() {
@@ -65,5 +70,11 @@ namespace VIEngine {
 			RenderCommand::OnShutdown();
 			CORE_LOG_INFO("Renderer is shutdown");
 		});
+		VI_FREE_MEMORY(sBatchRenderer);
+	}
+
+	void Renderer::SubmitSpriteBatch(const SpriteBatch& spriteBatch) {
+		if (Application::Get().GetPerFrameData().IsCatchUpPhase) return;
+		sBatchRenderer->InsertBatch(spriteBatch);
 	}
 }
