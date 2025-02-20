@@ -30,6 +30,17 @@ namespace VIEngine {
 			}
 		}
 
+		void SystemManager::OnStart() {
+			if (mRebuildSystemWorkOrder) {
+				BuildSystemWorkOrder();
+				mRebuildSystemWorkOrder = false;
+			}
+
+			for (auto system : mSortedOrderSystems) {
+				system->OnStart();
+			}
+		}
+
 		void SystemManager::OnUpdate(Time time) {
 			if (mRebuildSystemWorkOrder) {
 				BuildSystemWorkOrder();
@@ -51,6 +62,12 @@ namespace VIEngine {
 				}
 		
 				system->SetLastUpdateTime(intervalPassBy);
+			}
+		}
+
+		void SystemManager::OnDestroyed() {
+			for (auto iter = mUnsortedOrderSystems.rbegin(); iter != mUnsortedOrderSystems.rend(); iter++) {
+				(*iter)->OnDestroyed();
 			}
 		}
 

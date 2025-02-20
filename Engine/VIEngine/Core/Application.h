@@ -43,6 +43,8 @@ namespace VIEngine {
 		VI_FORCE_INLINE const PerFrameData& GetPerFrameData() const { return mPerFrameData; }
 		VI_FORCE_INLINE const ApplicationConfiguration& GetConfig() const { return mConfig; }
 		VI_FORCE_INLINE ECS::Coordinator* GetCoordinator() const { return mCoordinator; }
+		template<typename T>
+		VI_FORCE_INLINE T GetSystem() const { return mSystemManager->GetSystem<T>(); }
 	protected:
 		Application() = default;
 		Application(const ApplicationConfiguration&);
@@ -72,8 +74,10 @@ namespace VIEngine {
 		Time mTime;
 		bool mIsRunning;
 		PerFrameData mPerFrameData;
+		class ScriptSystem* mScriptSystem;
 	};
 
 	extern Application* CreateApplication();
 	class Actor CreateActor();
+	class Actor CreateActor(UUID);
 }

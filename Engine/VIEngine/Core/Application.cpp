@@ -13,6 +13,7 @@
 #include"Core/System/DirtySpriteValidationSystem.h"
 #include"Core/System/ActorStateCachingSystem.h"
 #include"Core/Type/Actor.h"
+#include"Core/System/ScriptSystem.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
 	if ((*iter)->On##eventType(eventContext)) {\
@@ -29,6 +30,10 @@ namespace VIEngine {
 
 	Actor CreateActor() {
 		return Actor(Application::Get().GetCoordinator());
+	}
+
+	Actor CreateActor(UUID actorID) {
+		return Actor(actorID, Application::Get().GetCoordinator());
 	}
 
 	Application::Application(const ApplicationConfiguration& config) : mConfig(config), mEventDispatcher(), 
@@ -52,7 +57,6 @@ namespace VIEngine {
 
 		mInputState = mNativeWindow->GetInputState();
 
-
 		mEventDispatcher.AddEventListener<WindowResizedEvent>(BIND_EVENT_FUNCTION(OnWindowResizedEvent));
 		mEventDispatcher.AddEventListener<KeyPressedEvent>(BIND_EVENT_FUNCTION(OnKeyPressedEvent));
 		mEventDispatcher.AddEventListener<KeyHeldEvent>(BIND_EVENT_FUNCTION(OnKeyHeldEvent));
@@ -63,13 +67,14 @@ namespace VIEngine {
 		mEventDispatcher.AddEventListener<MouseButtonHeldEvent>(BIND_EVENT_FUNCTION(OnMouseButtonHeldEvent));
 		mEventDispatcher.AddEventListener<MouseButtonReleasedEvent>(BIND_EVENT_FUNCTION(OnMouseButtonReleasedEvent));
 
-		auto& dirtySpriteSystem = mSystemManager->AddSystem<DirtySpriteValidationSystem>();
-		auto& spriteAnimationSystem = mSystemManager->AddSystem<SpriteAnimationSystem>();
-		auto& stateCachingSystem = mSystemManager->AddSystem<ActorStateCachingSystem>();
-		auto& spriteRendererSystem = mSystemManager->AddSystem<SpriteRendererSystem>();
+		auto dirtySpriteSystem = mSystemManager->AddSystem<DirtySpriteValidationSystem>();
+		auto spriteAnimationSystem = mSystemManager->AddSystem<SpriteAnimationSystem>();
+		auto stateCachingSystem = mSystemManager->AddSystem<ActorStateCachingSystem>();
+		auto spriteRendererSystem = mSystemManager->AddSystem<SpriteRendererSystem>();
+		mScriptSystem = mSystemManager->AddSystem<ScriptSystem>();
 		// Dirty Sprite Validation must be happen before any sprite rendering operations
-		mSystemManager->AddSystemDependency(&spriteRendererSystem, &dirtySpriteSystem);
-		mSystemManager->AddSystemDependency(&spriteAnimationSystem, &dirtySpriteSystem);
+		mSystemManager->AddSystemDependency(spriteRendererSystem, dirtySpriteSystem);
+		mSystemManager->AddSystemDependency(spriteAnimationSystem, dirtySpriteSystem);
 
 		mSystemManager->OnInit();
 		Renderer::OnInit(mConfig);
@@ -84,6 +89,8 @@ namespace VIEngine {
 		float minDeltaTime = 1.0f / mConfig.MaxFPS;
 
 		OnInitClient();
+
+		mSystemManager->GetSystem<ScriptSystem>().OnStart();
 
 		while (mIsRunning && !mNativeWindow->ShouldClose()) {
 			static float lastFrameTime = 0.0f;
@@ -100,6 +107,8 @@ namespace VIEngine {
 			for (auto layer : *mLayerStack) {
 				layer->OnProcessInput(*mInputState);
 			}
+
+			mScriptSystem->OnProcessInput(*mInputState);
 			
 			mNativeWindow->Swapbuffers();
 			while (mTime.GetDeltaTime() > MAX_DELTA_TIME) {
@@ -134,6 +143,7 @@ namespace VIEngine {
 			mPerFrameData.FrameIndex++;
 		}
 
+		mSystemManager->OnDestroyed();
 		OnShutdownClient();
 	}
 

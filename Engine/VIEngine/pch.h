@@ -23,6 +23,7 @@
 #include<queue>
 #include<map>
 #include<stack>
+#include<variant>
 
 template<typename T> using Shared = std::shared_ptr<T>;
 template<typename T> using Unique = std::unique_ptr<T>;

@@ -18,11 +18,13 @@ namespace VIEngine {
 			~SystemManager();
 
 			void OnInit();
+			void OnStart();
 			void OnUpdate(Time);
+			void OnDestroyed();
 			void OnShutdown();
 
 			template<typename T, typename... Args>
-			T& AddSystem(Args&&... args) {
+			T* AddSystem(Args&&... args) {
 				VI_BASE_CLASS_ASSERT(ISystem, T, "Add not valid system type");
 
 				ISystem* system = NewOnStack<T>(T::RunTimeType.GetTypeName(), std::forward<Args>(args)...);
@@ -40,7 +42,7 @@ namespace VIEngine {
 				}
 				mRebuildSystemWorkOrder = true;
 
-				return *StaticCast<T*>(system);
+				return StaticCast<T*>(system);
 			}
 
 			template<typename T>

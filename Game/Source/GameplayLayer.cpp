@@ -3,6 +3,7 @@
 #include<Core/Component/AnimatorComponent.h>
 #include<Core/Component/TransformComponent.h>
 #include<Core/Component/SpriteComponent.h>
+#include<Core/Component/ScriptComponent.h>
 #include<Resource/Sprite.h>
 
 GameplayLayer::GameplayLayer() {
@@ -48,6 +49,8 @@ void GameplayLayer::OnAttach() {
 	animator.SetFlipVertical(true);
 	mActor.GetComponent<TransformComponent>().SetPositionX(10.0f);
 	mActor.GetComponent<TransformComponent>().SetPositionY(10.0f);
+
+	mActor.AddComponent<ScriptComponent>("Assets/Scripts/PlayerController.lua");
 
 	GenerateTestingAnimations();
 	GenerateTestingSprites();
@@ -137,10 +140,7 @@ void GameplayLayer::OnProcessInput(const VIEngine::InputState& inputState) {
 	mMoveVertical = 0;
 
 	AnimatorComponent& animator = mActor.GetComponent<AnimatorComponent>();
-	if (inputState.Keyboard->IsPressed(EKeyCode::LEFT) || inputState.Keyboard->IsPressed(EKeyCode::A)) {
-		mMoveHorizontal += -1;
-		animator.SetFlipHorizontal(true);
-	}
+
 	if (inputState.Keyboard->IsPressed(EKeyCode::RIGHT) || inputState.Keyboard->IsPressed(EKeyCode::D)) {
 		mMoveHorizontal += 1;
 		animator.SetFlipHorizontal(false);
@@ -172,9 +172,11 @@ void GameplayLayer::OnUpdate(VIEngine::Time time) {
 	
 	Renderer::SetAlphaState(true);
 
-	TransformComponent& transform = mActor.GetComponent<TransformComponent>();
-	transform.SetPositionX(transform.GetPosition().x + mMoveHorizontal * mSpeed * time.GetDeltaTime());
-	transform.SetPositionY(transform.GetPosition().y + mMoveVertical * mSpeed * time.GetDeltaTime());
+	mActor.GetComponent<ScriptComponent>().OnUpdate(time.GetDeltaTime());
+
+	//TransformComponent& transform = mActor.GetComponent<TransformComponent>();
+	//transform.SetPositionX(transform.GetPosition().x + mMoveHorizontal * mSpeed * time.GetDeltaTime());
+	//transform.SetPositionY(transform.GetPosition().y + mMoveVertical * mSpeed * time.GetDeltaTime());
 }
 
 bool GameplayLayer::OnKeyPressedEvent(const VIEngine::KeyPressedEvent& eventContext) {

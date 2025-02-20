@@ -10,7 +10,9 @@ namespace VIEngine {
 		public:
 			virtual ~ISystem() = default;
 			virtual void OnInit() = 0;
+			virtual void OnStart() = 0;
 			virtual void OnUpdate(Time) = 0;
+			virtual void OnDestroyed() = 0;
 			virtual void OnShutdown() = 0;
 			virtual SystemID GetID() = 0;
 			virtual void SetID(SystemID) = 0;
@@ -35,7 +37,9 @@ namespace VIEngine {
 			~System() = default;
 
 			virtual void OnInit() override {}
+			virtual void OnStart() override {}
 			virtual void OnUpdate(Time) override {}
+			virtual void OnDestroyed() override {}
 			virtual void OnShutdown() override {}
 
 			VI_FORCE_INLINE virtual SystemID GetID() override { return mID; }
