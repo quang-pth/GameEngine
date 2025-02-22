@@ -3,7 +3,7 @@
 #include<VIScript/Lua.hpp>
 #include"Core/Input/InputState.h"
 #include"Core/Event/EventContext.h"
-#include"Core/Input/KeyboardLuaModule.h"
+#include"Core/Input/InputStateLuaModule.h"
 #include"Core/System/ScriptSystem.h"
 #include"Core/Application.h"
 
@@ -31,9 +31,10 @@ namespace VIEngine {
 
 	void ScriptComponent::OnProcessInput(const InputState& inputState) {
 		mExecutor->InvokeTableFunction(mObjectName, "OnProcessInput", true, LuaUserData::Create(
-			inputState.Keyboard,
-			KeyboardLuaModule::ModuleDef.GetMetableName(),
-			KeyboardLuaModule::ModuleDef.GetRegs()
+			(void*)&inputState,
+			InputStateLuaModule::ModuleDef.GetMetableName(),
+			InputStateLuaModule::ModuleDef.GetRegs(),
+			InputStateLuaModule::ModuleDef.GetAttributes()
 			)
 		);
 	}

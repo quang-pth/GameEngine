@@ -177,6 +177,12 @@ namespace VIEngine {
 
                         // Copy itself and push on the stack
                         lua_pushvalue(mL, -1);
+                        // TODO: Create (getter/setter) for index attributes
+                        // for (auto const &[key, value] : userData.Attributes) {
+                        //     lua_pushstring(mL, key.c_str());
+                        //     lua_pushcfunction(mL, value);
+                        //     lua_settable(mL, -3);
+                        // }
 
                         // Set metable as metable for itself
                         lua_setfield(mL, -2, "__index");

@@ -134,32 +134,7 @@ void GameplayLayer::GenerateTestingSprites() {
 }
 
 void GameplayLayer::OnProcessInput(const VIEngine::InputState& inputState) {
-	using namespace VIEngine;
 
-	mMoveHorizontal = 0;
-	mMoveVertical = 0;
-
-	AnimatorComponent& animator = mActor.GetComponent<AnimatorComponent>();
-
-	if (inputState.Keyboard->IsPressed(EKeyCode::RIGHT) || inputState.Keyboard->IsPressed(EKeyCode::D)) {
-		mMoveHorizontal += 1;
-		animator.SetFlipHorizontal(false);
-	}
-	if (inputState.Keyboard->IsPressed(EKeyCode::DOWN) || inputState.Keyboard->IsPressed(EKeyCode::S)) {
-		mMoveVertical += 1;
-	}
-	if (inputState.Keyboard->IsPressed(EKeyCode::UP) || inputState.Keyboard->IsPressed(EKeyCode::W)) {
-		mMoveVertical += -1;
-	}
-
-	if (mMoveHorizontal == 0) {
-		animator.SetActiveAnimation("ZeroIdle");
-		animator.SetFPS(4);
-	}
-	else {
-		animator.SetActiveAnimation("ZeroWalk");
-		animator.SetFPS(12);
-	}
 }
 
 void GameplayLayer::OnUpdate(VIEngine::Time time) {
@@ -171,12 +146,6 @@ void GameplayLayer::OnUpdate(VIEngine::Time time) {
 	temp += time.GetDeltaTime();
 	
 	Renderer::SetAlphaState(true);
-
-	mActor.GetComponent<ScriptComponent>().OnUpdate(time.GetDeltaTime());
-
-	//TransformComponent& transform = mActor.GetComponent<TransformComponent>();
-	//transform.SetPositionX(transform.GetPosition().x + mMoveHorizontal * mSpeed * time.GetDeltaTime());
-	//transform.SetPositionY(transform.GetPosition().y + mMoveVertical * mSpeed * time.GetDeltaTime());
 }
 
 bool GameplayLayer::OnKeyPressedEvent(const VIEngine::KeyPressedEvent& eventContext) {

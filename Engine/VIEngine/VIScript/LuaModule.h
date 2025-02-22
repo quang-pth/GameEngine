@@ -17,10 +17,11 @@ namespace VIEngine {
     class LuaModuleDef {
         public:
             LuaModuleDef() = default;
-            LuaModuleDef(const std::string& name, const std::vector<luaL_Reg>& regs, std::function<T* (lua_State*)> createFunction, std::function<void (T*)> deleteFunction) 
-                : mModuleName(name), mRegs(regs), mCreateInstance(createFunction), mDeleteInstance(deleteFunction) {}
+            LuaModuleDef(const std::string& name, const std::vector<luaL_Reg>& regs, const LuaIndexAttributes& attributes, std::function<T* (lua_State*)> createFunction, std::function<void (T*)> deleteFunction) 
+                : mModuleName(name), mRegs(regs), mAttributes(attributes), mCreateInstance(createFunction), mDeleteInstance(deleteFunction) {}
             const std::string& GetModuleName() const { return mModuleName; }
             const std::vector<luaL_Reg>& GetRegs() const { return mRegs; }
+            const LuaIndexAttributes& GetAttributes() const { return mAttributes; }
             T* CreateInstance(lua_State* L) { return mCreateInstance(L); }
             void DeleteInstance(T* obj) { mDeleteInstance(obj); }
             std::string GetMetableName() const { return std::string(mModuleName).append(".MetaTable"); }
@@ -29,5 +30,6 @@ namespace VIEngine {
             const std::vector<luaL_Reg> mRegs;
             const std::function<T* (lua_State*)> mCreateInstance;
             const std::function<void (T*)> mDeleteInstance;
+            const LuaIndexAttributes mAttributes;
     };
 }

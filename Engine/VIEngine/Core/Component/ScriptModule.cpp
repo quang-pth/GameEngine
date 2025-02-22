@@ -43,8 +43,11 @@ namespace VIEngine {
 	int lua_SetPositionX(lua_State* L) {
 		Actor actor = GetActor(L);
 
+		int type = lua_type(L, 2);
+		VI_ASSERT(type == LUA_TNUMBER && "Actor:SetPositionX #2 argument required a number");
+
 		TransformComponent& transform = actor.GetComponent<TransformComponent>();
-		float x = lua_tonumber(L, 1);
+		float x = lua_tonumber(L, 2);
 		transform.SetPositionX(x);
 		
 		return 0;
@@ -53,8 +56,11 @@ namespace VIEngine {
 	int lua_SetPositionY(lua_State* L) {
 		Actor actor = GetActor(L);
 
+		int type = lua_type(L, 2);
+		VI_ASSERT(type == LUA_TNUMBER && "Actor:SetPositionY #2 argument required a number");
+
 		TransformComponent& transform = actor.GetComponent<TransformComponent>();
-		float y = lua_tonumber(L, 1);
+		float y = lua_tonumber(L, 2);
 		transform.SetPositionY(y);
 
 		return 0;
@@ -68,7 +74,8 @@ namespace VIEngine {
 		executor->PushValue(LuaUserData::Create(
 			&animator, 
 			AnimatorLuaModule::ModuleDef.GetMetableName(), 
-			AnimatorLuaModule::ModuleDef.GetRegs()
+			AnimatorLuaModule::ModuleDef.GetRegs(),
+			AnimatorLuaModule::ModuleDef.GetAttributes()
 		));
 
 		return 1;

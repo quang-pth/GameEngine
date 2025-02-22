@@ -77,15 +77,17 @@ namespace VIEngine {
             LuaLightUserData(void* value) : Value(value) {}
     };
 
+    using LuaIndexAttributes = std::unordered_map<std::string, lua_CFunction>;
     struct LuaUserData final {
         public:
             const ELuaType Type = ELuaType::userData;
             void* Value;
             std::string MetableName;
             std::vector<luaL_Reg> Regs;
-            static LuaUserData Create(void* value, const std::string& metaTableName, const std::vector<luaL_Reg>& regs) { return LuaUserData(value, metaTableName, regs); }
+            LuaIndexAttributes Attributes;
+            static LuaUserData Create(void* value, const std::string& metaTableName, const std::vector<luaL_Reg>& regs, const LuaIndexAttributes& attributes) { return LuaUserData(value, metaTableName, regs, attributes); }
         private:
-            LuaUserData(void* value, const std::string& metaTableName, const std::vector<luaL_Reg>& regs) : Value(value), MetableName(metaTableName), Regs(regs) {}
+            LuaUserData(void* value, const std::string& metaTableName, const std::vector<luaL_Reg>& regs, const LuaIndexAttributes& attributes) : Value(value), MetableName(metaTableName), Regs(regs), Attributes(attributes) {}
     };
 
     using LuaValue = std::variant<LuaNil, LuaBoolean, LuaNumber, LuaString, LuaFunction, LuaTable, LuaLightUserData, LuaUserData>;
