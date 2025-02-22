@@ -6,6 +6,10 @@ PlayerController['MoveHorizontal'] = 0
 PlayerController['MoveVertical'] = 0
 PlayerController['Speed'] = 5.0
 
+function PlayerController:OnStart()
+    print("PlayerController started")
+end
+
 function PlayerController:OnProcessInput(inputState)
     self['MoveHorizontal'] = 0
     self['MoveVertical'] = 0

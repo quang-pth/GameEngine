@@ -7,25 +7,13 @@ namespace VIEngine {
 		return AnimationResourceManager::Get().NewAnimation(name);
 	}
 
-	Animation::Animation(const std::string& name) : mName(name), mSprites(), mNameHashID(GetHashID(name)), mCurrentFrameIdx(0), mIsLoop(true)
+	Animation::Animation(const std::string& name) : mName(name), mSprites(), mNameHashID(GetHashID(name)), mIsLoop(true)
 	{
 
 	}
 
 	Animation::~Animation() {
 
-	}
-
-	void Animation::NextFrame() {
-		if (!mIsLoop && mCurrentFrameIdx > mSprites.size() - 1) {
-			return;
-		}
-
-		mCurrentFrameIdx++;
-
-		if (mCurrentFrameIdx >= mSprites.size()) {
-			mCurrentFrameIdx -= mSprites.size();
-		}
 	}
 
 	Sprite* Animation::AddSprite(const std::string& filepath)

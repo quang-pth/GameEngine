@@ -33,7 +33,7 @@ namespace VIEngine {
             bool diffScale = transformComponent.GetScale() != stateCachingComponent.GetScale();
             bool diffRotation = transformComponent.GetRotation() != stateCachingComponent.GetRotation();
 
-            animator->GetActiveAnimation()->CurrentFrame()->SetIsDirty(diffPosition || diffScale || diffRotation);
+            animator->CurrentFrame()->SetIsDirty(diffPosition || diffScale || diffRotation);
         }
 
         for (SpriteComponent* spriteComponent : mCoordinator->GetComponentArray<SpriteComponent>()) {

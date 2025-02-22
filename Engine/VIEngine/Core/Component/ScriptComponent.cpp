@@ -27,6 +27,7 @@ namespace VIEngine {
 		mExecutor = Application::Get().GetSystem<ScriptSystem>().GetLuaExecutor();
 		mExecutor->RegisterModule(mModule);
 		mExecutor->ExecuteFromFile(mFilepath);
+		mExecutor->InvokeTableFunction(mObjectName, "OnStart", true);
 	}
 
 	void ScriptComponent::OnProcessInput(const InputState& inputState) {

@@ -22,6 +22,10 @@ namespace VIEngine {
 		VI_FORCE_INLINE float GetFPS() const { return mFPS; }
 		VI_FORCE_INLINE void SetFrameTime(float frameTime) { mFrameTime = frameTime; }
 		VI_FORCE_INLINE float GetFrameTime() const { return mFrameTime; }
+		VI_FORCE_INLINE uint8_t GetCurrentFrameIdx() const { return mCurrentFrameIdx; }
+		VI_FORCE_INLINE uint8_t SetFrameIdx(uint8_t frameIdx) { mCurrentFrameIdx = frameIdx; }
+		void NextFrame();
+		class Sprite* CurrentFrame();
 		void SetColor(const glm::vec4& color);
 		bool GetFlipVertical() const { return mFlipVertical; }
 		void SetFlipVertical(bool value) { mFlipVertical = value; }
@@ -34,5 +38,6 @@ namespace VIEngine {
 		float mFrameTime;
 		bool mFlipVertical = false;
 		bool mFlipHorizontal = false;
+		uint8_t mCurrentFrameIdx = 0;
 	};
 }

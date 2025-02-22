@@ -30,22 +30,20 @@ namespace VIEngine {
 
 	void AnimatorComponent::SetActiveAnimation(const std::string& name)
 	{
-		UUID nameHashID = GetHashID(name);
-		if (mAnimationMap.count(nameHashID)) {
-			mActiveAnimationID = nameHashID;
-		}
-		else {
-			CORE_LOG_WARN("Invalid animation name has been set {0}", name.c_str());
-		}
+		SetActiveAnimation(GetHashID(name));
 	}
 
 	void AnimatorComponent::SetActiveAnimation(UUID hashNameID)
 	{
-		if (mAnimationMap.count(hashNameID)) {
+		bool validAnimation = mAnimationMap.count(hashNameID);
+		if (validAnimation && mActiveAnimationID != hashNameID) {
 			mActiveAnimationID = hashNameID;
+			mCurrentFrameIdx = 0; // Reset the frame index for new animation has been switched to
+			return;
 		}
-		else {
-			CORE_LOG_WARN("Invalid animation hash name id has been set");
+		
+		if (!validAnimation) {
+			CORE_LOG_WARN("Invalid animation has been set");
 		}
 	}
 
@@ -68,5 +66,24 @@ namespace VIEngine {
 				sprite->SetColor(color);
 			}
 		}
+	}
+
+	void AnimatorComponent::NextFrame() {
+		Animation* activeAnimation = mAnimationMap[mActiveAnimationID];
+		if (!activeAnimation->GetIsLoop() && mCurrentFrameIdx >= activeAnimation->GetNumsFrame() - 1) {
+			return;
+		}
+		
+		++mCurrentFrameIdx;
+		
+		if (mCurrentFrameIdx >= activeAnimation->GetNumsFrame()) {
+			mCurrentFrameIdx -= activeAnimation->GetNumsFrame();
+		}
+	}
+
+	Sprite* AnimatorComponent::CurrentFrame() {
+		Animation* activeAnimation = mAnimationMap[mActiveAnimationID];
+		VI_ASSERT(mCurrentFrameIdx < activeAnimation->GetNumsFrame() && "Invalid animation frame index");
+		return activeAnimation->GetSprite(mCurrentFrameIdx);
 	}
 }

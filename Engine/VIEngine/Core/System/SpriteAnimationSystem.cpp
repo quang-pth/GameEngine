@@ -32,25 +32,22 @@ namespace VIEngine {
 		Application& application = Application::Get();
 
 		for (AnimatorComponent* animator : mCoordinator->GetComponentArray<AnimatorComponent>()) {
-			Animation* activeAnimation = animator->GetActiveAnimation();
-
 			float frameTime = animator->GetFrameTime() + time.GetDeltaTime();
 			animator->SetFrameTime(frameTime);
 
 			float timePerCelSeconds = 1 / animator->GetFPS();
 
 			if (frameTime > timePerCelSeconds) {
-				activeAnimation->NextFrame();
+				animator->NextFrame();
 				frameTime -= timePerCelSeconds;
 				animator->SetFrameTime(frameTime);
 			}
 
 			TransformComponent& transform = animator->GetOwner().GetComponent<TransformComponent>();
-			Sprite* sprite = activeAnimation->CurrentFrame();
 
 			SpriteBatch spriteBatch;
 			spriteBatch.SpriteTransform = transform.GetTransform();
-			spriteBatch.SpriteContext = activeAnimation->CurrentFrame();
+			spriteBatch.SpriteContext = animator->CurrentFrame();
 			spriteBatch.FlipHorizontal = animator->GetFlipHorizontal();
 			spriteBatch.FlipVertical = animator->GetFlipVertical();
 			spriteBatch.Depth = transform.GetPosition().y / application.GetConfig().Height;
