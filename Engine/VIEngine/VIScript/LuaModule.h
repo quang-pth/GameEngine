@@ -17,19 +17,32 @@ namespace VIEngine {
     class LuaModuleDef {
         public:
             LuaModuleDef() = default;
-            LuaModuleDef(const std::string& name, const std::vector<luaL_Reg>& regs, const LuaIndexAttributes& attributes, std::function<T* (lua_State*)> createFunction, std::function<void (T*)> deleteFunction) 
-                : mModuleName(name), mRegs(regs), mAttributes(attributes), mCreateInstance(createFunction), mDeleteInstance(deleteFunction) {}
+            LuaModuleDef(const std::string& name, 
+                const std::vector<luaL_Reg>& regs, 
+                const LuaIndexAttributes& attributes, 
+                std::function<T* (lua_State*)> createFunction, 
+                std::function<void (T*)> deleteFunction,
+                std::function<int (lua_State*)> pushUpValuesFunction = [](lua_State*) -> int { return 0; })
+                : mModuleName(name), 
+                    mRegs(regs), 
+                    mAttributes(attributes), 
+                    mCreateInstance(createFunction), 
+                    mDeleteInstance(deleteFunction),
+                    mPushUpValues(pushUpValuesFunction)
+                {}
             const std::string& GetModuleName() const { return mModuleName; }
             const std::vector<luaL_Reg>& GetRegs() const { return mRegs; }
             const LuaIndexAttributes& GetAttributes() const { return mAttributes; }
             T* CreateInstance(lua_State* L) { return mCreateInstance(L); }
             void DeleteInstance(T* obj) { mDeleteInstance(obj); }
+            int PushUpValues(lua_State* L) { return mPushUpValues(L); }
             std::string GetMetableName() const { return std::string(mModuleName).append(".MetaTable"); }
         private:
             const std::string mModuleName;
             const std::vector<luaL_Reg> mRegs;
             const std::function<T* (lua_State*)> mCreateInstance;
             const std::function<void (T*)> mDeleteInstance;
+            const std::function<int (lua_State*)> mPushUpValues;
             const LuaIndexAttributes mAttributes;
     };
 }

@@ -3,6 +3,9 @@
 #include"Core/Component/ScriptComponent.h"
 #include"Core/Input/InputState.h"
 #include"Core/Event/EventContext.h"
+#include"Animation/AnimationLuaModule.h"
+#include"VIScript/LuaModuleExporter.hpp"
+#include"Animation/Animation.h"
 
 namespace VIEngine {
 	DEFINE_RTTI_NO_PARENT(ScriptSystem)
@@ -18,8 +21,10 @@ namespace VIEngine {
 	}
 
 	void ScriptSystem::OnInit() {
+		static auto animModule = LuaModuleExporter<Animation>::Create(AnimationLuaModule::ModuleDef);
 		mStateHandler = new LuaStateHandler();
 		mLuaExecutor = new LuaExecutor(mStateHandler);
+		mLuaExecutor->RegisterModule(&animModule);
 	}
 
 	void ScriptSystem::OnShutdown() {

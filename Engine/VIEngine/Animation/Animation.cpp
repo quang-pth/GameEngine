@@ -27,7 +27,7 @@ namespace VIEngine {
 			sprite->Release();
 		}
 		mSprites.clear();
-		//AnimationResourceManager::Get().FreeAnimation(this);
+		AnimationResourceManager::Get().FreeAnimation(this);
 	}
 
 	void Animation::RemoveSprite(const std::string& name)

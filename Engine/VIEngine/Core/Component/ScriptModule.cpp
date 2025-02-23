@@ -24,7 +24,7 @@ namespace VIEngine {
 		return CreateActor(lua_tointeger(L, lua_upvalueindex(1)));
 	}
 
-	LuaExecutor* GetExecutor(lua_State* L) {
+	static LuaExecutor* GetExecutor(lua_State* L) {
 		return reinterpret_cast<LuaExecutor*>(lua_touserdata(L, lua_upvalueindex(2)));
 	}
 

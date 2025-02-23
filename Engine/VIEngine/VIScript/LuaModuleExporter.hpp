@@ -6,6 +6,7 @@ namespace VIEngine {
     template<typename T>
     class LuaModuleExporter final : public LuaModule {
         public:
+            LuaModuleExporter() = default;
             LuaModuleExporter(const LuaModuleExporter&) = delete;
             ~LuaModuleExporter() = default;
 
@@ -24,7 +25,7 @@ namespace VIEngine {
             
             const std::vector<luaL_Reg> &Regs() const override 
             {
-                return mRegs; 
+                return mRegs;
             }
 
             virtual int32_t PushUpValues(lua_State* L) const {
@@ -37,13 +38,8 @@ namespace VIEngine {
             static int LuaDelete(lua_State* L) {
                 // 1 is the index (in the stack call) of self argument passed by lua
                 T* obj = *reinterpret_cast<T**>(lua_touserdata(L, 1));
-                /*
-                * Currently this not work, i don't know why
-                * TODO: Fix later
-                */
-                // auto luaModuleDef = Get(L)->mModuleDef;
-                // luaModuleDef.DeleteInstance(obj);
-                delete obj;
+                auto luaModuleDef = Get(L)->mModuleDef;
+                luaModuleDef.DeleteInstance(obj);
                 return 0;
             }
 
@@ -66,7 +62,8 @@ namespace VIEngine {
                     lua_pushvalue(L, -1);
                     // Set metable as metable for itself
                     lua_setfield(L, -2, "__index");
-                    luaL_setfuncs(L, luaModuleDef.GetRegs().data(), 0);
+                    int upvalues = luaModuleDef.PushUpValues(L);
+                    luaL_setfuncs(L, luaModuleDef.GetRegs().data(), upvalues);
                     // Register function for garbage collection
                     lua_pushlightuserdata(L, exporter); // Push exporter instance as an upvalue for LuaDelete function because it's not export as module like LuaNew
                     lua_pushcclosure(L, LuaDelete, 1);
@@ -79,7 +76,6 @@ namespace VIEngine {
                 return 1;
             }
         private: 
-            const std::string mName = "TODO"; 
             const std::vector<luaL_Reg> mRegs = { 
                 {"Create", LuaNew}, 
                 {NULL, NULL}

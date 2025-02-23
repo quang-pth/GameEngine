@@ -19,36 +19,8 @@ void GameplayLayer::OnAttach() {
 
 	using namespace VIEngine;
 
-	Animation* idleAnimation = Animation::Create("ZeroIdle");
-	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle00.png");
-	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle01.png");
-	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle02.png");
-	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle03.png");
-	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle04.png");
-	idleAnimation->AddSprite("Assets/Sprite/Zero/idle/idle05.png");
-
-	Animation* walkAnimation = Animation::Create("ZeroWalk");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk01.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk02.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk03.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk04.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk05.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk06.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk07.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk08.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk09.png");
-	walkAnimation->AddSprite("Assets/Sprite/Zero/walk/walk10.png");
-
 	mActor = CreateActor();
-
 	AnimatorComponent& animator = mActor.AddComponent<AnimatorComponent>();
-	animator.AddAnimation(idleAnimation);
-	animator.AddAnimation(walkAnimation);
-	animator.SetFPS(120);
-	animator.SetActiveAnimation(walkAnimation->GetName());
-	animator.SetFlipVertical(true);
-	mActor.GetComponent<TransformComponent>().SetPositionX(10.0f);
-	mActor.GetComponent<TransformComponent>().SetPositionY(10.0f);
 
 	mActor.AddComponent<ScriptComponent>("Assets/Scripts/PlayerController.lua");
 

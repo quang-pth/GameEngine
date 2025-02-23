@@ -7,6 +7,7 @@ namespace VIEngine {
         nil,
         boolean,
         number,
+        integer,
         string,
         function,
         table,
@@ -39,6 +40,15 @@ namespace VIEngine {
             static LuaNumber Create(float value) { return LuaNumber(value); }
         private:
             LuaNumber(float value) : Value(value) {}
+    };
+    
+    struct LuaInteger final {
+        public:
+            const ELuaType Type = ELuaType::integer;
+            const size_t Value;
+            static LuaInteger Create(size_t value) { return LuaInteger(value); }
+        private:
+            LuaInteger(size_t value) : Value(value) {}
     };
 
     struct LuaString final {
@@ -90,7 +100,7 @@ namespace VIEngine {
             LuaUserData(void* value, const std::string& metaTableName, const std::vector<luaL_Reg>& regs, const LuaIndexAttributes& attributes) : Value(value), MetableName(metaTableName), Regs(regs), Attributes(attributes) {}
     };
 
-    using LuaValue = std::variant<LuaNil, LuaBoolean, LuaNumber, LuaString, LuaFunction, LuaTable, LuaLightUserData, LuaUserData>;
+    using LuaValue = std::variant<LuaNil, LuaBoolean, LuaNumber, LuaInteger, LuaString, LuaFunction, LuaTable, LuaLightUserData, LuaUserData>;
 
     inline ELuaType GetLuaType(const LuaValue& value) {
         return std::visit([](const auto& v) {
@@ -111,6 +121,9 @@ namespace VIEngine {
                 break;
             case ELuaType::number:
                 return std::to_string(std::get<LuaNumber>(value).Value);
+                break;
+            case ELuaType::integer:
+                return std::to_string(std::get<LuaInteger>(value).Value);
                 break;
             case ELuaType::string:
                 return std::get<LuaString>(value).Value;

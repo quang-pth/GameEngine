@@ -1,4 +1,5 @@
 VIScript = VIScript or {}
+Animation = Animation or {}
 
 function VIScript.Create(objName)
     local obj = {}

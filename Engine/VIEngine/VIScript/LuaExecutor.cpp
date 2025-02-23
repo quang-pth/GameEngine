@@ -149,6 +149,9 @@ namespace VIEngine {
             case ELuaType::number:
                 lua_pushnumber(mL, std::get<LuaNumber>(value).Value);
                 break;
+            case ELuaType::integer:
+                lua_pushinteger(mL, std::get<LuaInteger>(value).Value);
+                break;
             case ELuaType::string:
                 lua_pushstring(mL, std::get<LuaString>(value).Value.c_str());
                 break;
