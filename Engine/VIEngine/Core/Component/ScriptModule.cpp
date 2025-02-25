@@ -81,11 +81,27 @@ namespace VIEngine {
 		return 1;
 	}
 
+	int lua_AddAnimator(lua_State* L) {
+		Actor actor = GetActor(L);
+		LuaExecutor* executor = GetExecutor(L);
+
+		AnimatorComponent& animator = actor.AddComponent<AnimatorComponent>();
+		executor->PushValue(LuaUserData::Create(
+			&animator,
+			AnimatorLuaModule::ModuleDef.GetModuleName(),
+			AnimatorLuaModule::ModuleDef.GetRegs(),
+			AnimatorLuaModule::ModuleDef.GetAttributes()
+		));
+
+		return 1;
+	}
+
 	const std::vector<luaL_Reg> regs = {
 		{"GetPosition", lua_GetPosition},
 		{"SetPositionX", lua_SetPositionX},
 		{"SetPositionY", lua_SetPositionY},
 		{"GetAnimator", lua_GetAnimator},
+		{"AddAnimator", lua_AddAnimator},
 		{NULL, NULL}
 	};
 

@@ -86,4 +86,13 @@ namespace VIEngine {
 		VI_ASSERT(mCurrentFrameIdx < activeAnimation->GetNumsFrame() && "Invalid animation frame index");
 		return activeAnimation->GetSprite(mCurrentFrameIdx);
 	}
+
+	bool AnimatorComponent::IsActiveAnimationFinished() {
+		Animation* activeAnimation = mAnimationMap[mActiveAnimationID];
+		if (activeAnimation->GetIsLoop()) {
+			return false;
+		}
+
+		return mCurrentFrameIdx >= activeAnimation->GetNumsFrame() - 1;
+	}
 }

@@ -31,6 +31,7 @@ namespace VIEngine {
 		void SetFlipVertical(bool value) { mFlipVertical = value; }
 		bool GetFlipHorizontal() const { return mFlipHorizontal; }
 		void SetFlipHorizontal(bool value) { mFlipHorizontal = value; }
+		bool IsActiveAnimationFinished();
 	private:
 		std::unordered_map<UUID, Animation*> mAnimationMap;
 		UUID mActiveAnimationID;

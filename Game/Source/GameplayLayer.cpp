@@ -20,12 +20,10 @@ void GameplayLayer::OnAttach() {
 	using namespace VIEngine;
 
 	mActor = CreateActor();
-	AnimatorComponent& animator = mActor.AddComponent<AnimatorComponent>();
-
 	mActor.AddComponent<ScriptComponent>("Assets/Scripts/PlayerController.lua");
 
-	GenerateTestingAnimations();
-	GenerateTestingSprites();
+	// GenerateTestingAnimations();
+	// GenerateTestingSprites();
 }
 
 void GameplayLayer::OnDetach() {

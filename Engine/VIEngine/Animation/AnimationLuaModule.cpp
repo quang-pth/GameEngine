@@ -55,6 +55,25 @@ namespace VIEngine
         return 1;
     }
 
+    int lua_SetAnimationIsLoop(lua_State* L) {
+        Animation* anim = GetObject(L);
+
+        int type = lua_type(L, 2);
+        VI_ASSERT(type == LUA_TBOOLEAN && "Animation:SetIsLoop #2 argument required a boolean");
+        
+        anim->SetIsLoop(lua_toboolean(L, 2));
+
+        return 0;
+    }
+
+    int lua_GetAnimationIsLoop(lua_State* L) {
+        Animation* anim = GetObject(L);
+
+        lua_pushboolean(L, anim->GetIsLoop());
+
+        return 1;
+    }
+
     LuaModuleDef<Animation> AnimationLuaModule::ModuleDef =
         LuaModuleDef<Animation>
     {
@@ -64,6 +83,8 @@ namespace VIEngine
             {"GetName", lua_GetAnimationName},
             {"SetName", lua_SetAnimationName},
             {"GetNumsFrame", lua_GetAnimationNumsFrame},
+            {"SetIsLoop", lua_SetAnimationIsLoop},
+            {"GetIsLoop", lua_GetAnimationIsLoop},
             {NULL, NULL}
         },
         {},

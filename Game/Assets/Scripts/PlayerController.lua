@@ -1,14 +1,23 @@
 require("Assets\\Scripts\\Core")
+require("Assets\\Scripts\\Zero\\ZeroIdleState")
+require("Assets\\Scripts\\Zero\\ZeroWalkState")
+require("Assets\\Scripts\\Zero\\ZeroBasicAttack1State")
+require("Assets\\Scripts\\Zero\\ZeroBasicAttack2State")
+require("Assets\\Scripts\\Zero\\ZeroBasicAttack3State")
 
 PlayerController = PlayerController or {}
 
 PlayerController['MoveHorizontal'] = 0
 PlayerController['MoveVertical'] = 0
 PlayerController['Speed'] = 5.0
+PlayerController['ActiveState'] = nil
+PlayerController['WalkState'] = ZeroWalkState
+PlayerController['IdleState'] = ZeroIdleState
+PlayerController['BasicAttack1State'] = ZeroBasicAttack1State
+PlayerController['BasicAttack2State'] = ZeroBasicAttack2State
+PlayerController['BasicAttack3State'] = ZeroBasicAttack3State
 
 function PlayerController:OnStart()
-    print("PlayerController started")
-
     local idleAnimation = Animation.Create("ZeroIdle");
     idleAnimation:AddSprite("Assets/Sprite/Zero/idle/idle00.png")
 	idleAnimation:AddSprite("Assets/Sprite/Zero/idle/idle01.png")
@@ -29,55 +38,69 @@ function PlayerController:OnStart()
 	walkAnimation:AddSprite("Assets/Sprite/Zero/walk/walk09.png");
 	walkAnimation:AddSprite("Assets/Sprite/Zero/walk/walk10.png");
 
-    local animator = self:GetAnimator()
+    local basicAttack1 = Animation.Create("ZeroBasicAttack1")
+    -- basicAttack1:AddSprite("Assets/Sprite/Zero/basic_attack1/basic_attack1_00.png");
+    basicAttack1:AddSprite("Assets/Sprite/Zero/basic_attack1/basic_attack1_01.png");
+    basicAttack1:AddSprite("Assets/Sprite/Zero/basic_attack1/basic_attack1_02.png");
+    basicAttack1:AddSprite("Assets/Sprite/Zero/basic_attack1/basic_attack1_03.png");
+    basicAttack1:AddSprite("Assets/Sprite/Zero/basic_attack1/basic_attack1_04.png");
+    basicAttack1:AddSprite("Assets/Sprite/Zero/basic_attack1/basic_attack1_05.png");
+    basicAttack1:AddSprite("Assets/Sprite/Zero/basic_attack1/basic_attack1_06.png");
+    basicAttack1:AddSprite("Assets/Sprite/Zero/basic_attack1/basic_attack1_07.png");
+    basicAttack1:SetIsLoop(false)
+
+    local basicAttack2 = Animation.Create("ZeroBasicAttack2")
+    basicAttack2:AddSprite("Assets/Sprite/Zero/basic_attack2/basic_attack2_00.png");
+    basicAttack2:AddSprite("Assets/Sprite/Zero/basic_attack2/basic_attack2_01.png");
+    basicAttack2:AddSprite("Assets/Sprite/Zero/basic_attack2/basic_attack2_02.png");
+    basicAttack2:AddSprite("Assets/Sprite/Zero/basic_attack2/basic_attack2_03.png");
+    basicAttack2:AddSprite("Assets/Sprite/Zero/basic_attack2/basic_attack2_04.png");
+    basicAttack2:AddSprite("Assets/Sprite/Zero/basic_attack2/basic_attack2_05.png");
+    basicAttack2:AddSprite("Assets/Sprite/Zero/basic_attack2/basic_attack2_06.png");
+    -- basicAttack2:AddSprite("Assets/Sprite/Zero/basic_attack2/basic_attack2_07.png");
+    -- basicAttack2:AddSprite("Assets/Sprite/Zero/basic_attack2/basic_attack2_08.png");
+    basicAttack2:SetIsLoop(false)
+
+    local basicAttack3 = Animation.Create("ZeroBasicAttack2")
+    basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_00.png");
+    basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_01.png");
+    basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_02.png");
+    basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_03.png");
+    basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_04.png");
+    basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_05.png");
+    basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_06.png");
+    basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_07.png");
+    basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_08.png");
+    basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_09.png");
+    basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_10.png");
+    basicAttack3:SetIsLoop(false)
+
+    local animator = self:AddAnimator()
     animator:SetFPS(120)
     animator:AddAnimation(idleAnimation)
     animator:AddAnimation(walkAnimation)
+    animator:AddAnimation(basicAttack1)
+    animator:AddAnimation(basicAttack2)
+    animator:AddAnimation(basicAttack3)
     animator:SetActiveAnimation(walkAnimation:GetName())
     animator:FlipVertical(true)
 
     self:SetPositionX(10.0)
     self:SetPositionY(10.0)
+
+    self['ActiveState'] = ZeroIdleState
+    self['ActiveState']:OnEnter(self)
 end
 
 function PlayerController:OnProcessInput(inputState)
-    self['MoveHorizontal'] = 0
-    self['MoveVertical'] = 0
-
-    local keyboardState = inputState:GetKeyboard()
-    local mouseInput = inputState:GetMouse()
-
-    local animator = self:GetAnimator()
-    if keyboardState:IsPressed(VIKeyCode.A) or keyboardState:IsPressed(VIKeyCode.LEFT) then
-        animator:FlipHorizontal(true);
-        self['MoveHorizontal'] = self['MoveHorizontal'] - 1
-    end
-
-    if keyboardState:IsPressed(VIKeyCode.D) or keyboardState:IsPressed(VIKeyCode.RIGHT) then
-        animator:FlipHorizontal(false);
-        self['MoveHorizontal'] = self['MoveHorizontal'] + 1
-    end
-
-    if keyboardState:IsPressed(VIKeyCode.S) or keyboardState:IsPressed(VIKeyCode.DOWN) then
-        self['MoveVertical'] = self['MoveVertical'] + 1
-    end
-
-    if keyboardState:IsPressed(VIKeyCode.W) or keyboardState:IsPressed(VIKeyCode.UP) then
-        self['MoveVertical'] = self['MoveVertical'] - 1
-    end
-
-    if self['MoveHorizontal'] == 0 then
-        animator:SetActiveAnimation("ZeroIdle")
-        animator:SetFPS(4)
-    else
-       animator:SetActiveAnimation("ZeroWalk")
-       animator:SetFPS(12)
-    end
+    self['ActiveState']:OnProcessInput(inputState)
 end
 
 function PlayerController:OnUpdate(deltaTime)
-    local x, y, _ = self:GetPosition();
-
-    self:SetPositionX(x + self['MoveHorizontal'] * self['Speed'] * deltaTime)
-    self:SetPositionY(y + self['MoveVertical'] * self['Speed'] * deltaTime)
+    local nextState = self['ActiveState']:OnUpdate(deltaTime)
+    if nextState ~= nil and nextState ~= self['ActiveState'] then
+        self['ActiveState']:OnExit()
+        self['ActiveState'] = nextState
+        self['ActiveState']:OnEnter(self)
+    end
 end

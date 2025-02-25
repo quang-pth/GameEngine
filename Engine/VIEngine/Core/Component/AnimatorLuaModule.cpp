@@ -70,6 +70,14 @@ namespace VIEngine {
 		return 0;
 	}
 
+	int lua_IsActiveAnimationFinished(lua_State* L) {
+		AnimatorComponent* animator = GetAnimatorComponent(L);
+
+		lua_pushboolean(L, animator->IsActiveAnimationFinished());
+
+		return 1;
+	}
+
 	LuaModuleDef<AnimatorComponent> AnimatorLuaModule::ModuleDef =
 		LuaModuleDef<AnimatorComponent>
 	{
@@ -80,6 +88,7 @@ namespace VIEngine {
 			{"SetActiveAnimation", lua_SetActiveAnimation},
 			{"SetFPS", lua_SetFPS},
 			{"AddAnimation", lua_AddAnimation},
+			{"IsActiveAnimationFinished", lua_IsActiveAnimationFinished},
 			{NULL, NULL}
 		},
 		{}, // index attributes
