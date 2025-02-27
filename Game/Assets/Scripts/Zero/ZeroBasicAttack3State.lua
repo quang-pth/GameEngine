@@ -1,13 +1,13 @@
 require("Assets\\Scripts\\Core")
 require("Assets\\Scripts\\Zero\\ZeroState")
 
-ZeroBasicAttack3State = {
+ZeroBasicAttack3State = {}
+setmetatable(ZeroBasicAttack3State, {
     __index = ZeroState
-}
+})
 
 ZeroBasicAttack3State['Owner'] = nil
 ZeroBasicAttack3State['Animator'] = nil
--- ZeroBasicAttack3State['TriggerBasicAttack3'] = false
 
 function ZeroBasicAttack3State:OnEnter(owner)
     ZeroBasicAttack3State['Owner'] = owner
@@ -18,22 +18,14 @@ function ZeroBasicAttack3State:OnEnter(owner)
 end
 
 function ZeroBasicAttack3State:OnProcessInput(inputState)
-    -- ZeroBasicAttack3State['TriggerBasicAttack3'] = false
-
-    -- local mouseState = inputState:GetMouse()
-    -- if not self['Animator']:IsActiveAnimationFinished() and mouseState:IsPressed(VIMouseButton.BUTTON_LEFT) then
-    --     self['TriggerBasicAttack3'] = true
-    -- end
 end
 
 function ZeroBasicAttack3State:OnUpdate(deltaTime)
-    if self['Animator']:IsActiveAnimationFinished() then
-        return self['Owner']['IdleState']
+    if not self['Animator']:IsActiveAnimationFinished() then
+        return
     end
 
-    -- if self['TriggerBasicAttack3'] then
-    --     return self['Owner']['BasicAttack3State']
-    -- end
+    return self['Owner']['IdleState']
 end
 
 function ZeroBasicAttack3State:OnExit()

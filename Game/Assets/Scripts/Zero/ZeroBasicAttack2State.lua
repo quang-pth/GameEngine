@@ -1,14 +1,23 @@
 require("Assets\\Scripts\\Core")
 require("Assets\\Scripts\\Zero\\ZeroState")
 
-ZeroBasicAttack2State = {
+ZeroBasicAttack2State = {}
+setmetatable(ZeroBasicAttack2State, {
     __index = ZeroState
-}
+})
 
 ZeroBasicAttack2State['Owner'] = nil
 ZeroBasicAttack2State['Animator'] = nil
-ZeroBasicAttack2State['TriggerBasicAttack3'] = false
-
+ZeroBasicAttack2State['CommandBuffers'] = {
+    FrameIndex = 0,
+    Buffers = {
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+    }
+}
 function ZeroBasicAttack2State:OnEnter(owner)
     ZeroBasicAttack2State['Owner'] = owner
 
@@ -18,11 +27,14 @@ function ZeroBasicAttack2State:OnEnter(owner)
 end
 
 function ZeroBasicAttack2State:OnProcessInput(inputState)
-    ZeroBasicAttack2State['TriggerBasicAttack3'] = false
+    local nextIndex = ZeroState:NextIndex(self['CommandBuffers']['FrameIndex'], #self['CommandBuffers']['Buffers'])
+    self['CommandBuffers']['FrameIndex'] = nextIndex
 
     local mouseState = inputState:GetMouse()
-    if not self['Animator']:IsActiveAnimationFinished() and mouseState:IsPressed(VIMouseButton.BUTTON_LEFT) then
-        self['TriggerBasicAttack3'] = true
+    if mouseState:IsPressed(VIMouseButton.BUTTON_LEFT) then
+        self['CommandBuffers']['Buffers'][nextIndex] = VIMouseButton.BUTTON_LEFT
+    else
+        self['CommandBuffers']['Buffers'][nextIndex] = -1
     end
 end
 
@@ -31,8 +43,11 @@ function ZeroBasicAttack2State:OnUpdate(deltaTime)
         return
     end
 
-    if self['TriggerBasicAttack3'] == true then
-        return self['Owner']['BasicAttack3State']
+    local commandBuffers = self['CommandBuffers']['Buffers']
+    for index = 1, #commandBuffers do
+        if commandBuffers[index] == VIMouseButton.BUTTON_LEFT then
+            return self['Owner']['BasicAttack3State']
+        end
     end
 
     return self['Owner']['IdleState']

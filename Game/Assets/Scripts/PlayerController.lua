@@ -61,7 +61,7 @@ function PlayerController:OnStart()
     -- basicAttack2:AddSprite("Assets/Sprite/Zero/basic_attack2/basic_attack2_08.png");
     basicAttack2:SetIsLoop(false)
 
-    local basicAttack3 = Animation.Create("ZeroBasicAttack2")
+    local basicAttack3 = Animation.Create("ZeroBasicAttack3")
     basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_00.png");
     basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_01.png");
     basicAttack3:AddSprite("Assets/Sprite/Zero/basic_attack3/basic_attack3_02.png");
