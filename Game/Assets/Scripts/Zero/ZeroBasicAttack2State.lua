@@ -43,11 +43,8 @@ function ZeroBasicAttack2State:OnUpdate(deltaTime)
         return
     end
 
-    local commandBuffers = self['CommandBuffers']['Buffers']
-    for index = 1, #commandBuffers do
-        if commandBuffers[index] == VIMouseButton.BUTTON_LEFT then
-            return self['Owner']['BasicAttack3State']
-        end
+    if ZeroState:CountIsPressed(self['CommandBuffers']['Buffers'], VIMouseButton.BUTTON_LEFT, 1) then
+        return self['Owner']['BasicAttack3State']
     end
 
     return self['Owner']['IdleState']

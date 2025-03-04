@@ -28,6 +28,7 @@ private:
 	void GenerateTestingSprites();
 private:
 	class VIEngine::Actor mActor;
+	class VIEngine::Actor mBackground;
 	int8_t mMoveHorizontal = 0, mMoveVertical = 0;
 	float mSpeed = 5.0f;
 };

@@ -8,7 +8,6 @@
 #include"ECS/Coordinator.h"
 #include"Renderer/Renderer.h"
 #include"Resource/ResourceManager.h"
-#include"Core/System/SpriteAnimationSystem.h"
 #include"Core/System/SpriteRendererSystem.h"
 #include"Core/System/DirtySpriteValidationSystem.h"
 #include"Core/System/ActorStateCachingSystem.h"
@@ -68,13 +67,11 @@ namespace VIEngine {
 		mEventDispatcher.AddEventListener<MouseButtonReleasedEvent>(BIND_EVENT_FUNCTION(OnMouseButtonReleasedEvent));
 
 		auto dirtySpriteSystem = mSystemManager->AddSystem<DirtySpriteValidationSystem>();
-		auto spriteAnimationSystem = mSystemManager->AddSystem<SpriteAnimationSystem>();
 		auto stateCachingSystem = mSystemManager->AddSystem<ActorStateCachingSystem>();
 		auto spriteRendererSystem = mSystemManager->AddSystem<SpriteRendererSystem>();
 		mScriptSystem = mSystemManager->AddSystem<ScriptSystem>();
 		// Dirty Sprite Validation must be happen before any sprite rendering operations
 		mSystemManager->AddSystemDependency(spriteRendererSystem, dirtySpriteSystem);
-		mSystemManager->AddSystemDependency(spriteAnimationSystem, dirtySpriteSystem);
 
 		mSystemManager->OnInit();
 		Renderer::OnInit(mConfig);

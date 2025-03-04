@@ -10,7 +10,7 @@
 #include<glm/gtc/matrix_transform.hpp>
 
 namespace VIEngine {
-	BatchRenderer::BatchRenderer() : mRenderBatches(), mMemoryManager() {
+	BatchRenderer::BatchRenderer() : mRenderBatches(), mMemoryManager(), mSpriteBatchesMap() {
 		mShader = Shader::Create("Assets/Shader/render-batch.glsl");
 	}
 
@@ -19,6 +19,11 @@ namespace VIEngine {
 	}
 
 	void BatchRenderer::Begin() {
+		mRenderBatches.clear();
+		mSpriteBatchesMap.clear();
+	}
+	
+	void BatchRenderer::End() {
 		GenerateRenderBatches();
 
 		// TODO: Make camera configurable later
@@ -31,6 +36,10 @@ namespace VIEngine {
 		mShader->SetMatrix4("projectionMatrix", projection);
 
 		for (auto& renderBatch : mRenderBatches) {
+			if (renderBatch->GetBatchCount() == 0) {
+				continue;
+			}
+
 			uint32_t textureSlots = renderBatch->GetTextureSlots();
 
 			for (int8_t i = 0; i < textureSlots; i++) {
@@ -43,11 +52,6 @@ namespace VIEngine {
 			Renderer::DrawIndexed(renderBatch->GetVertexArray()->GetIndexBuffer()->GetNums());
 			renderBatch->Release();
 		}
-	}
-	
-	void BatchRenderer::End() {
-		mRenderBatches.clear();
-		mSpriteBatchesMap.clear();
 	}
 
 	void BatchRenderer::InsertBatch(const SpriteBatch& spriteBatch)

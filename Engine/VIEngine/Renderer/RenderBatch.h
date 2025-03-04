@@ -32,6 +32,7 @@ namespace VIEngine {
 			VI_FORCE_INLINE bool HasTextureSlot() const { return mCurrentTextureIdx < MAX_TEXTURE_UNITS; }
 			int32_t GetTextureSlot(uint32_t textureID) const;
 			VI_FORCE_INLINE class VertexArray* GetVertexArray() const { return mVertexArray; }
+			VI_FORCE_INLINE int GetBatchCount() const { return mBatchCount; }
 		private:
 			std::array<BatchedVertex, MAX_BATCH_SIZE * 4> mVertices;
 			std::array<uint32_t, MAX_BATCH_SIZE * 6> mIndices;

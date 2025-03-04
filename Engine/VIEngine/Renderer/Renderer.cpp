@@ -5,7 +5,8 @@
 
 namespace VIEngine {
 	RenderCommandQueue Renderer::sRenderCommandQueue;
-	BatchRenderer* Renderer::sBatchRenderer = nullptr;
+	std::vector<BatchRenderer*> Renderer::sBatchRenderers;
+	MemoryManager Renderer::sMemoryManager;
 
 	void Renderer::Submit(const RenderCallback& renderCallback) {
 		if (Application::Get().GetPerFrameData().IsCatchUpPhase) return;
@@ -44,7 +45,7 @@ namespace VIEngine {
 	}
 
 	void Renderer::OnInit(const ApplicationConfiguration& appConfig) {
-		sBatchRenderer = new BatchRenderer();
+		sBatchRenderers.push_back(sMemoryManager.NewPerFrame<BatchRenderer>());
 		Submit([rendererSpec = appConfig.RendererSpec]() {
 			RenderCommand::OnInit(rendererSpec);
 			CORE_LOG_INFO("Renderer init success");
@@ -52,8 +53,6 @@ namespace VIEngine {
 	}
 
 	bool Renderer::BeginScene() {
-		sBatchRenderer->Begin();
-
 		return true;
 	}
 
@@ -62,19 +61,32 @@ namespace VIEngine {
 	}
 
 	void Renderer::EndScene() {
-		sBatchRenderer->End();
 	}
 
 	void Renderer::OnShutDown() {
 		Submit([]() {
 			RenderCommand::OnShutdown();
+			for (auto iter = sBatchRenderers.begin(); iter != sBatchRenderers.end(); ++iter) {
+				sBatchRenderers.erase(iter);
+			}
+			sBatchRenderers.clear();
 			CORE_LOG_INFO("Renderer is shutdown");
 		});
-		VI_FREE_MEMORY(sBatchRenderer);
+	}
+
+	void Renderer::StartSpriteBatch() {
+		// TODO: Fix memory leaks here later
+		// sBatchRenderers.push_back(sMemoryManager.NewPerFrame<BatchRenderer>());
+		sBatchRenderers.back()->Begin();
 	}
 
 	void Renderer::SubmitSpriteBatch(const SpriteBatch& spriteBatch) {
 		if (Application::Get().GetPerFrameData().IsCatchUpPhase) return;
-		sBatchRenderer->InsertBatch(spriteBatch);
+		sBatchRenderers.back()->InsertBatch(spriteBatch);
+	}
+
+	void Renderer::EndSpriteBatch() {
+		sBatchRenderers.back()->End();
+		// sBatchRenderers.clear();
 	}
 }

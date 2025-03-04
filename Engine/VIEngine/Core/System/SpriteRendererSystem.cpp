@@ -1,6 +1,7 @@
 #include"SpriteRendererSystem.h"
 #include"Core/Component/SpriteComponent.h"
 #include"Core/Component/TransformComponent.h"
+#include"Core/Component/AnimatorComponent.h"
 #include"Core/Application.h"
 #include"Resource/Sprite.h"
 #include"Resource/Shader.h"
@@ -30,6 +31,7 @@ namespace VIEngine {
 	void SpriteRendererSystem::OnUpdate(Time time) {
 		Application& application = Application::Get();
 
+		Renderer::StartSpriteBatch();
 		for (SpriteComponent* spriteComponent : mCoordinator->GetComponentArray<SpriteComponent>()) {
 			TransformComponent& transformComponent = spriteComponent->GetOwner().GetComponent<TransformComponent>();
 			Sprite* sprite = spriteComponent->GetSprite();
@@ -43,6 +45,32 @@ namespace VIEngine {
 
 			Renderer::SubmitSpriteBatch(spriteBatch);
 		}
+
+		for (AnimatorComponent* animator : mCoordinator->GetComponentArray<AnimatorComponent>()) {
+			float frameTime = animator->GetFrameTime() + time.GetDeltaTime();
+			animator->SetFrameTime(frameTime);
+
+			float timePerCelSeconds = 1 / animator->GetFPS();
+
+			if (frameTime > timePerCelSeconds) {
+				animator->NextFrame();
+				frameTime -= timePerCelSeconds;
+				animator->SetFrameTime(frameTime);
+			}
+
+			TransformComponent& transform = animator->GetOwner().GetComponent<TransformComponent>();
+
+			SpriteBatch spriteBatch;
+			spriteBatch.SpriteTransform = transform.GetTransform();
+			spriteBatch.SpriteContext = animator->CurrentFrame();
+			spriteBatch.FlipHorizontal = animator->GetFlipHorizontal();
+			spriteBatch.FlipVertical = animator->GetFlipVertical();
+			spriteBatch.Depth = transform.GetPosition().y / application.GetConfig().Height;
+
+			Renderer::SubmitSpriteBatch(spriteBatch);
+		}
+
+		Renderer::EndSpriteBatch();
 	}
 
 	void SpriteRendererSystem::OnShutdown() {

@@ -22,6 +22,9 @@ void GameplayLayer::OnAttach() {
 	mActor = CreateActor();
 	mActor.AddComponent<ScriptComponent>("Assets/Scripts/PlayerController.lua");
 
+	mBackground = CreateActor();
+	mBackground.AddComponent<ScriptComponent>("Assets/Scripts/Background.lua");
+
 	// GenerateTestingAnimations();
 	// GenerateTestingSprites();
 }
@@ -64,7 +67,6 @@ void GameplayLayer::GenerateTestingAnimations() {
 
 void GameplayLayer::GenerateTestingSprites() {
 	using namespace VIEngine;
-
 
 	Sprite* idleSprite = Sprite::Create("Assets/Sprite/Zero/idle/idle00.png");
 	Sprite* walkSprite = Sprite::Create("Assets/Sprite/Zero/walk/walk01.png");

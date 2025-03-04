@@ -16,4 +16,15 @@ function ZeroState:NextIndex(currentIndex, upperBound)
     return nextIndex
 end
 
+function ZeroState:CountIsPressed(commandBuffers, inputCommand, count)
+    local times = 0
+    for i = 1, #commandBuffers do
+        if commandBuffers[i] == inputCommand then
+            times = times + 1
+        end
+    end
+
+    return times >= count
+end
+
 function ZeroState:OnExit() end

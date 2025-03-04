@@ -5,6 +5,8 @@
 #include"ScriptComponent.h"
 #include"AnimatorComponent.h"
 #include"AnimatorLuaModule.h"
+#include"SpriteComponent.h"
+#include"SpriteLuaModule.h"
 #include"Core/System/ScriptSystem.h"
 
 namespace VIEngine {
@@ -66,6 +68,44 @@ namespace VIEngine {
 		return 0;
 	}
 
+	int lua_GetScale(lua_State* L) {
+		Actor actor = GetActor(L);
+
+		TransformComponent& transform = actor.GetComponent<TransformComponent>();
+		
+		lua_pushnumber(L, transform.GetScale().x);
+		lua_pushnumber(L, transform.GetScale().y);
+		lua_pushnumber(L, transform.GetScale().z);
+
+		return 3;
+	}
+
+	int lua_SetScaleX(lua_State* L) {
+		Actor actor = GetActor(L);
+
+		int type = lua_type(L, 2);
+		VI_ASSERT(type == LUA_TNUMBER && "Actor:SetScaleX #2 argument required a number");
+
+		TransformComponent& transform = actor.GetComponent<TransformComponent>();
+		float x = lua_tonumber(L, 2);
+		transform.SetScaleX(x);
+
+		return 0;
+	}
+
+	int lua_SetScaleY(lua_State* L) {
+		Actor actor = GetActor(L);
+
+		int type = lua_type(L, 2);
+		VI_ASSERT(type == LUA_TNUMBER && "Actor:SetScaleY #2 argument required a number");
+
+		TransformComponent& transform = actor.GetComponent<TransformComponent>();
+		float y = lua_tonumber(L, 2);
+		transform.SetScaleY(y);
+
+		return 0;
+	}
+
 	int lua_GetAnimator(lua_State* L) {
 		Actor actor = GetActor(L);
 		LuaExecutor* executor = GetExecutor(L);
@@ -96,12 +136,47 @@ namespace VIEngine {
 		return 1;
 	}
 
+	static int lua_GetSprite(lua_State* L) {
+		Actor actor = GetActor(L);
+		LuaExecutor* executor = GetExecutor(L);
+
+		SpriteComponent& sprite = actor.GetComponent<SpriteComponent>();
+		executor->PushValue(LuaUserData::Create(
+			&sprite,
+			SpriteLuaModule::ModuleDef.GetModuleName(),
+			SpriteLuaModule::ModuleDef.GetRegs(),
+			SpriteLuaModule::ModuleDef.GetAttributes()
+		));
+
+		return 1;
+	}
+
+	static int lua_AddSprite(lua_State* L) {
+		Actor actor = GetActor(L);
+		LuaExecutor* executor = GetExecutor(L);
+
+		SpriteComponent& sprite = actor.AddComponent<SpriteComponent>();
+		executor->PushValue(LuaUserData::Create(
+			&sprite,
+			SpriteLuaModule::ModuleDef.GetModuleName(),
+			SpriteLuaModule::ModuleDef.GetRegs(),
+			SpriteLuaModule::ModuleDef.GetAttributes()
+		));
+
+		return 1;
+	}
+
 	const std::vector<luaL_Reg> regs = {
 		{"GetPosition", lua_GetPosition},
 		{"SetPositionX", lua_SetPositionX},
 		{"SetPositionY", lua_SetPositionY},
+		{"GetScale", lua_GetScale},
+		{"SetScaleX", lua_SetScaleX},
+		{"SetScaleY", lua_SetScaleY},
 		{"GetAnimator", lua_GetAnimator},
 		{"AddAnimator", lua_AddAnimator},
+		{"GetSprite", lua_GetSprite},
+		{"AddSprite", lua_AddSprite},
 		{NULL, NULL}
 	};
 

@@ -5,6 +5,7 @@
 #include"RenderCommandQueue.h"
 #include"BatchRenderer.h"
 #include"RenderBatch.h"
+#include"Memory/MemoryManager.h"
 
 namespace VIEngine {
 	struct VI_API RendererData {
@@ -24,10 +25,13 @@ namespace VIEngine {
 		static void Render();
 		static void EndScene();
 		static void OnShutDown();
+		static void StartSpriteBatch();
 		static void SubmitSpriteBatch(const SpriteBatch& spriteBatch);
+		static void EndSpriteBatch();
 	private:
 		static RenderCommandQueue sRenderCommandQueue;
-		static class BatchRenderer* sBatchRenderer;
+		static class std::vector<BatchRenderer*> sBatchRenderers;
+		static MemoryManager sMemoryManager;
 	public:
 		~Renderer() = default;
 	protected:
