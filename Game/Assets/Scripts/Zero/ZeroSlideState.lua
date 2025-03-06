@@ -9,6 +9,7 @@ setmetatable(ZeroSlideState, {
 ZeroSlideState['Owner'] = nil
 ZeroSlideState['Animator'] = nil
 ZeroSlideState['Speed'] = 7.5
+ZeroSlideState['ContinuedSlide'] = true
 
 function ZeroSlideState:OnEnter(owner)
     self['Owner'] = owner
@@ -20,6 +21,7 @@ end
 function ZeroSlideState:OnProcessInput(inputState)
     local owner = self['Owner']
     owner['MoveHorizontal'] = 0
+    self['ContinuedSlide'] = false
 
     local keyboardState = inputState:GetKeyboard()
     if keyboardState:IsPressed(VIKeyCode.A) then
@@ -30,10 +32,19 @@ function ZeroSlideState:OnProcessInput(inputState)
         owner['MoveHorizontal'] = owner['MoveHorizontal'] + 1
     end
 
+    if keyboardState:IsPressed(VIKeyCode.LEFT_SHIFT) then
+        self['ContinuedSlide'] = true
+    end
+
 end
 
 function ZeroSlideState:OnUpdate(deltaTime)
     local owner = self['Owner']
+    
+    if not self['ContinuedSlide'] then
+        return owner['PrevState']
+    end
+
     
     if owner['MoveHorizontal'] == 0 then
         return owner['IdleState']
