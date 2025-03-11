@@ -19,6 +19,7 @@ namespace VIEngine {
 		void OnUpdate(Time time);
 		void OnDestroyed();
 		void OnKeyPressedEvent(const class KeyPressedEvent& eventContext);
+		void OnMouseButtonPressedEvent(const class MouseButtonPressedEvent& eventContext);
 	private:
 		std::vector<std::string> SplitString(const std::string& str, const std::string& delimeter);
 	private:

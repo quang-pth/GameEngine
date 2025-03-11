@@ -18,6 +18,7 @@ namespace VIEngine {
 		virtual void OnUpdate(Time) override;
 		virtual void OnDestroyed() override;
 		void OnKeyPressedEvent(const class KeyPressedEvent& eventContext);
+		void OnMouseButtonPressedEvent(const class MouseButtonPressedEvent& eventContext);
 
 		VI_FORCE_INLINE class LuaExecutor* GetLuaExecutor() const { return mLuaExecutor; }
 		VI_FORCE_INLINE class IStateHandler* GetStateHandler() const { return mStateHandler; }

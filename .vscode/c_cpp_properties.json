@@ -7,6 +7,7 @@
                 "${workspaceFolder}/Vendors/glfw/**",
                 "${workspaceFolder}/Vendors/glm/**",
                 "${workspaceFolder}/Vendors/lua/**",
+                "${workspaceFolder}/Vendors/box2d/include/**",
                 "${workspaceFolder}/Engine/VIEngine/**"
             ],
             "defines": ["_DEBUG", "VI_API"],

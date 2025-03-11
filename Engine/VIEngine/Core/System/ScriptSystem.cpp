@@ -60,4 +60,10 @@ namespace VIEngine {
 			scriptComponent->OnKeyPressedEvent(eventContext);
 		}
 	}
+
+	void ScriptSystem::OnMouseButtonPressedEvent(const MouseButtonPressedEvent& eventContext) {
+		for (ScriptComponent* scriptComponent : mCoordinator->GetComponentArray<ScriptComponent>()) {
+			scriptComponent->OnMouseButtonPressedEvent(eventContext);
+		}
+	}
 }

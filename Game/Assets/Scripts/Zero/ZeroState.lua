@@ -16,6 +16,10 @@ function ZeroState:NextIndex(currentIndex, upperBound)
     return nextIndex
 end
 
+function ZeroState:OnKeyPressed(keyCode) end
+
+function ZeroState:OnMouseButtonPressed(button) end
+
 function ZeroState:CountIsPressed(commandBuffers, inputCommand, count)
     local times = 0
     for i = 1, #commandBuffers do

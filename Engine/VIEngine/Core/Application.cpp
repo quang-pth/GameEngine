@@ -13,6 +13,7 @@
 #include"Core/System/ActorStateCachingSystem.h"
 #include"Core/Type/Actor.h"
 #include"Core/System/ScriptSystem.h"
+#include"Core/System/PhysicSystem.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
 	if ((*iter)->On##eventType(eventContext)) {\
@@ -69,9 +70,13 @@ namespace VIEngine {
 		auto dirtySpriteSystem = mSystemManager->AddSystem<DirtySpriteValidationSystem>();
 		auto stateCachingSystem = mSystemManager->AddSystem<ActorStateCachingSystem>();
 		auto spriteRendererSystem = mSystemManager->AddSystem<SpriteRendererSystem>();
+		auto physicSystem = mSystemManager->AddSystem<PhysicSystem>();
 		mScriptSystem = mSystemManager->AddSystem<ScriptSystem>();
 		// Dirty Sprite Validation must be happen before any sprite rendering operations
 		mSystemManager->AddSystemDependency(spriteRendererSystem, dirtySpriteSystem);
+		mSystemManager->AddSystemDependency(spriteRendererSystem, physicSystem);
+		mSystemManager->AddSystemDependency(mScriptSystem, physicSystem);
+		physicSystem->SetUpdateInterval(1 / 30.0f);
 
 		mSystemManager->OnInit();
 		Renderer::OnInit(mConfig);
@@ -88,6 +93,7 @@ namespace VIEngine {
 		OnInitClient();
 
 		mSystemManager->GetSystem<ScriptSystem>().OnStart();
+		mSystemManager->GetSystem<PhysicSystem>().OnStart();
 
 		while (mIsRunning && !mNativeWindow->ShouldClose()) {
 			static float lastFrameTime = 0.0f;
@@ -165,6 +171,8 @@ namespace VIEngine {
 			return true;
 		}
 
+		mScriptSystem->OnKeyPressedEvent(eventContext);
+
 		DISPATCH_LAYER_EVENT(KeyPressedEvent, eventContext);
 		return false;
 	}
@@ -190,6 +198,7 @@ namespace VIEngine {
 	}
 	
 	bool Application::OnMouseButtonPressedEvent(const MouseButtonPressedEvent& eventContext) {
+		mScriptSystem->OnMouseButtonPressedEvent(eventContext);
 		DISPATCH_LAYER_EVENT(MouseButtonPressedEvent, eventContext);
 		return false;
 	}

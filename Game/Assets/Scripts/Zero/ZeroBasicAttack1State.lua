@@ -26,7 +26,7 @@ function ZeroBasicAttack1State:OnEnter(owner)
 
     self['Animator'] = owner:GetAnimator()
     self['Animator']:SetActiveAnimation("ZeroBasicAttack1")
-    self['Animator']:SetFPS(12)
+    self['Animator']:SetFPS(18)
 end
 
 function ZeroBasicAttack1State:OnProcessInput(inputState)
@@ -36,12 +36,22 @@ function ZeroBasicAttack1State:OnProcessInput(inputState)
     local mouseState = inputState:GetMouse()
     if mouseState:IsPressed(VIMouseButton.BUTTON_LEFT) then
         self['CommandBuffers']['Buffers'][nextIndex] = VIMouseButton.BUTTON_LEFT
-    else
+    else 
         self['CommandBuffers']['Buffers'][nextIndex] = -1
     end
 end
 
+function ZeroBasicAttack1State:OnMouseButtonPressed(button)
+    -- local nextIndex = self['CommandBuffers']['FrameIndex']
+    -- if button == VIMouseButton.BUTTON_LEFT then
+    --     self['CommandBuffers']['Buffers'][nextIndex] = VIMouseButton.BUTTON_LEFT
+    -- end
+end
+
 function ZeroBasicAttack1State:OnUpdate(deltaTime)
+    local nextIndex = ZeroState:NextIndex(self['CommandBuffers']['FrameIndex'], #self['CommandBuffers']['Buffers'])
+    self['CommandBuffers']['FrameIndex'] = nextIndex
+
     if not self['Animator']:IsActiveAnimationFinished() then
         return
     end

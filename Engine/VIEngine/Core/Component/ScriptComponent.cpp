@@ -51,6 +51,10 @@ namespace VIEngine {
 		mExecutor->InvokeTableFunction(mObjectName, "OnKeyPressed", true, LuaNumber::Create(eventContext.GetKey()));
 	}
 
+	void ScriptComponent::OnMouseButtonPressedEvent(const MouseButtonPressedEvent& eventContext) {
+		mExecutor->InvokeTableFunction(mObjectName, "OnMouseButtonPressed", true, LuaNumber::Create(eventContext.GetButton()));
+	}
+
 	std::vector<std::string> ScriptComponent::SplitString(const std::string& str, const std::string& delimeter) {
 		std::vector<std::string> tokens;
 		size_t currentPosition = 0;

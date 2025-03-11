@@ -7,3 +7,6 @@
 [submodule "Vendors/VIScript"]
 	path = Vendors/VIScript
 	url = https://github.com/quang-pth/VIScript.git
+[submodule "Vendors/box2d"]
+	path = Vendors/box2d
+	url = https://github.com/erincatto/box2d.git

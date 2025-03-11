@@ -4,6 +4,8 @@
 #include<Core/Component/TransformComponent.h>
 #include<Core/Component/SpriteComponent.h>
 #include<Core/Component/ScriptComponent.h>
+#include<Core/Component/Box2DComponent.h>
+#include<Core/Component/RigidBodyComponent.h>
 #include<Resource/Sprite.h>
 
 GameplayLayer::GameplayLayer() {
@@ -21,9 +23,18 @@ void GameplayLayer::OnAttach() {
 
 	mActor = CreateActor();
 	mActor.AddComponent<ScriptComponent>("Assets/Scripts/PlayerController.lua");
+	RigidBodyComponent& rigidBody = mActor.AddComponent<RigidBodyComponent>();
+	rigidBody.SetBodyType(EBodyType::DYNAMIC);
+	rigidBody.SetGravityScale(0.1f);
+	Box2DComponent& playerBox = mActor.AddComponent<Box2DComponent>();
+	playerBox.SetWidth(10);
+	playerBox.SetHeight(10);
 
-	mBackground = CreateActor();
-	mBackground.AddComponent<ScriptComponent>("Assets/Scripts/Background.lua");
+	 mBackground = CreateActor();
+	 mBackground.AddComponent<ScriptComponent>("Assets/Scripts/Background.lua");
+	 RigidBodyComponent& backgroundBody = mBackground.AddComponent<RigidBodyComponent>();
+	 backgroundBody.SetBodyType(EBodyType::STATIC);
+	 Box2DComponent& backgroundBox = mBackground.AddComponent<Box2DComponent>(); 
 
 	// GenerateTestingAnimations();
 	// GenerateTestingSprites();
@@ -104,7 +115,13 @@ void GameplayLayer::OnUpdate(VIEngine::Time time) {
 
 	static float temp = 0.0f;
 	temp += time.GetDeltaTime();
+
+	// auto& zeroTransform = mActor.GetComponent<TransformComponent>();
+	// CORE_LOG_DEBUG("Zero {0}, {1}", zeroTransform.GetPosition().x, zeroTransform.GetPosition().y);
 	
+	// auto& backgroundTransform = mBackground.GetComponent<TransformComponent>();
+	// CORE_LOG_DEBUG("Background {0}, {1}", backgroundTransform.GetPosition().x, backgroundTransform.GetPosition().y);
+
 	Renderer::SetAlphaState(true);
 }
 

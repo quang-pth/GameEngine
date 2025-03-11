@@ -14,7 +14,7 @@ function ZeroBasicAttack3State:OnEnter(owner)
 
     self['Animator'] = owner:GetAnimator()
     self['Animator']:SetActiveAnimation("ZeroBasicAttack3")
-    self['Animator']:SetFPS(12)
+    self['Animator']:SetFPS(18)
 end
 
 function ZeroBasicAttack3State:OnProcessInput(inputState)

@@ -100,7 +100,7 @@ function PlayerController:OnStart()
     animator:FlipVertical(true)
 
     self:SetPositionX(10.0)
-    self:SetPositionY(10.0)
+    self:SetPositionY(5.0)
 
     self['ActiveState'] = ZeroIdleState
     self['ActiveState']:OnEnter(self)
@@ -108,6 +108,11 @@ end
 
 function PlayerController:OnProcessInput(inputState)
     self['ActiveState']:OnProcessInput(inputState)
+
+    -- local mouseState = inputState:GetMouse()
+    -- if mouseState:IsPressed(VIMouseButton.BUTTON_LEFT) then
+    --     self:SetPositionY(5.0)
+    -- end
 end
 
 function PlayerController:OnUpdate(deltaTime)
@@ -126,6 +131,13 @@ function PlayerController:OnUpdate(deltaTime)
         self:ResetSlideCooldown()
         self['IsReadyToSlide'] = true
     end
+end
+
+function PlayerController:OnKeyPressed(keyCode)
+end
+
+function PlayerController:OnMouseButtonPressed(button)
+    self['ActiveState']:OnMouseButtonPressed(button)
 end
 
 function PlayerController:ResetSlideCooldown()

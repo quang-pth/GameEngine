@@ -23,7 +23,7 @@ function ZeroBasicAttack2State:OnEnter(owner)
 
     self['Animator'] = owner:GetAnimator()
     self['Animator']:SetActiveAnimation("ZeroBasicAttack2")
-    self['Animator']:SetFPS(12)
+    self['Animator']:SetFPS(18)
 end
 
 function ZeroBasicAttack2State:OnProcessInput(inputState)
