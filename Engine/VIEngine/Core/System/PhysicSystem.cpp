@@ -8,9 +8,9 @@ namespace VIEngine {
 
 	constexpr float WORLD_LENGTH_UNITS_PER_METER = 100.0f;
 
-	static float PixelToWorld(float pixels) { return pixels / WORLD_LENGTH_UNITS_PER_METER; }
+	float PixelToWorld(float pixels) { return pixels / WORLD_LENGTH_UNITS_PER_METER; }
 
-	static float WorldToPixel(float meters) { return meters * WORLD_LENGTH_UNITS_PER_METER; }
+	float WorldToPixel(float meters) { return meters * WORLD_LENGTH_UNITS_PER_METER; }
 
 	const std::unordered_map<EBodyType, b2BodyType> BODY_TYPE_MAP = {
 		{EBodyType::STATIC, b2_staticBody},
@@ -50,16 +50,19 @@ namespace VIEngine {
 			bodyDef.position = b2Vec2{PixelToWorld(transform.GetPosition().x), PixelToWorld(-transform.GetPosition().y)};
 			b2BodyId bodyId = b2CreateBody(mWorldID, &bodyDef);
 			rigidBody->SetBodyID(bodyId);
-			b2Body_SetUserData(bodyId, this);
+			b2Body_SetUserData(bodyId, rigidBody);
 			
-			VI_ASSERT(actor.HasComponent<Box2DComponent>() && "Actor with RigidbodyComponent attached should have atleast one shape collider component");
-
-			Box2DComponent& box2DComponent = actor.GetComponent<Box2DComponent>();
-			b2Polygon boxCollider = b2MakeBox(PixelToWorld(box2DComponent.GetWidth() * 0.5), PixelToWorld(box2DComponent.GetHeight() * 0.5));
-			b2ShapeDef shapeDef = b2DefaultShapeDef();
-			shapeDef.density = box2DComponent.GetDensity();
-			shapeDef.friction = box2DComponent.GetFriction();
-			b2CreatePolygonShape(bodyId, &shapeDef, &boxCollider);
+			if (actor.HasComponent<Box2DComponent>()) {
+				Box2DComponent& box2DComponent = actor.GetComponent<Box2DComponent>();
+				b2Polygon boxCollider = b2MakeBox(PixelToWorld(box2DComponent.GetWidth() * 0.5), PixelToWorld(box2DComponent.GetHeight() * 0.5));
+				b2ShapeDef shapeDef = b2DefaultShapeDef();
+				shapeDef.density = box2DComponent.GetDensity();
+				shapeDef.friction = box2DComponent.GetFriction();
+				b2CreatePolygonShape(bodyId, &shapeDef, &boxCollider);
+			}
+			else {
+				VI_ASSERT(false && "Actor with RigidbodyComponent attached should have atleast one shape collider component");
+			}
 		}
 	}
 

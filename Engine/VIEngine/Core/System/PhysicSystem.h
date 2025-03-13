@@ -19,6 +19,9 @@ namespace VIEngine {
 		CHAIN_SEGMENT
 	};
 
+	float PixelToWorld(float pixels);
+	float WorldToPixel(float meters);
+
 	class VI_API PhysicSystem : public ECS::System<PhysicSystem> {
 	public:
 		DECLARE_RTTI

@@ -1,6 +1,7 @@
 #include"SpriteLuaModule.h"
 #include"VIScript/LuaExecutor.h"
 #include"Resource/Sprite.h"
+#include"Resource/Texture2D.h"
 
 namespace VIEngine {
     const std::string NAME = "SpriteComponent";
@@ -75,6 +76,22 @@ namespace VIEngine {
 		return 0;
 	}
 
+    int lua_GetSpriteWidth(lua_State* L) {
+        SpriteComponent* spriteComponent = GetSpriteComponent(L);
+
+        lua_pushnumber(L, spriteComponent->GetSprite()->GetTexture()->GetTextureData().Width);
+
+        return 1;
+    }
+
+    int lua_GetSpriteHeight(lua_State* L) {
+        SpriteComponent* spriteComponent = GetSpriteComponent(L);
+
+        lua_pushnumber(L, spriteComponent->GetSprite()->GetTexture()->GetTextureData().Height);
+
+        return 1;
+    }
+
     LuaModuleDef<SpriteComponent> SpriteLuaModule::ModuleDef = 
         LuaModuleDef<SpriteComponent>
         {
@@ -84,6 +101,8 @@ namespace VIEngine {
                 {"SetColor", lua_SetColor},
                 {"FlipHorizontal", lua_FlipHorizontal},
                 {"FlipVertical", lua_FlipVertical},
+                {"GetWidth", lua_GetSpriteWidth},
+                {"GetHeight", lua_GetSpriteHeight},
                 {NULL, NULL}
             },
             {},

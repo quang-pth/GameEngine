@@ -1,5 +1,7 @@
 #include"AnimatorLuaModule.h"
 #include"VIScript/LuaExecutor.h"
+#include"Resource/Sprite.h"
+#include"Resource/Texture2D.h"
 
 namespace VIEngine {
 	const std::string NAME = "AnimatorComponent";
@@ -78,6 +80,24 @@ namespace VIEngine {
 		return 1;
 	}
 
+	int lua_GetActiveSpriteWidth(lua_State* L) {
+		AnimatorComponent* animator = GetAnimatorComponent(L);
+		LuaExecutor* executor = GetExecutor(L);
+		
+		lua_pushnumber(L, animator->GetActiveAnimation()->GetSprite(animator->GetCurrentFrameIdx())->GetTexture()->GetTextureData().Width);
+
+		return 1;
+	}
+
+	int lua_GetActiveSpriteHeight(lua_State* L) {
+		AnimatorComponent* animator = GetAnimatorComponent(L);
+		LuaExecutor* executor = GetExecutor(L);
+		
+		lua_pushnumber(L, animator->GetActiveAnimation()->GetSprite(animator->GetCurrentFrameIdx())->GetTexture()->GetTextureData().Height);
+
+		return 1;
+	}
+
 	LuaModuleDef<AnimatorComponent> AnimatorLuaModule::ModuleDef =
 		LuaModuleDef<AnimatorComponent>
 	{
@@ -89,6 +109,8 @@ namespace VIEngine {
 			{"SetFPS", lua_SetFPS},
 			{"AddAnimation", lua_AddAnimation},
 			{"IsActiveAnimationFinished", lua_IsActiveAnimationFinished},
+			{"GetWidth", lua_GetActiveSpriteWidth},
+			{"GetHeight", lua_GetActiveSpriteHeight},
 			{NULL, NULL}
 		},
 		{}, // index attributes

@@ -2,7 +2,6 @@
 
 #include"Core/Type/RTTI.h"
 #include"ECS/ISystem.h"
-#include"Renderer/BatchRenderer.h"
 
 namespace VIEngine {
 	class VI_API DirtySpriteValidationSystem : public ECS::System<DirtySpriteValidationSystem> {

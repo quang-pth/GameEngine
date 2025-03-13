@@ -2,6 +2,8 @@
 #include"VIScript/LuaExecutor.h"
 #include"Core/Application.h"
 #include"Core/System/ScriptSystem.h"
+#include"Resource/Sprite.h"
+#include"Resource/Texture2D.h"
 
 namespace VIEngine
 {

@@ -7,6 +7,8 @@
 #include"AnimatorLuaModule.h"
 #include"SpriteComponent.h"
 #include"SpriteLuaModule.h"
+#include"Box2DLuaModule.h"
+#include"RigidBodyLuaModule.h"
 #include"Core/System/ScriptSystem.h"
 
 namespace VIEngine {
@@ -110,13 +112,18 @@ namespace VIEngine {
 		Actor actor = GetActor(L);
 		LuaExecutor* executor = GetExecutor(L);
 
-		AnimatorComponent& animator = actor.GetComponent<AnimatorComponent>();
-		executor->PushValue(LuaUserData::Create(
-			&animator, 
-			AnimatorLuaModule::ModuleDef.GetMetableName(), 
-			AnimatorLuaModule::ModuleDef.GetRegs(),
-			AnimatorLuaModule::ModuleDef.GetAttributes()
-		));
+		if (actor.HasComponent<AnimatorComponent>()) {
+			AnimatorComponent& animator = actor.GetComponent<AnimatorComponent>();
+			executor->PushValue(LuaUserData::Create(
+				&animator, 
+				AnimatorLuaModule::ModuleDef.GetMetableName(), 
+				AnimatorLuaModule::ModuleDef.GetRegs(),
+				AnimatorLuaModule::ModuleDef.GetAttributes()
+			));
+		}
+		else {
+			lua_pushnil(L);
+		}
 
 		return 1;
 	}
@@ -140,13 +147,18 @@ namespace VIEngine {
 		Actor actor = GetActor(L);
 		LuaExecutor* executor = GetExecutor(L);
 
-		SpriteComponent& sprite = actor.GetComponent<SpriteComponent>();
-		executor->PushValue(LuaUserData::Create(
-			&sprite,
-			SpriteLuaModule::ModuleDef.GetModuleName(),
-			SpriteLuaModule::ModuleDef.GetRegs(),
-			SpriteLuaModule::ModuleDef.GetAttributes()
-		));
+		if (actor.HasComponent<SpriteComponent>()) {
+			SpriteComponent& sprite = actor.GetComponent<SpriteComponent>();
+			executor->PushValue(LuaUserData::Create(
+				&sprite,
+				SpriteLuaModule::ModuleDef.GetModuleName(),
+				SpriteLuaModule::ModuleDef.GetRegs(),
+				SpriteLuaModule::ModuleDef.GetAttributes()
+			));
+		}
+		else {
+			lua_pushnil(L);
+		}
 
 		return 1;
 	}
@@ -166,6 +178,76 @@ namespace VIEngine {
 		return 1;
 	}
 
+	int lua_GetBox2D(lua_State* L) {
+		Actor actor = GetActor(L);
+		LuaExecutor* executor = GetExecutor(L);
+
+		if (actor.HasComponent<Box2DComponent>()) {
+			Box2DComponent& box = actor.GetComponent<Box2DComponent>();
+			executor->PushValue(LuaUserData::Create(
+				&box,
+				Box2DLuaModule::ModuleDef.GetModuleName(),
+				Box2DLuaModule::ModuleDef.GetRegs(),
+				Box2DLuaModule::ModuleDef.GetAttributes()
+			));
+		}
+		else {
+			lua_pushnil(L);
+		}
+
+		return 1;
+	}
+
+	int lua_AddBox2D(lua_State* L) {
+		Actor actor = GetActor(L);
+		LuaExecutor* executor = GetExecutor(L);
+
+		Box2DComponent& box = actor.AddComponent<Box2DComponent>();
+		executor->PushValue(LuaUserData::Create(
+			&box,
+			Box2DLuaModule::ModuleDef.GetModuleName(),
+			Box2DLuaModule::ModuleDef.GetRegs(),
+			Box2DLuaModule::ModuleDef.GetAttributes()
+		));
+
+		return 1;
+	}
+
+	int lua_AddRigidBody(lua_State* L) {
+		Actor actor = GetActor(L);
+		LuaExecutor* executor = GetExecutor(L);
+
+		RigidBodyComponent& rigidBody = actor.AddComponent<RigidBodyComponent>();
+		executor->PushValue(LuaUserData::Create(
+			&rigidBody,
+			RigidBodyLuaModule::ModuleDef.GetModuleName(),
+			RigidBodyLuaModule::ModuleDef.GetRegs(),
+			RigidBodyLuaModule::ModuleDef.GetAttributes()
+		));
+
+		return 1;
+	}
+
+	int lua_GetRigidBody(lua_State* L) {
+		Actor actor = GetActor(L);
+		LuaExecutor* executor = GetExecutor(L);
+
+		if (actor.HasComponent<RigidBodyComponent>()) {
+			RigidBodyComponent& rigidBody = actor.GetComponent<RigidBodyComponent>();
+			executor->PushValue(LuaUserData::Create(
+				&rigidBody,
+				RigidBodyLuaModule::ModuleDef.GetModuleName(),
+				RigidBodyLuaModule::ModuleDef.GetRegs(),
+				RigidBodyLuaModule::ModuleDef.GetAttributes()
+			));
+		}
+		else {
+			lua_pushnil(L);
+		}
+
+		return 1;
+	}
+
 	const std::vector<luaL_Reg> regs = {
 		{"GetPosition", lua_GetPosition},
 		{"SetPositionX", lua_SetPositionX},
@@ -177,6 +259,10 @@ namespace VIEngine {
 		{"AddAnimator", lua_AddAnimator},
 		{"GetSprite", lua_GetSprite},
 		{"AddSprite", lua_AddSprite},
+		{"GetBox2D", lua_GetBox2D},
+		{"AddBox2D", lua_AddBox2D},
+		{"GetRigidBody", lua_GetRigidBody},
+		{"AddRigidBody", lua_AddRigidBody},
 		{NULL, NULL}
 	};
 

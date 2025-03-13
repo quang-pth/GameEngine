@@ -35,8 +35,8 @@ namespace VIEngine {
 
     void RenderBatch::SubmitVerticesAndIndices() {
 		mVertexArray->Bind();
-		mVertexArray->SetVertexBuffer(mVertices.data(), mVertexFormat.GetStride() * mBatchCount * 4);
-		mVertexArray->SetIndexBuffer(mIndices.data(), sizeof(uint32_t) * mBatchCount * 6, mBatchCount * 6);
+		mVertexArray->SetVertexBuffer(mVertices.data(), mVertexFormat.GetStride() * mBatchCount * 4, ERendererMode::Dynamic);
+		mVertexArray->SetIndexBuffer(mIndices.data(), sizeof(uint32_t) * mBatchCount * 6, mBatchCount * 6, ERendererMode::Dynamic);
     }
 
     bool RenderBatch::HasSlot() const {

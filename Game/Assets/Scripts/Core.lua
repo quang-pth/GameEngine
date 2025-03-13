@@ -149,3 +149,11 @@ VIMouseButton = {
     BUTTON_RIGHT     = 1,
     BUTTON_MIDDLE    = 2
 }
+
+VIPhysic = {
+    BodyType = {
+        STATIC = 0,
+        DYNAMIC = 1,
+        KINEMATIC = 2,
+    }
+}

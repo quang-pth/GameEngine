@@ -28,10 +28,13 @@ namespace VIEngine {
 		static void StartSpriteBatch();
 		static void SubmitSpriteBatch(const SpriteBatch& spriteBatch);
 		static void EndSpriteBatch();
+		static void DrawQuad(float minX, float minY, float maxX, float maxY, const glm::vec3& color);
 	private:
 		static RenderCommandQueue sRenderCommandQueue;
 		static class std::vector<BatchRenderer*> sBatchRenderers;
 		static MemoryManager sMemoryManager;
+		static class VertexArray* sQuadVertexArray;
+		static class Shader* sQuadShader;
 	public:
 		~Renderer() = default;
 	protected:

@@ -14,6 +14,7 @@
 #include"Core/Type/Actor.h"
 #include"Core/System/ScriptSystem.h"
 #include"Core/System/PhysicSystem.h"
+#include"Core/System/DebugDrawSystem.h"
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
 	if ((*iter)->On##eventType(eventContext)) {\
@@ -71,11 +72,12 @@ namespace VIEngine {
 		auto stateCachingSystem = mSystemManager->AddSystem<ActorStateCachingSystem>();
 		auto spriteRendererSystem = mSystemManager->AddSystem<SpriteRendererSystem>();
 		auto physicSystem = mSystemManager->AddSystem<PhysicSystem>();
+		auto debugDrawSystem = mSystemManager->AddSystem<DebugDrawSystem>();
 		mScriptSystem = mSystemManager->AddSystem<ScriptSystem>();
-		// Dirty Sprite Validation must be happen before any sprite rendering operations
 		mSystemManager->AddSystemDependency(spriteRendererSystem, dirtySpriteSystem);
 		mSystemManager->AddSystemDependency(spriteRendererSystem, physicSystem);
 		mSystemManager->AddSystemDependency(mScriptSystem, physicSystem);
+		mSystemManager->AddSystemDependency(debugDrawSystem, physicSystem);
 		physicSystem->SetUpdateInterval(1 / 30.0f);
 
 		mSystemManager->OnInit();
@@ -104,13 +106,13 @@ namespace VIEngine {
 
 			mTime = currentFrameTime - lastFrameTime;
 			lastFrameTime = currentFrameTime;
-
+			
 			mNativeWindow->PollsEvent();
-
+			
 			for (auto layer : *mLayerStack) {
 				layer->OnProcessInput(*mInputState);
 			}
-
+			
 			mScriptSystem->OnProcessInput(*mInputState);
 			
 			mNativeWindow->Swapbuffers();

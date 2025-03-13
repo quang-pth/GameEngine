@@ -23,20 +23,11 @@ void GameplayLayer::OnAttach() {
 
 	mActor = CreateActor();
 	mActor.AddComponent<ScriptComponent>("Assets/Scripts/PlayerController.lua");
-	RigidBodyComponent& rigidBody = mActor.AddComponent<RigidBodyComponent>();
-	rigidBody.SetBodyType(EBodyType::DYNAMIC);
-	rigidBody.SetGravityScale(0.1f);
-	Box2DComponent& playerBox = mActor.AddComponent<Box2DComponent>();
-	playerBox.SetWidth(10);
-	playerBox.SetHeight(10);
 
 	 mBackground = CreateActor();
 	 mBackground.AddComponent<ScriptComponent>("Assets/Scripts/Background.lua");
-	 RigidBodyComponent& backgroundBody = mBackground.AddComponent<RigidBodyComponent>();
-	 backgroundBody.SetBodyType(EBodyType::STATIC);
-	 Box2DComponent& backgroundBox = mBackground.AddComponent<Box2DComponent>(); 
 
-	// GenerateTestingAnimations();
+	 // GenerateTestingAnimations();
 	// GenerateTestingSprites();
 }
 
@@ -113,8 +104,8 @@ void GameplayLayer::OnUpdate(VIEngine::Time time) {
 
 	Renderer::ClearColor(1.0f, 0.3f, 0.6f);
 
-	static float temp = 0.0f;
-	temp += time.GetDeltaTime();
+	// static float temp = 0.0f;
+	// temp += time.GetDeltaTime();
 
 	// auto& zeroTransform = mActor.GetComponent<TransformComponent>();
 	// CORE_LOG_DEBUG("Zero {0}, {1}", zeroTransform.GetPosition().x, zeroTransform.GetPosition().y);

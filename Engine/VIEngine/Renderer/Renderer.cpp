@@ -2,14 +2,22 @@
 #include"Core/Logger/Logger.h"
 #include"Core/Application.h"
 #include"RenderCommand.h"
+#include"Resource/Shader.h"
+#include"Resource/VertexArray.h"
+#include"Resource/VertexBuffer.h"
+#include"Resource/IndexBuffer.h"
+#include"Renderer/Camera/Camera.h"
+#include<glm/gtc/matrix_transform.hpp>
 
 namespace VIEngine {
 	RenderCommandQueue Renderer::sRenderCommandQueue;
 	std::vector<BatchRenderer*> Renderer::sBatchRenderers;
 	MemoryManager Renderer::sMemoryManager;
+	VertexArray* Renderer::sQuadVertexArray = nullptr;
+	Shader* Renderer::sQuadShader = nullptr;
 
 	void Renderer::Submit(const RenderCallback& renderCallback) {
-		if (Application::Get().GetPerFrameData().IsCatchUpPhase) return;
+		// if (Application::Get().GetPerFrameData().IsCatchUpPhase) return;
 
 		sRenderCommandQueue.Enqueue(renderCallback);
 	}
@@ -46,6 +54,7 @@ namespace VIEngine {
 
 	void Renderer::OnInit(const ApplicationConfiguration& appConfig) {
 		sBatchRenderers.push_back(sMemoryManager.NewPerFrame<BatchRenderer>());
+		sQuadShader = Shader::Create("Assets/Shader/quad.glsl");
 		Submit([rendererSpec = appConfig.RendererSpec]() {
 			RenderCommand::OnInit(rendererSpec);
 			CORE_LOG_INFO("Renderer init success");
@@ -88,5 +97,42 @@ namespace VIEngine {
 	void Renderer::EndSpriteBatch() {
 		sBatchRenderers.back()->End();
 		// sBatchRenderers.clear();
+	}
+
+	void Renderer::DrawQuad(float minX, float minY, float maxX, float maxY, const glm::vec3& color) {
+		// TODO: Make camera configurable later
+		static glm::mat4 projection = glm::ortho(0.0f, 20.0f, 20.0f, 0.0f, -1.0f, 10.f);
+		static Camera camera = Camera(projection);
+		camera.Update();
+		
+		sQuadShader->Bind();
+		sQuadShader->SetMatrix4("viewMatrix", camera.GetViewMatrix());
+		sQuadShader->SetMatrix4("projectionMatrix", projection);
+		sQuadShader->SetVector3("quadColor", color);
+
+		float vertices[] = {
+			minX, minY, 0.0f, // Bottom Left
+			minX, maxY, 0.0f, // Top Left
+			maxX, maxY, 0.0f, // Top Right
+			maxX, minY, 0.0f, // Bottom Right
+		};
+		uint32_t indices[] = {
+			0, 1, // Left Vertical Line
+			1, 2, // Top Horizontal Line
+			2, 3, // Right Vertical Line
+			3, 0 // Bottom Horizontal Line
+		};
+
+		VertexFormat format;
+		format.AddAttribute(EVertexAttributeType::Float3, "aPosition");
+		VertexArray* vertexArray = VertexArray::Create(format);
+		vertexArray->Bind();
+		vertexArray->SetVertexBuffer(vertices, sizeof(vertices), ERendererMode::Dynamic);
+		vertexArray->SetIndexBuffer(indices, sizeof(indices), sizeof(indices) / sizeof(uint32_t), ERendererMode::Dynamic);
+
+		Submit([vertexArray = vertexArray]() {
+			RenderCommand::DrawIndexed(vertexArray->GetIndexBuffer()->GetNums(), ERendererPrimitive::Lines);
+		});
+		vertexArray->Release();
 	}
 }
