@@ -42,7 +42,7 @@ namespace VIEngine {
 		//}
 	}
 
-	void Camera::Update() {
+	void Camera::Update(Time time) {
 		mPosition = CalculatePosition();
 		glm::quat orientation = GetOrientation();
 		mRotation = glm::eulerAngles(orientation) * (180.0f / (float)mPI);

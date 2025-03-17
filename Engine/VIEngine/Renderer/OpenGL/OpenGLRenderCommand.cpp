@@ -21,7 +21,13 @@ namespace VIEngine {
 	}
 
 	void OpenGLRenderCommand::DrawIndexedImpl(uint32_t nums, ERendererPrimitive primitive, uint32_t offset) {
+		VI_ASSERT(nums > 0 && "Invalid nums is set");
 		glDrawElements(OpenGLFactory::ToOpenGLPrimitive(primitive), nums, GL_UNSIGNED_INT, (void*)offset);
+	}
+
+	void OpenGLRenderCommand::DrawArraysImpl(uint32_t nums, ERendererPrimitive primitive, uint32_t offset) {
+		VI_ASSERT(nums > 0 && "Invalid nums is set");
+		glDrawArrays(OpenGLFactory::ToOpenGLPrimitive(primitive), offset, nums);
 	}
 
 	void OpenGLRenderCommand::SetAlphaStateImpl(bool enable, ERendererBlendFunction source, ERendererBlendFunction destination, ERendererBlendEquation blendEquation) {

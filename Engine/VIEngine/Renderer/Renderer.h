@@ -20,7 +20,7 @@ namespace VIEngine {
 		static void SetAlphaState(bool enable = true, ERendererBlendFunction source = ERendererBlendFunction::SourceAlpha, ERendererBlendFunction destination = ERendererBlendFunction::OneMinusSourceAlpha, ERendererBlendEquation blendEquation = ERendererBlendEquation::Add);
 		static void ActivateTexture(uint8_t index);
 		static void BindTexture2D(uint8_t textureID);
-		static void OnInit(const ApplicationConfiguration&);
+		static void OnInit(const ApplicationConfiguration&, class Camera* camera);
 		static bool BeginScene();
 		static void Render();
 		static void EndScene();
@@ -29,12 +29,14 @@ namespace VIEngine {
 		static void SubmitSpriteBatch(const SpriteBatch& spriteBatch);
 		static void EndSpriteBatch();
 		static void DrawQuad(float minX, float minY, float maxX, float maxY, const glm::vec3& color);
+		static void DrawPolygon(glm::vec3* vertices, uint32_t count, const glm::vec3& color);
 	private:
 		static RenderCommandQueue sRenderCommandQueue;
 		static class std::vector<BatchRenderer*> sBatchRenderers;
 		static MemoryManager sMemoryManager;
 		static class VertexArray* sQuadVertexArray;
-		static class Shader* sQuadShader;
+		static class Shader* sPolygonShader;
+		static class Camera* sCamera;
 	public:
 		~Renderer() = default;
 	protected:

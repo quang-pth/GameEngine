@@ -13,6 +13,8 @@ namespace VIEngine {
 	uint32_t OpenGLFactory::ToOpenGLPrimitive(ERendererPrimitive primitive) {
 		if (primitive == ERendererPrimitive::Points) return GL_POINTS;
 		if (primitive == ERendererPrimitive::Lines) return GL_LINES;
+		if (primitive == ERendererPrimitive::LinesStrip) return GL_LINE_STRIP;
+		if (primitive == ERendererPrimitive::LinesLoop) return GL_LINE_LOOP;
 
 		return GL_TRIANGLES;
 	}

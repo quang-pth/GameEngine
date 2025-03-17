@@ -8,13 +8,15 @@
 #include"Resource/IndexBuffer.h"
 #include"Renderer/Camera/Camera.h"
 #include<glm/gtc/matrix_transform.hpp>
+#include<glad/gl.h>
 
 namespace VIEngine {
 	RenderCommandQueue Renderer::sRenderCommandQueue;
 	std::vector<BatchRenderer*> Renderer::sBatchRenderers;
 	MemoryManager Renderer::sMemoryManager;
 	VertexArray* Renderer::sQuadVertexArray = nullptr;
-	Shader* Renderer::sQuadShader = nullptr;
+	Shader* Renderer::sPolygonShader = nullptr;
+	Camera* Renderer::sCamera = nullptr;
 
 	void Renderer::Submit(const RenderCallback& renderCallback) {
 		// if (Application::Get().GetPerFrameData().IsCatchUpPhase) return;
@@ -52,9 +54,12 @@ namespace VIEngine {
 		});
 	}
 
-	void Renderer::OnInit(const ApplicationConfiguration& appConfig) {
+	void Renderer::OnInit(const ApplicationConfiguration& appConfig, Camera* camera) {
+		sCamera = camera;
 		sBatchRenderers.push_back(sMemoryManager.NewPerFrame<BatchRenderer>());
-		sQuadShader = Shader::Create("Assets/Shader/quad.glsl");
+		sBatchRenderers.back()->SetCamera(sCamera);
+
+		sPolygonShader = Shader::Create("Assets/Shader/quad.glsl");
 		Submit([rendererSpec = appConfig.RendererSpec]() {
 			RenderCommand::OnInit(rendererSpec);
 			CORE_LOG_INFO("Renderer init success");
@@ -100,15 +105,12 @@ namespace VIEngine {
 	}
 
 	void Renderer::DrawQuad(float minX, float minY, float maxX, float maxY, const glm::vec3& color) {
-		// TODO: Make camera configurable later
-		static glm::mat4 projection = glm::ortho(0.0f, 20.0f, 20.0f, 0.0f, -1.0f, 10.f);
-		static Camera camera = Camera(projection);
-		camera.Update();
-		
-		sQuadShader->Bind();
-		sQuadShader->SetMatrix4("viewMatrix", camera.GetViewMatrix());
-		sQuadShader->SetMatrix4("projectionMatrix", projection);
-		sQuadShader->SetVector3("quadColor", color);
+		VI_ASSERT(sCamera != nullptr && "Camera is not set");
+
+		sPolygonShader->Bind();
+		sPolygonShader->SetMatrix4("viewMatrix", sCamera->GetViewMatrix());
+		sPolygonShader->SetMatrix4("projectionMatrix", sCamera->GetProjectionMatrix());
+		sPolygonShader->SetVector3("quadColor", color);
 
 		float vertices[] = {
 			minX, minY, 0.0f, // Bottom Left
@@ -132,6 +134,26 @@ namespace VIEngine {
 
 		Submit([vertexArray = vertexArray]() {
 			RenderCommand::DrawIndexed(vertexArray->GetIndexBuffer()->GetNums(), ERendererPrimitive::Lines);
+		});
+		vertexArray->Release();
+	}
+
+	void Renderer::DrawPolygon(glm::vec3* vertices, uint32_t count, const glm::vec3& color) {
+		VI_ASSERT(sCamera != nullptr && "Camera is not set");
+
+		sPolygonShader->Bind();
+		sPolygonShader->SetMatrix4("viewMatrix", sCamera->GetViewMatrix());
+		sPolygonShader->SetMatrix4("projectionMatrix", sCamera->GetProjectionMatrix());
+		sPolygonShader->SetVector3("quadColor", color);
+
+		VertexFormat format;
+		format.AddAttribute(EVertexAttributeType::Float3, "aPosition");
+		VertexArray* vertexArray = VertexArray::Create(format);
+		vertexArray->Bind();
+		vertexArray->SetVertexBuffer(vertices, sizeof(glm::vec3) * count, ERendererMode::Dynamic);
+
+		Submit([vertexArray = vertexArray, count = count]() {
+			RenderCommand::DrawArrays(count, ERendererPrimitive::LinesLoop);
 		});
 		vertexArray->Release();
 	}

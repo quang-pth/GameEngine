@@ -97,19 +97,26 @@ function PlayerController:OnStart()
     animator:AddAnimation(basicAttack3)
     animator:AddAnimation(slideState)
     animator:SetActiveAnimation(walkAnimation:GetName())
-    animator:FlipVertical(true)
+    animator:FlipVertical(false)
 
     self:SetPositionX(10.0)
-    self:SetPositionY(0.0)
+    self:SetPositionY(10.0)
 
-    self:AddBox2D()
+    local box2D = self:AddBox2D()
+    box2D:SetDensity(1.0)
+    box2D:SetFriction(0.0)
+    box2D:SetWidth(0.5) 
+    box2D:SetHeight(1.25)
 
     local rigidBody = self:AddRigidBody()
     rigidBody:SetBodyType(VIPhysic.BodyType.DYNAMIC)
-    rigidBody:SetGravityScale(0.05)
+    rigidBody:SetGravityScale(0.1)
 
     self['ActiveState'] = ZeroIdleState
     self['ActiveState']:OnEnter(self)
+
+    -- box2D:SetWidth(self:GetAnimator():GetWidth() * 0.01)
+    -- box2D:SetHeight(self:GetAnimator():GetHeight() * 0.018)
 end
 
 function PlayerController:OnProcessInput(inputState)
@@ -122,9 +129,9 @@ function PlayerController:OnProcessInput(inputState)
 end
 
 function PlayerController:OnUpdate(deltaTime)
-    local box2D = self:GetBox2D()
-    box2D:SetWidth(self:GetAnimator():GetWidth() * 0.1)
-    box2D:SetHeight(self:GetAnimator():GetHeight() * 0.1)
+    -- local box2D = self:GetBox2D()
+    -- box2D:SetWidth(self:GetAnimator():GetWidth() * 0.1)
+    -- box2D:SetHeight(self:GetAnimator():GetHeight() * 0.1)
 
     local nextState = self['ActiveState']:OnUpdate(deltaTime)
     if nextState ~= nil and nextState ~= self['ActiveState'] then

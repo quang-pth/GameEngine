@@ -60,6 +60,13 @@ namespace VIEngine {
 			{glm::vec3(0.5f, 0.5f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec4(1.0f)} // top-right
 		};
 
+		// Vertex vertices[4] = {
+		// 	{glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f), glm::vec4(1.0f)}, // top-left
+		// 	{glm::vec3(0.0f, 0.0f, 0.0f), glm::vec2(0.0f, 0.0f), glm::vec4(1.0f)}, // bottom-left
+		// 	{glm::vec3(1.0f, 0.0f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec4(1.0f)}, // bottom-right
+		// 	{glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f), glm::vec4(1.0f)} // top-right
+		// };
+
 		uint32_t indicies[6] = {
 			0, 1, 2, // left-bottom triangle
 			2, 3, 0 // right-top triangle

@@ -6,7 +6,7 @@ setmetatable(ZeroWalkState, {
 })
 
 ZeroWalkState['Owner'] = nil
-ZeroWalkState['Speed'] = 5.0
+ZeroWalkState['Speed'] = 300
 ZeroWalkState['TriggerSlide'] = false
 
 function ZeroWalkState:OnEnter(owner)

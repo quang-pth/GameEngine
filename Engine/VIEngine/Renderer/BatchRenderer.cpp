@@ -26,14 +26,9 @@ namespace VIEngine {
 	void BatchRenderer::End() {
 		GenerateRenderBatches();
 
-		// TODO: Make camera configurable later
-		static glm::mat4 projection = glm::ortho(0.0f, 20.0f, 20.0f, 0.0f, -1.0f, 10.f);
-		static Camera camera = Camera(projection);
-		camera.Update();	
-
 		mShader->Bind();
-		mShader->SetMatrix4("viewMatrix", camera.GetViewMatrix());
-		mShader->SetMatrix4("projectionMatrix", projection);
+		mShader->SetMatrix4("viewMatrix", mCamera->GetViewMatrix());
+		mShader->SetMatrix4("projectionMatrix", mCamera->GetProjectionMatrix());
 
 		for (auto& renderBatch : mRenderBatches) {
 			if (renderBatch->GetBatchCount() == 0) {

@@ -8,7 +8,7 @@ setmetatable(ZeroSlideState, {
 
 ZeroSlideState['Owner'] = nil
 ZeroSlideState['Animator'] = nil
-ZeroSlideState['Speed'] = 7.5
+ZeroSlideState['Speed'] = 450
 ZeroSlideState['ContinuedSlide'] = true
 
 function ZeroSlideState:OnEnter(owner)

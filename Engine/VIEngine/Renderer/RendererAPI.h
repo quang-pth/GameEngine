@@ -21,7 +21,9 @@ namespace VIEngine {
 	enum class ERendererPrimitive {
 		Triangles,
 		Points,
-		Lines
+		Lines,
+		LinesStrip,
+		LinesLoop
 	};
 
 	enum class ERendererState {

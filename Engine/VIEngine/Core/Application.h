@@ -7,6 +7,7 @@
 #include"Core/Time/Time.h"
 #include"Renderer/RendererAPI.h"
 #include"Core/Type/Actor.h"
+#include"Renderer/Camera/Camera.h"
 
 namespace VIEngine {
 	struct VI_API ApplicationConfiguration {
@@ -75,6 +76,7 @@ namespace VIEngine {
 		bool mIsRunning;
 		PerFrameData mPerFrameData;
 		class ScriptSystem* mScriptSystem;
+		Camera mCamera;
 	};
 
 	extern Application* CreateApplication();

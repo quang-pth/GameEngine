@@ -14,6 +14,7 @@ namespace VIEngine {
 		void Begin();
 		void End();
 		void InsertBatch(const SpriteBatch& spriteBatch);
+		void SetCamera(class Camera* camera) { mCamera = camera; }
 	private:
 		void GenerateRenderBatches();
 	private:
@@ -21,5 +22,6 @@ namespace VIEngine {
 		std::vector<RenderBatch*> mRenderBatches;
 		class Shader* mShader;
 		MemoryManager mMemoryManager;
+		class Camera* mCamera;
 	};
 }

@@ -15,6 +15,7 @@
 #include"Core/System/ScriptSystem.h"
 #include"Core/System/PhysicSystem.h"
 #include"Core/System/DebugDrawSystem.h"
+#include<glm/gtc/matrix_transform.hpp>
 
 #define DISPATCH_LAYER_EVENT(eventType, eventContext) for (auto iter = mLayerStack->rbegin(); iter != mLayerStack->rend(); ++iter) {\
 	if ((*iter)->On##eventType(eventContext)) {\
@@ -76,12 +77,19 @@ namespace VIEngine {
 		mScriptSystem = mSystemManager->AddSystem<ScriptSystem>();
 		mSystemManager->AddSystemDependency(spriteRendererSystem, dirtySpriteSystem);
 		mSystemManager->AddSystemDependency(spriteRendererSystem, physicSystem);
-		mSystemManager->AddSystemDependency(mScriptSystem, physicSystem);
+		mSystemManager->AddSystemDependency(physicSystem, mScriptSystem);
 		mSystemManager->AddSystemDependency(debugDrawSystem, physicSystem);
-		physicSystem->SetUpdateInterval(1 / 30.0f);
+		// physicSystem->SetUpdateInterval(1 / 30.0f);
+
+		// TODO: Make perspective camera and orthgraphic camera later
+		glm::mat4 projection = glm::ortho(0.0f, 20.0f, 00.0f, 20.0f, -1.0f, 10.f);
+		mCamera = Camera(projection);
 
 		mSystemManager->OnInit();
-		Renderer::OnInit(mConfig);
+		Renderer::OnInit(mConfig, &mCamera);
+
+		debugDrawSystem->SetPhysicWorldID(physicSystem->GetWorldID());
+
 
 		return true;
 	}
@@ -102,13 +110,14 @@ namespace VIEngine {
 
 			while (mNativeWindow->GetTimeSeconds() - lastFrameTime < minDeltaTime);
 
+			
 			float currentFrameTime = mNativeWindow->GetTimeSeconds();
-
+			
 			mTime = currentFrameTime - lastFrameTime;
 			lastFrameTime = currentFrameTime;
 			
 			mNativeWindow->PollsEvent();
-			
+
 			for (auto layer : *mLayerStack) {
 				layer->OnProcessInput(*mInputState);
 			}
@@ -134,6 +143,8 @@ namespace VIEngine {
 			}
 
 			mSystemManager->OnUpdate(mTime);
+			
+			mCamera.Update(mTime);
 
 			for (auto layer : *mLayerStack) {
 				layer->OnGUIRender();

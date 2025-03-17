@@ -3,6 +3,7 @@
 #include"pch.h"
 #include"Core/Input/InputState.h"
 #include<glm/glm.hpp>
+#include"Core/Time/Time.h"
 
 namespace VIEngine {
     const glm::vec3 AxisUnitX = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -11,10 +12,11 @@ namespace VIEngine {
 
     class Camera {
     public:
+        Camera() = default;
         Camera(const glm::mat4& projectionMatrix);
         ~Camera();
         void ProcessInput(const InputState&);
-        void Update();
+        void Update(Time time);
         void Focus();
         VI_FORCE_INLINE float GetDistance() const { return mDistance; }
         VI_FORCE_INLINE void SetDistance(float distance) { mDistance = distance; }
