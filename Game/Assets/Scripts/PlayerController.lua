@@ -104,13 +104,15 @@ function PlayerController:OnStart()
 
     local box2D = self:AddBox2D()
     box2D:SetDensity(1.0)
-    box2D:SetFriction(0.0)
-    box2D:SetWidth(0.5) 
+    box2D:SetFriction(1.0)
+    box2D:SetWidth(0.5)
     box2D:SetHeight(1.25)
 
     local rigidBody = self:AddRigidBody()
     rigidBody:SetBodyType(VIPhysic.BodyType.DYNAMIC)
-    rigidBody:SetGravityScale(0.1)
+    rigidBody:SetGravityScale(1)
+    rigidBody:SetLinearDamping(10.0)
+    rigidBody:SetFixedRotation(true)
 
     self['ActiveState'] = ZeroIdleState
     self['ActiveState']:OnEnter(self)
@@ -132,6 +134,9 @@ function PlayerController:OnUpdate(deltaTime)
     -- local box2D = self:GetBox2D()
     -- box2D:SetWidth(self:GetAnimator():GetWidth() * 0.1)
     -- box2D:SetHeight(self:GetAnimator():GetHeight() * 0.1)
+
+    -- local x, y, _ = self:GetPosition()
+    -- self:SetPositionY(y - 50 * deltaTime)
 
     local nextState = self['ActiveState']:OnUpdate(deltaTime)
     if nextState ~= nil and nextState ~= self['ActiveState'] then

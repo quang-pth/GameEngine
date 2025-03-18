@@ -58,6 +58,81 @@ namespace VIEngine
         return 0;
     }
 
+    int lua_ApplyForceToCenter(lua_State* L) {
+        RigidBodyComponent* rigidBody = GetRigidBodyComponent(L);
+
+        // Apply force X
+        int type = lua_type(L, 2);
+        VI_ASSERT(type == LUA_TNUMBER && "RigidBodyComponent:ApplyForceToCenter #2 argument required a number");
+        
+        // Apply force Y
+        type = lua_type(L, 3);
+        VI_ASSERT(type == LUA_TNUMBER && "RigidBodyComponent:ApplyForceToCenter #3 argument required a number");
+        
+        type = lua_type(L, 4);
+        bool awake = true;
+        if (type != LUA_TNIL) {
+            VI_ASSERT(type == LUA_TBOOLEAN && "RigidBodyComponent:ApplyForceToCenter #4 argument required a boolean");
+            awake = lua_toboolean(L, 4);
+        }
+
+        float accelerationX = lua_tonumber(L, 2);
+        b2Body_ApplyForceToCenter(
+            rigidBody->GetBodyID(), 
+            b2Vec2{PixelToWorld(lua_tonumber(L, 2)), PixelToWorld(lua_tonumber(L, 3))}, 
+            awake
+        );
+        
+        return 0;
+    }
+
+    int lua_GetLinearVelocity(lua_State* L) {
+        RigidBodyComponent* rigidBody = GetRigidBodyComponent(L);
+        
+        lua_pushnumber(L, PixelToWorld(b2Body_GetLinearVelocity(rigidBody->GetBodyID()).x));
+        lua_pushnumber(L, PixelToWorld(b2Body_GetLinearVelocity(rigidBody->GetBodyID()).y));
+
+        return 2;
+    }
+
+    int lua_SetLinearDamping(lua_State* L) {
+        RigidBodyComponent* rigidBody = GetRigidBodyComponent(L);
+
+        int type = lua_type(L, 2);
+        VI_ASSERT(type == LUA_TNUMBER && "RigidBodyComponent::SetLinearDamping #2 argument required a number");
+
+        rigidBody->SetLinearDamping(StaticCast<float>(lua_tonumber(L, 2)));
+
+        return 0;
+    }
+
+    int lua_GetLinearDamping(lua_State* L) {
+        RigidBodyComponent* rigidBody = GetRigidBodyComponent(L);
+
+        lua_pushnumber(L, rigidBody->GetLinearDamping());
+
+        return 1;
+    }
+
+    int lua_SetFixedRotation(lua_State* L) {
+        RigidBodyComponent* rigidBody = GetRigidBodyComponent(L);
+
+        int type = lua_type(L, 2);
+        VI_ASSERT(type == LUA_TBOOLEAN && "RigidBodyComponent::SetFixedRotation #2 argument required a number");
+
+        rigidBody->SetFixedRotation(lua_toboolean(L, 2));
+
+        return 0;
+    }
+
+    int lua_GetFixedRotation(lua_State* L) {
+        RigidBodyComponent* rigidBody = GetRigidBodyComponent(L);
+
+        lua_pushboolean(L, rigidBody->GetFixedRotation());
+
+        return 1;
+    }
+
     LuaModuleDef<RigidBodyComponent> RigidBodyLuaModule::ModuleDef =
         LuaModuleDef<RigidBodyComponent>
     {
@@ -67,6 +142,12 @@ namespace VIEngine
             {"SetBodyType", lua_SetBodyType},
             {"GetGravityScale", lua_GetGravityScale},
             {"SetGravityScale", lua_SetGravityScale},
+            {"ApplyForceToCenter", lua_ApplyForceToCenter},
+            {"GetLinearVelocity", lua_GetLinearVelocity},
+            {"SetLinearDamping", lua_SetLinearDamping},
+            {"GetLinearDamping", lua_GetLinearDamping},
+            {"SetFixedRotation", lua_SetFixedRotation},
+            {"GetFixedRotation", lua_GetFixedRotation},
             {NULL, NULL}
         },
         {},

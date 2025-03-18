@@ -19,8 +19,6 @@ namespace VIEngine {
     }
 
 	void VIDrawPolygon(const b2Vec2* vertices, int vertexCount, b2HexColor color, void* context) {
-        DebugDrawSystem* debugDrawSystem = reinterpret_cast<DebugDrawSystem*>(context);
-
         std::vector<glm::vec3> points;
         points.reserve(vertexCount);
 

@@ -45,6 +45,8 @@ namespace VIEngine {
 			b2BodyDef bodyDef = b2DefaultBodyDef();
 			bodyDef.type = BODY_TYPE_MAP.at(rigidBody->GetBodyType());
 			bodyDef.gravityScale =  rigidBody->GetGravityScale();
+			bodyDef.linearDamping = rigidBody->GetLinearDamping();
+			bodyDef.fixedRotation = rigidBody->GetFixedRotation();
 			
 			if (actor.HasComponent<Box2DComponent>()) {
 				Box2DComponent& box2DComponent = actor.GetComponent<Box2DComponent>();
@@ -59,7 +61,6 @@ namespace VIEngine {
 				b2Body_SetUserData(bodyId, rigidBody);
 				
 				b2Polygon boxCollider = b2MakeBox(PixelToWorld(box2DComponent.GetWidth() * 0.5), PixelToWorld(box2DComponent.GetHeight() * 0.5));
-				// b2Polygon boxCollider = b2MakeBox(0.01, 0.01);
 				b2ShapeDef shapeDef = b2DefaultShapeDef();
 				shapeDef.density = box2DComponent.GetDensity();
 				shapeDef.friction = box2DComponent.GetFriction();
@@ -79,8 +80,8 @@ namespace VIEngine {
 			if (!rigidBody->GetIsActive()) continue;
 
 			TransformComponent& transform = rigidBody->GetOwner().GetComponent<TransformComponent>();
+			b2Vec2 physicWorldPosition = b2Body_GetPosition(rigidBody->GetBodyID());
 			if (rigidBody->GetBodyType() == EBodyType::KINEMATIC) {
-				b2Vec2 physicWorldPosition = b2Body_GetPosition(rigidBody->GetBodyID());
 				b2Vec2 velocity = b2Vec2{
 					PixelToWorld(transform.GetPosition().x) - physicWorldPosition.x, 
 					PixelToWorld(transform.GetPosition().y) - physicWorldPosition.y

@@ -19,9 +19,15 @@ namespace VIEngine {
         VI_FORCE_INLINE EBodyType GetBodyType() const { return mBodyType; }
         VI_FORCE_INLINE void SetGravityScale(float scale) { mGravityScale = scale; }
         VI_FORCE_INLINE float GetGravityScale() const { return mGravityScale; }
+        VI_FORCE_INLINE void SetLinearDamping(float damping) { mLinearDamping = damping; }
+        VI_FORCE_INLINE float GetLinearDamping() const { return mLinearDamping; }
+        VI_FORCE_INLINE void SetFixedRotation(bool fixedRotation) { mFixedRotation = fixedRotation; }
+        VI_FORCE_INLINE float GetFixedRotation() const { return mFixedRotation; }
     private:
         b2BodyId mBodyID;
         EBodyType mBodyType = EBodyType::STATIC;
         float mGravityScale = 1.0f;
+        float mLinearDamping = 1.0f;
+        bool mFixedRotation = false;
     };
 }

@@ -70,6 +70,19 @@ namespace VIEngine {
 		return 0;
 	}
 
+	int lua_SetPositionZ(lua_State* L) {
+		Actor actor = GetActor(L);
+
+		int type = lua_type(L, 2);
+		VI_ASSERT(type == LUA_TNUMBER && "Actor:SetPositionY #2 argument required a number");
+
+		TransformComponent& transform = actor.GetComponent<TransformComponent>();
+		float z = lua_tonumber(L, 2);
+		transform.SetPositionZ(z);
+
+		return 0;
+	}
+
 	int lua_GetScale(lua_State* L) {
 		Actor actor = GetActor(L);
 
@@ -80,6 +93,36 @@ namespace VIEngine {
 		lua_pushnumber(L, transform.GetScale().z);
 
 		return 3;
+	}
+
+	int lua_GetScaleX(lua_State* L) {
+		Actor actor = GetActor(L);
+
+		TransformComponent& transform = actor.GetComponent<TransformComponent>();
+		
+		lua_pushnumber(L, transform.GetScale().x);
+
+		return 1;
+	}
+
+	int lua_GetScaleY(lua_State* L) {
+		Actor actor = GetActor(L);
+
+		TransformComponent& transform = actor.GetComponent<TransformComponent>();
+		
+		lua_pushnumber(L, transform.GetScale().y);
+
+		return 1;
+	}
+
+	int lua_GetScaleZ(lua_State* L) {
+		Actor actor = GetActor(L);
+
+		TransformComponent& transform = actor.GetComponent<TransformComponent>();
+		
+		lua_pushnumber(L, transform.GetScale().z);
+
+		return 1;
 	}
 
 	int lua_SetScaleX(lua_State* L) {
@@ -252,7 +295,11 @@ namespace VIEngine {
 		{"GetPosition", lua_GetPosition},
 		{"SetPositionX", lua_SetPositionX},
 		{"SetPositionY", lua_SetPositionY},
+		{"SetPositionZ", lua_SetPositionZ},
 		{"GetScale", lua_GetScale},
+		{"GetScaleX", lua_GetScaleX},
+		{"GetScaleY", lua_GetScaleY},
+		{"GetScalez", lua_GetScaleZ},
 		{"SetScaleX", lua_SetScaleX},
 		{"SetScaleY", lua_SetScaleY},
 		{"GetAnimator", lua_GetAnimator},
