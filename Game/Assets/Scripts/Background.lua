@@ -2,6 +2,10 @@ require("Assets\\Scripts\\Core")
 
 Background = Background or {}
 
+setmetatable(Background, {
+    __index = VIScript
+})
+
 function Background:OnStart()
     local sprite = self:AddSprite()
     sprite:SetSprite("Assets/Sprite/Background/camellya-and-cat.png")
@@ -27,13 +31,10 @@ function Background:OnProcessInput(inputState)
     
 end
 
-function Background:OnKeyPressed(keyCode)
-    
-end
-
-function Background:OnMouseButtonPressed(button)
-end
-
 function Background:OnUpdate(deltaTime)
     
+end
+
+function Background:OnCollision(collision) 
+    print("From background: " .. tostring(collision:GetContactCount()))
 end

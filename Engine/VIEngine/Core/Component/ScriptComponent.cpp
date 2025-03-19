@@ -6,6 +6,7 @@
 #include"Core/Input/InputStateLuaModule.h"
 #include"Core/System/ScriptSystem.h"
 #include"Core/Application.h"
+#include"Core/Type/CollisionLuaModule.h"
 
 namespace VIEngine {
 	DEFINE_RTTI_NO_PARENT(ScriptComponent)
@@ -53,6 +54,15 @@ namespace VIEngine {
 
 	void ScriptComponent::OnMouseButtonPressedEvent(const MouseButtonPressedEvent& eventContext) {
 		mExecutor->InvokeTableFunction(mObjectName, "OnMouseButtonPressed", true, LuaNumber::Create(eventContext.GetButton()));
+	}
+
+	void ScriptComponent::OnCollision(Collision* collision) {
+		mExecutor->InvokeTableFunction(mObjectName, "OnCollision", true, LuaUserData::Create(
+			collision,
+			CollisionLuaModule::ModuleDef.GetModuleName(),
+			CollisionLuaModule::ModuleDef.GetRegs(),
+			CollisionLuaModule::ModuleDef.GetAttributes()
+		));
 	}
 
 	std::vector<std::string> ScriptComponent::SplitString(const std::string& str, const std::string& delimeter) {

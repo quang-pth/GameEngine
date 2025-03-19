@@ -1,14 +1,13 @@
 VIScript = VIScript or {}
 Animation = Animation or {}
 
-function VIScript.Create(objName)
-    local obj = {}
-    setmetatable(obj, {
-        __index = VIScript
-    })
-    _G[objName] = obj
-    return obj
-end
+function VIScript:OnStart() end
+function VIScript:OnProcessInput(inputState) end
+function VIScript:OnUpdate(deltaTime) end
+function VIScript:OnKeyPressed(keyCode) end
+function VIScript:OnMouseButtonPressed(button) end
+function VIScript:OnCollision(collision) end
+
 
 VIKeyCode = {
     SPACE              = 32,

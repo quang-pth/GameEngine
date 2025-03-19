@@ -69,9 +69,9 @@ namespace VIEngine
         type = lua_type(L, 3);
         VI_ASSERT(type == LUA_TNUMBER && "RigidBodyComponent:ApplyForceToCenter #3 argument required a number");
         
-        type = lua_type(L, 4);
         bool awake = true;
-        if (type != LUA_TNIL) {
+        if (lua_gettop(L) == 4) {
+            type = lua_type(L, 4);
             VI_ASSERT(type == LUA_TBOOLEAN && "RigidBodyComponent:ApplyForceToCenter #4 argument required a boolean");
             awake = lua_toboolean(L, 4);
         }
@@ -101,7 +101,11 @@ namespace VIEngine
         int type = lua_type(L, 2);
         VI_ASSERT(type == LUA_TNUMBER && "RigidBodyComponent::SetLinearDamping #2 argument required a number");
 
-        rigidBody->SetLinearDamping(StaticCast<float>(lua_tonumber(L, 2)));
+        float damping = StaticCast<float>(lua_tonumber(L, 2));
+        rigidBody->SetLinearDamping(damping);
+        if (b2Body_IsValid(rigidBody->GetBodyID())) {
+            b2Body_SetLinearDamping(rigidBody->GetBodyID(), damping);
+        }
 
         return 0;
     }
@@ -121,6 +125,9 @@ namespace VIEngine
         VI_ASSERT(type == LUA_TBOOLEAN && "RigidBodyComponent::SetFixedRotation #2 argument required a number");
 
         rigidBody->SetFixedRotation(lua_toboolean(L, 2));
+        if (b2Body_IsValid(rigidBody->GetBodyID())) {
+            b2Body_SetFixedRotation(rigidBody->GetBodyID(), lua_toboolean(L, 2));
+        }
 
         return 0;
     }

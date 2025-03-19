@@ -6,7 +6,6 @@ setmetatable(ZeroWalkState, {
 })
 
 ZeroWalkState['Owner'] = nil
-ZeroWalkState['Speed'] = 5
 ZeroWalkState['TriggerSlide'] = false
 ZeroWalkState['CurrentVelocity'] = {x = 0.7, y = 0}
 ZeroWalkState['MaxVelocity'] = {x = 1.4, y = 0}
@@ -60,25 +59,17 @@ function ZeroWalkState:OnUpdate(deltaTime)
     animator:SetFPS(self['BaseFPS'] * (1.0 + ratio))
     
     if self['CurrentVelocity'].x > 0.7 then
-        rigidBody:ApplyForceToCenter(owner['MoveHorizontal'] * self['CurrentVelocity'].x, 0, true)
+        rigidBody:ApplyForceToCenter(owner['MoveHorizontal'] * self['CurrentVelocity'].x, 0)
     end
 
-    -- Wait for the damping to make sure that zero is completly finished the walk state
+    -- Wait for the damping to make sure that zero is completly finished the walk state before transition back to idle
     if self['CurrentVelocity'].x < 0.7 and bodyVelocityX < 0.5 then
         return owner['IdleState']
     end
 
-    -- if owner['MoveHorizontal'] == 0 then
-    --     return owner['IdleState']
-    -- end
-
     if owner['IsReadyToSlide'] and self['TriggerSlide'] then
         return owner['SlideState']
     end
-
-    -- local x, y, _ = owner:GetPosition()
-    -- owner:SetPositionX(x + owner['MoveHorizontal'] * self['Speed'] * deltaTime)
-    -- owner:SetPositionY(y + owner['MoveVertical'] * self['Speed'] * deltaTime)
 end
 
 function ZeroWalkState:OnExit()

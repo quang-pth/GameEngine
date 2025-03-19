@@ -7,6 +7,11 @@ require("Assets\\Scripts\\Zero\\ZeroBasicAttack2State")
 require("Assets\\Scripts\\Zero\\ZeroBasicAttack3State")
 
 PlayerController = PlayerController or {}
+
+setmetatable(PlayerController, {
+    __index = VIScript
+})
+
 PlayerController['MoveHorizontal'] = 0
 PlayerController['MoveVertical'] = 0
 PlayerController['ActiveState'] = nil
@@ -89,7 +94,6 @@ function PlayerController:OnStart()
     slideState:SetIsLoop(false)
 
     local animator = self:AddAnimator()
-    animator:SetFPS(120)
     animator:AddAnimation(idleAnimation)
     animator:AddAnimation(walkAnimation)
     animator:AddAnimation(basicAttack1)
@@ -116,9 +120,6 @@ function PlayerController:OnStart()
 
     self['ActiveState'] = ZeroIdleState
     self['ActiveState']:OnEnter(self)
-
-    -- box2D:SetWidth(self:GetAnimator():GetWidth() * 0.01)
-    -- box2D:SetHeight(self:GetAnimator():GetHeight() * 0.018)
 end
 
 function PlayerController:OnProcessInput(inputState)
@@ -131,12 +132,9 @@ function PlayerController:OnProcessInput(inputState)
 end
 
 function PlayerController:OnUpdate(deltaTime)
-    -- local box2D = self:GetBox2D()
-    -- box2D:SetWidth(self:GetAnimator():GetWidth() * 0.1)
-    -- box2D:SetHeight(self:GetAnimator():GetHeight() * 0.1)
-
-    -- local x, y, _ = self:GetPosition()
-    -- self:SetPositionY(y - 50 * deltaTime)
+    local box2D = self:GetBox2D()
+    box2D:SetWidth(self:GetAnimator():GetWidth() * 0.01)
+    box2D:SetHeight(self:GetAnimator():GetHeight() * 0.018)
 
     local nextState = self['ActiveState']:OnUpdate(deltaTime)
     if nextState ~= nil and nextState ~= self['ActiveState'] then
@@ -155,7 +153,8 @@ function PlayerController:OnUpdate(deltaTime)
     end
 end
 
-function PlayerController:OnKeyPressed(keyCode)
+function PlayerController:OnCollision(collision)
+    print("From player: " .. tostring(collision:GetContactCount()))
 end
 
 function PlayerController:OnMouseButtonPressed(button)

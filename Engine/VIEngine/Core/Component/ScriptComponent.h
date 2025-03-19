@@ -5,6 +5,7 @@
 #include"Core/Time/Time.h"
 #include<VIScript/LuaExecutor.h>
 #include<VIScript/LuaModule.h>
+#include"Core/Type/Collision.h"
 
 namespace VIEngine {
 	class VI_API ScriptComponent : public ECS::Component<ScriptComponent, Actor> {
@@ -20,6 +21,7 @@ namespace VIEngine {
 		void OnDestroyed();
 		void OnKeyPressedEvent(const class KeyPressedEvent& eventContext);
 		void OnMouseButtonPressedEvent(const class MouseButtonPressedEvent& eventContext);
+		void OnCollision(Collision* collision);
 	private:
 		std::vector<std::string> SplitString(const std::string& str, const std::string& delimeter);
 	private:

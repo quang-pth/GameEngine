@@ -24,7 +24,7 @@ namespace VIEngine {
         VI_FORCE_INLINE void SetFixedRotation(bool fixedRotation) { mFixedRotation = fixedRotation; }
         VI_FORCE_INLINE float GetFixedRotation() const { return mFixedRotation; }
     private:
-        b2BodyId mBodyID;
+        b2BodyId mBodyID = b2_nullBodyId;
         EBodyType mBodyType = EBodyType::STATIC;
         float mGravityScale = 1.0f;
         float mLinearDamping = 1.0f;
