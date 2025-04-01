@@ -58,16 +58,10 @@ function ZeroSlideState:OnUpdate(deltaTime)
     if self['CurrentVelocity'].x > 0.7 then
         rigidBody:ApplyForceToCenter(owner['MoveHorizontal'] * self['CurrentVelocity'].x, 0)
     end
-    
 
     if not self['ContinuedSlide'] and self['CurrentVelocity'].x < 0.7 and bodyVelocityX < 0.5 then
         return owner['PrevState']
     end
-
-    -- if not self['ContinuedSlide'] then
-    --     return owner['PrevState']
-    -- end
-
     
     if owner['MoveHorizontal'] == 0 then
         return owner['IdleState']
@@ -76,11 +70,6 @@ function ZeroSlideState:OnUpdate(deltaTime)
     if self['Animator']:IsActiveAnimationFinished() then
         return owner['PrevState']
     end
-
-    -- local x, y, _ = owner:GetPosition();
-
-    -- owner:SetPositionX(x + owner['MoveHorizontal'] * self['Speed'] * deltaTime)
-    -- owner:SetPositionY(y + owner['MoveVertical'] * self['Speed'] * deltaTime)
 end
 
 function ZeroSlideState:OnExit()

@@ -29,6 +29,6 @@ function ZeroBasicAttack3State:OnUpdate(deltaTime)
 end
 
 function ZeroBasicAttack3State:OnExit()
-
+    ZeroState:OnExit()
 end
 

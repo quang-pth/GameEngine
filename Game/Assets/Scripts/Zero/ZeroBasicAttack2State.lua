@@ -8,16 +8,7 @@ setmetatable(ZeroBasicAttack2State, {
 
 ZeroBasicAttack2State['Owner'] = nil
 ZeroBasicAttack2State['Animator'] = nil
-ZeroBasicAttack2State['CommandBuffers'] = {
-    FrameIndex = 0,
-    Buffers = {
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-    }
-}
+
 function ZeroBasicAttack2State:OnEnter(owner)
     ZeroBasicAttack2State['Owner'] = owner
 
@@ -27,15 +18,9 @@ function ZeroBasicAttack2State:OnEnter(owner)
 end
 
 function ZeroBasicAttack2State:OnProcessInput(inputState)
-    local nextIndex = ZeroState:NextIndex(self['CommandBuffers']['FrameIndex'], #self['CommandBuffers']['Buffers'])
-    self['CommandBuffers']['FrameIndex'] = nextIndex
-
+    ZeroState:OnProcessInput(inputState)
     local mouseState = inputState:GetMouse()
-    if mouseState:IsPressed(VIMouseButton.BUTTON_LEFT) then
-        self['CommandBuffers']['Buffers'][nextIndex] = VIMouseButton.BUTTON_LEFT
-    else
-        self['CommandBuffers']['Buffers'][nextIndex] = -1
-    end
+    ZeroState:SetMousePressedCommand(mouseState, VIMouseButton.BUTTON_LEFT)
 end
 
 function ZeroBasicAttack2State:OnUpdate(deltaTime)
@@ -43,7 +28,7 @@ function ZeroBasicAttack2State:OnUpdate(deltaTime)
         return
     end
 
-    if ZeroState:CountIsPressed(self['CommandBuffers']['Buffers'], VIMouseButton.BUTTON_LEFT, 1) then
+    if ZeroState:CountIsPressed(VIMouseButton.BUTTON_LEFT, 1) then
         return self['Owner']['BasicAttack3State']
     end
 
@@ -51,6 +36,6 @@ function ZeroBasicAttack2State:OnUpdate(deltaTime)
 end
 
 function ZeroBasicAttack2State:OnExit()
-
+    ZeroState:OnExit()
 end
 

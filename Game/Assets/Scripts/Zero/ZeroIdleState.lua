@@ -11,18 +11,6 @@ ZeroIdleState['Animator'] = nil
 ZeroIdleState['RigidBody'] = nil
 ZeroIdleState['TriggerBasicAttack1'] = false
 ZeroIdleState['TriggerSlide'] = false
-ZeroIdleState['CommandBuffers'] = {
-    FrameIndex = 0,
-    Buffers = {
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1,
-        -1
-    }
-}
 
 function ZeroIdleState:OnEnter(owner)
     self['Owner'] = owner
@@ -33,8 +21,7 @@ function ZeroIdleState:OnEnter(owner)
 end
 
 function ZeroIdleState:OnProcessInput(inputState)
-    local nextIndex = ZeroState:NextIndex(self['CommandBuffers']['FrameIndex'], #self['CommandBuffers']['Buffers'])
-    self['CommandBuffers']['FrameIndex'] = nextIndex
+    ZeroState:OnProcessInput(inputState)
 
     local owner = self['Owner']
     owner['MoveHorizontal'] = 0
@@ -50,11 +37,7 @@ function ZeroIdleState:OnProcessInput(inputState)
         owner['MoveHorizontal'] = owner['MoveHorizontal'] + 1
     end
 
-    if keyboardState:IsPressed(VIKeyCode.SPACE) then
-        self['CommandBuffers']['Buffers'][nextIndex] = VIMouseButton.SPACE
-    else
-        self['CommandBuffers']['Buffers'][nextIndex] = -1
-    end
+    ZeroState:SetKeyboardPressedCommand(keyboardState, VIKeyCode.SPACE)
 
     local mouseState = inputState:GetMouse()
     self['TriggerBasicAttack1'] = mouseState:IsPressed(VIMouseButton.BUTTON_LEFT)
@@ -62,6 +45,8 @@ function ZeroIdleState:OnProcessInput(inputState)
 end
 
 function ZeroIdleState:OnUpdate(deltaTime)
+    ZeroState:OnUpdate(deltaTime)
+
     local owner = self['Owner']
     if owner['MoveHorizontal'] ~= 0 then
         return owner['WalkState']
@@ -73,7 +58,7 @@ function ZeroIdleState:OnUpdate(deltaTime)
         return self['Owner']['FallingState']
     end
 
-    if ZeroState:CountIsPressed(self['CommandBuffers']['Buffers'], VIMouseButton.SPACE, 1) then
+    if ZeroState:CountIsPressed(VIKeyCode.SPACE, 1) then
         local jumpState = self['Owner']['JumpState']
         jumpState:SetImpulseForward(0)
         return self['Owner']['JumpState']
@@ -89,7 +74,7 @@ function ZeroIdleState:OnUpdate(deltaTime)
 end
 
 function ZeroIdleState:OnExit()
-    ZeroState:ResetCommandBuffers(self['CommandBuffers'])
+    ZeroState:OnExit()
 end
 
 
