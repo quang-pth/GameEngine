@@ -50,44 +50,6 @@ namespace VIEngine {
         return 0;
     }
 
-    int lua_Box2DGetDensity(lua_State* L) {
-        Box2DComponent* box = GetBox2DComponent(L);
-
-        lua_pushnumber(L, box->GetDensity());
-
-        return 1;
-    }
-
-    int lua_Box2DSetDensity(lua_State* L) {
-        Box2DComponent* box = GetBox2DComponent(L);
-
-        int type = lua_type(L, 2);
-        VI_ASSERT(type == LUA_TNUMBER && "Box2DComponent:SetDensity #2 argument required a number");
-
-        box->SetDensity(lua_tonumber(L, 2));
-
-        return 0;
-    }
-
-    int lua_Box2DGetFriction(lua_State* L) {
-        Box2DComponent* box = GetBox2DComponent(L);
-
-        lua_pushnumber(L, box->GetFriction());
-
-        return 1;
-    }
-
-    int lua_Box2DSetFriction(lua_State* L) {
-        Box2DComponent* box = GetBox2DComponent(L);
-
-        int type = lua_type(L, 2);
-        VI_ASSERT(type == LUA_TNUMBER && "Box2DComponent:SetFriction #2 argument required a number");
-
-        box->SetFriction(lua_tonumber(L, 2));
-
-        return 0;
-    }
-
     LuaModuleDef<Box2DComponent> Box2DLuaModule::ModuleDef =
         LuaModuleDef<Box2DComponent>
     {
@@ -97,10 +59,6 @@ namespace VIEngine {
             {"SetWidth", lua_Box2DSetWidth},
             {"GetHeight", lua_Box2DGetHeight},
             {"SetHeight", lua_Box2DSetHeight},
-            {"GetDensity", lua_Box2DGetDensity},
-            {"SetDensity", lua_Box2DSetDensity},
-            {"GetFriction", lua_Box2DGetFriction},
-            {"SetFriction", lua_Box2DSetFriction},
             {NULL, NULL}
         },
         {},

@@ -17,14 +17,8 @@ namespace VIEngine {
         VI_FORCE_INLINE float GetWidth() const { return mWidth; }
         VI_FORCE_INLINE void SetHeight(float height) { mHeight = height; }
         VI_FORCE_INLINE float GetHeight() const { return mHeight; }
-        VI_FORCE_INLINE void SetDensity(float density) { mDensity = density; }
-        VI_FORCE_INLINE float GetDensity() const { return mDensity; }
-        VI_FORCE_INLINE void SetFriction(float friction) { mFriction = friction; }
-        VI_FORCE_INLINE float GetFriction() const { return mFriction; }
     private:
         b2BodyId mBodyID;
         float mWidth = 1.0f, mHeight = 1.0f;
-        float mDensity = 1.0f;
-        float mFriction = 0.3f;
     };
 }

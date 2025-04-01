@@ -3,6 +3,7 @@
 #include"Core/Component/RigidBodyComponent.h"
 #include"Core/Component/TransformComponent.h"
 #include"Core/Component/ScriptComponent.h"
+#include"Core/Component/InfoComponent.h"
 #include"Core/Type/Collision.h"
 
 namespace VIEngine {
@@ -49,31 +50,48 @@ namespace VIEngine {
 			bodyDef.gravityScale =  rigidBody->GetGravityScale();
 			bodyDef.linearDamping = rigidBody->GetLinearDamping();
 			bodyDef.fixedRotation = rigidBody->GetFixedRotation();
+			bodyDef.position = b2Vec2{
+				PixelToWorld(transform.GetPosition().x), 
+				PixelToWorld(transform.GetPosition().y)
+			};
+			
+			b2BodyId bodyId = b2CreateBody(mWorldID, &bodyDef);
+			rigidBody->SetBodyID(bodyId);
+			b2Body_SetUserData(bodyId, rigidBody);
+			
+			b2ShapeDef shapeDef = b2DefaultShapeDef();
+			shapeDef.userData = rigidBody;
+			shapeDef.enableContactEvents = true;
+			shapeDef.enableHitEvents = true;
+			shapeDef.density = rigidBody->GetDensity();
+			shapeDef.friction = rigidBody->GetFriction();
+
+			InfoComponent& infoComponent = rigidBody->GetOwner().GetComponent<InfoComponent>();
+			b2Filter shapeFilter = b2DefaultFilter();
+
+			uint64_t categoryBits = ECategory::NONE;
+			if (infoComponent.GetCategoryBits() != ECategory::NONE) {
+				categoryBits = infoComponent.GetCategoryBits();
+			}
+			else if (rigidBody->GetBodyType() == EBodyType::DYNAMIC) {
+				categoryBits = ECategory::DYNAMIC;
+			}
+			else if (rigidBody->GetBodyType() == EBodyType::STATIC) {
+				categoryBits = ECategory::STATIC;
+			}
+			else if (rigidBody->GetBodyType() == EBodyType::KINEMATIC) {
+				categoryBits = ECategory::KINEMATIC;
+			}
+
+			shapeFilter.categoryBits = categoryBits;
+			shapeFilter.maskBits = infoComponent.GetMaskBits();
+			// TODO: Utilize group index later
+			// shapeFilter.groupIndex = infoComponent.GetGroupIndex();
+			shapeDef.filter = shapeFilter;
 			
 			if (actor.HasComponent<Box2DComponent>()) {
 				Box2DComponent& box2DComponent = actor.GetComponent<Box2DComponent>();
-
-				bodyDef.position = b2Vec2{
-					PixelToWorld(transform.GetPosition().x), 
-					PixelToWorld(transform.GetPosition().y)
-				};
-
-				b2BodyId bodyId = b2CreateBody(mWorldID, &bodyDef);
-				rigidBody->SetBodyID(bodyId);
-				b2Body_SetUserData(bodyId, rigidBody);
-				// b2Polygon boxCollider = b2MakeBox(PixelToWorld(box2DComponent.GetWidth() * 0.5), PixelToWorld(box2DComponent.GetHeight() * 0.5));
-				b2Polygon boxCollider = b2MakeOffsetBox(
-					PixelToWorld(box2DComponent.GetWidth() * 0.5), 
-					PixelToWorld(box2DComponent.GetHeight() * 0.5),
-					b2Body_GetLocalCenterOfMass(bodyId),
-					b2Body_GetRotation(bodyId)
-				);
-				b2ShapeDef shapeDef = b2DefaultShapeDef();
-				shapeDef.density = box2DComponent.GetDensity();
-				shapeDef.friction = box2DComponent.GetFriction();
-				shapeDef.userData = rigidBody;
-				shapeDef.enableContactEvents = true;
-				shapeDef.enableHitEvents = true;
+				b2Polygon boxCollider = b2MakeBox(PixelToWorld(box2DComponent.GetWidth() * 0.5), PixelToWorld(box2DComponent.GetHeight() * 0.5));
 				b2CreatePolygonShape(bodyId, &shapeDef, &boxCollider);
 			}
 			else {
@@ -86,22 +104,6 @@ namespace VIEngine {
 		float timeStep = 1.0f / 60.0f;
 		int subStepCount = 4;
 
-		for (RigidBodyComponent* rigidBody : mCoordinator->GetComponentArray<RigidBodyComponent>()) {
-			if (!rigidBody->GetIsActive()) continue;
-
-			TransformComponent& transform = rigidBody->GetOwner().GetComponent<TransformComponent>();
-			b2Vec2 physicWorldPosition = b2Body_GetPosition(rigidBody->GetBodyID());
-			if (rigidBody->GetBodyType() == EBodyType::KINEMATIC) {
-				b2Vec2 velocity = b2Vec2{
-					PixelToWorld(transform.GetPosition().x) - physicWorldPosition.x, 
-					PixelToWorld(transform.GetPosition().y) - physicWorldPosition.y
-				};
-				b2Body_SetLinearVelocity(rigidBody->GetBodyID(), velocity);
-			}
-			else if (rigidBody->GetBodyType() == EBodyType::DYNAMIC) {
-			}
-		}
-
 		// Update physic world
 		b2World_Step(mWorldID, timeStep, subStepCount);
 		
@@ -111,29 +113,14 @@ namespace VIEngine {
 			const b2BodyMoveEvent* event = bodyEvents.moveEvents + i;
 			RigidBodyComponent* rigidBody = reinterpret_cast<RigidBodyComponent*>(event->userData);
 			Actor actor = rigidBody->GetOwner();
-			if (actor.HasComponent<Box2DComponent>()) {
-				Box2DComponent& box = actor.GetComponent<Box2DComponent>();
-				TransformComponent& transform = actor.GetComponent<TransformComponent>();
-				b2Vec2 physicWorldPosition = b2Body_GetPosition(rigidBody->GetBodyID());
-				// transform.SetPositionX(WorldToPixel(physicWorldPosition.x) + box.GetWidth() * 0.5);
-				// transform.SetPositionY(-WorldToPixel(physicWorldPosition.y) - box.GetHeight() * 0.5);
-
-				transform.SetPositionX(WorldToPixel(physicWorldPosition.x));
-				transform.SetPositionY(WorldToPixel(physicWorldPosition.y));
-			}
-			else {
-				VI_ASSERT(false && "Actor with RigidbodyComponent attached should have at least one shape collider component");
-			}
+			Box2DComponent& box = actor.GetComponent<Box2DComponent>();
+			TransformComponent& transform = actor.GetComponent<TransformComponent>();
+			b2Vec2 physicWorldPosition = b2Body_GetPosition(rigidBody->GetBodyID());
+			transform.SetPositionX(WorldToPixel(physicWorldPosition.x));
+			transform.SetPositionY(WorldToPixel(physicWorldPosition.y));
 		}
 
-		// b2SensorEvents sensorEvents = b2World_GetSensorEvents(mWorldID);
-		// CORE_LOG_TRACE("Sensor Event Begin: {0}", sensorEvents.beginCount);
-		// CORE_LOG_TRACE("Sensor Event End: {0}", sensorEvents.endCount);
-		
 		b2ContactEvents contactEvents = b2World_GetContactEvents(mWorldID);
-		// CORE_LOG_TRACE("Begin : {0}", contactEvents.beginCount);
-		// CORE_LOG_TRACE("End : {0}", contactEvents.endCount);
-		// CORE_LOG_TRACE("Hit : {0}", contactEvents.hitCount);
 		for (int32_t i = 0; i < contactEvents.beginCount; ++i) {
 			b2ContactBeginTouchEvent* beginTouchEvent = contactEvents.beginEvents + i;
 			RigidBodyComponent* bodyA = reinterpret_cast<RigidBodyComponent*>(b2Shape_GetUserData(beginTouchEvent->shapeIdA));
@@ -156,6 +143,7 @@ namespace VIEngine {
 				collisionContextA.ContactPoints[j].Persisted = manifoldPoint.persisted;
 				collisionContextA.ContactPoints[j].TangentImpulse = manifoldPoint.tangentImpulse;
 				collisionContextA.ContactPoints[j].WorldPosition = glm::vec2(manifoldPoint.point.x, manifoldPoint.point.y);
+				collisionContextA.ContactPoints[j].Seperation = manifoldPoint.separation;
 			}
 
 			bodyA->GetOwner().GetComponent<ScriptComponent>().OnCollision(&collisionContextA);
@@ -176,6 +164,7 @@ namespace VIEngine {
 				collisionContextB.ContactPoints[j].Persisted = manifoldPoint.persisted;
 				collisionContextB.ContactPoints[j].TangentImpulse = manifoldPoint.tangentImpulse;
 				collisionContextB.ContactPoints[j].WorldPosition = glm::vec2(manifoldPoint.point.x, manifoldPoint.point.y);
+				collisionContextB.ContactPoints[j].Seperation = manifoldPoint.separation;
 			}
 
 			bodyB->GetOwner().GetComponent<ScriptComponent>().OnCollision(&collisionContextB);

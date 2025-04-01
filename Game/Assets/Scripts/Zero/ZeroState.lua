@@ -31,4 +31,24 @@ function ZeroState:CountIsPressed(commandBuffers, inputCommand, count)
     return times >= count
 end
 
+function ZeroState:CountCommand(commandBuffers, inputCommand)
+    local times = 0
+    for i = 1, #commandBuffers do
+        if commandBuffers[i] == inputCommand then
+            times = times + 1
+        end
+    end
+
+    return times
+end
+
+function ZeroState:ResetCommandBuffers(command)
+    for i=1, #command['Buffers'] do
+        command['Buffers'][i] = -1
+    end
+    command['FrameIndex'] = 0
+end
+
 function ZeroState:OnExit() end
+
+function ZeroState:OnCollision(collision) end

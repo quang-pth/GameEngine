@@ -8,17 +8,34 @@ setmetatable(ZeroIdleState, {
 
 ZeroIdleState['Owner'] = nil
 ZeroIdleState['Animator'] = nil
+ZeroIdleState['RigidBody'] = nil
 ZeroIdleState['TriggerBasicAttack1'] = false
 ZeroIdleState['TriggerSlide'] = false
+ZeroIdleState['CommandBuffers'] = {
+    FrameIndex = 0,
+    Buffers = {
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+    }
+}
 
 function ZeroIdleState:OnEnter(owner)
     self['Owner'] = owner
     self['Animator'] = owner:GetAnimator()
     self['Animator']:SetActiveAnimation("ZeroIdle")
     self['Animator']:SetFPS(6)
+    self['RigidBody'] = owner:GetRigidBody()
 end
 
 function ZeroIdleState:OnProcessInput(inputState)
+    local nextIndex = ZeroState:NextIndex(self['CommandBuffers']['FrameIndex'], #self['CommandBuffers']['Buffers'])
+    self['CommandBuffers']['FrameIndex'] = nextIndex
+
     local owner = self['Owner']
     owner['MoveHorizontal'] = 0
 
@@ -33,6 +50,12 @@ function ZeroIdleState:OnProcessInput(inputState)
         owner['MoveHorizontal'] = owner['MoveHorizontal'] + 1
     end
 
+    if keyboardState:IsPressed(VIKeyCode.SPACE) then
+        self['CommandBuffers']['Buffers'][nextIndex] = VIMouseButton.SPACE
+    else
+        self['CommandBuffers']['Buffers'][nextIndex] = -1
+    end
+
     local mouseState = inputState:GetMouse()
     self['TriggerBasicAttack1'] = mouseState:IsPressed(VIMouseButton.BUTTON_LEFT)
     self['TriggerSlide'] = mouseState:IsPressed(VIKeyCode.LEFT_SHIFT)
@@ -42,6 +65,18 @@ function ZeroIdleState:OnUpdate(deltaTime)
     local owner = self['Owner']
     if owner['MoveHorizontal'] ~= 0 then
         return owner['WalkState']
+    end
+
+    local _, velocityY = self['RigidBody']:GetLinearVelocity()
+    if not owner['HaveTouchedGround'] and velocityY < 0.0 then
+        print('Idle to falling')
+        return self['Owner']['FallingState']
+    end
+
+    if ZeroState:CountIsPressed(self['CommandBuffers']['Buffers'], VIMouseButton.SPACE, 1) then
+        local jumpState = self['Owner']['JumpState']
+        jumpState:SetImpulseForward(0)
+        return self['Owner']['JumpState']
     end
 
     if self['TriggerSlide'] then
@@ -54,6 +89,7 @@ function ZeroIdleState:OnUpdate(deltaTime)
 end
 
 function ZeroIdleState:OnExit()
-
+    ZeroState:ResetCommandBuffers(self['CommandBuffers'])
 end
+
 

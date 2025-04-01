@@ -10,6 +10,7 @@
 #include"Box2DLuaModule.h"
 #include"RigidBodyLuaModule.h"
 #include"Core/System/ScriptSystem.h"
+#include"Core/Component/InfoComponent.h"
 
 namespace VIEngine {
 	ScriptModule::ScriptModule() {
@@ -291,6 +292,60 @@ namespace VIEngine {
 		return 1;
 	}
 
+	int lua_SetCategoryBits(lua_State* L) {
+		Actor actor = GetActor(L);
+
+		int type = lua_type(L, 2);
+		VI_ASSERT(type == LUA_TNUMBER && "Actor:SetCategory #2 argument required a number");
+		actor.GetComponent<InfoComponent>().SetCategoryBits(lua_tonumber(L, 2));
+
+		return 0;
+	}
+
+	int lua_GetCategoryBits(lua_State* L) {
+		Actor actor = GetActor(L);
+
+		lua_pushnumber(L, actor.GetComponent<InfoComponent>().GetCategoryBits());
+
+		return 1;
+	}
+
+	int lua_SetMaskBits(lua_State* L) {
+		Actor actor = GetActor(L);
+
+		int type = lua_type(L, 2);
+		VI_ASSERT(type == LUA_TNUMBER && "Actor:SetMaskBits #2 argument required a number");
+		actor.GetComponent<InfoComponent>().SetMaskBits(lua_tonumber(L, 2));
+
+		return 0;
+	}
+
+	int lua_GetMaskBits(lua_State* L) {
+		Actor actor = GetActor(L);
+
+		lua_pushnumber(L, actor.GetComponent<InfoComponent>().GetMaskBits());
+
+		return 1;
+	}
+
+	int lua_SetGroupIndex(lua_State* L) {
+		Actor actor = GetActor(L);
+
+		int type = lua_type(L, 2);
+		VI_ASSERT(type == LUA_TNUMBER && "Actor:SetGroupIndex #2 argument required a number");
+		actor.GetComponent<InfoComponent>().SetGroupIndex(lua_tonumber(L, 2));
+
+		return 0;
+	}
+
+	int lua_GetGroupIndex(lua_State* L) {
+		Actor actor = GetActor(L);
+
+		lua_pushnumber(L, actor.GetComponent<InfoComponent>().GetGroupIndex());
+
+		return 1;
+	}
+
 	const std::vector<luaL_Reg> regs = {
 		{"GetPosition", lua_GetPosition},
 		{"SetPositionX", lua_SetPositionX},
@@ -310,6 +365,12 @@ namespace VIEngine {
 		{"AddBox2D", lua_AddBox2D},
 		{"GetRigidBody", lua_GetRigidBody},
 		{"AddRigidBody", lua_AddRigidBody},
+		{"SetCategoryBits", lua_SetCategoryBits},
+		{"GetCategoryBits", lua_GetCategoryBits},
+		{"SetMaskBits", lua_SetMaskBits},
+		{"GetMaskBits", lua_GetMaskBits},
+		{"SetGroupIndex", lua_SetGroupIndex},
+		{"GetGroupIndex", lua_GetGroupIndex},
 		{NULL, NULL}
 	};
 

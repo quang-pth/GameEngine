@@ -86,11 +86,28 @@ namespace VIEngine
         return 0;
     }
 
+    int lua_SetLinearVelocity(lua_State* L) {
+        RigidBodyComponent* rigidBody = GetRigidBodyComponent(L);
+        
+        int type = lua_type(L, 2);
+        VI_ASSERT(type == LUA_TNUMBER && "RigidBodyComponent:SetLinearVelocity #2 argument required a number");
+        
+        type = lua_type(L, 3);
+        VI_ASSERT(type == LUA_TNUMBER && "RigidBodyComponent:SetLinearVelocity #3 argument required a number");
+    
+        b2Body_SetLinearVelocity(
+            rigidBody->GetBodyID(),
+            b2Vec2{PixelToWorld(lua_tonumber(L, 2)), PixelToWorld(lua_tonumber(L, 3))}
+        );
+
+        return 0;
+    }
+
     int lua_GetLinearVelocity(lua_State* L) {
         RigidBodyComponent* rigidBody = GetRigidBodyComponent(L);
         
-        lua_pushnumber(L, PixelToWorld(b2Body_GetLinearVelocity(rigidBody->GetBodyID()).x));
-        lua_pushnumber(L, PixelToWorld(b2Body_GetLinearVelocity(rigidBody->GetBodyID()).y));
+        lua_pushnumber(L, WorldToPixel(b2Body_GetLinearVelocity(rigidBody->GetBodyID()).x));
+        lua_pushnumber(L, WorldToPixel(b2Body_GetLinearVelocity(rigidBody->GetBodyID()).y));
 
         return 2;
     }
@@ -140,6 +157,73 @@ namespace VIEngine
         return 1;
     }
 
+    int lua_ApplyImpulseToCenter(lua_State* L) {
+        RigidBodyComponent* rigidBody = GetRigidBodyComponent(L);
+
+        // Apply force X
+        int type = lua_type(L, 2);
+        VI_ASSERT(type == LUA_TNUMBER && "RigidBodyComponent:ApplyImpulseToCenter #2 argument required a number");
+        
+        // Apply force Y
+        type = lua_type(L, 3);
+        VI_ASSERT(type == LUA_TNUMBER && "RigidBodyComponent:ApplyImpulseToCenter #3 argument required a number");
+        
+        bool awake = true;
+        if (lua_gettop(L) == 4) {
+            type = lua_type(L, 4);
+            VI_ASSERT(type == LUA_TBOOLEAN && "RigidBodyComponent:ApplyImpulseToCenter #4 argument required a boolean");
+            awake = lua_toboolean(L, 4);
+        }
+
+        b2Vec2 worldCenter = b2Body_GetWorldCenterOfMass(rigidBody->GetBodyID());
+        b2Body_ApplyLinearImpulse(
+            rigidBody->GetBodyID(), 
+            b2Vec2{PixelToWorld(lua_tonumber(L, 2)), PixelToWorld(lua_tonumber(L, 3))},
+            worldCenter,
+            awake
+        );
+
+        return 0;
+    }
+
+    int lua_GetDensity(lua_State* L) {
+        RigidBodyComponent* rigidBody = GetRigidBodyComponent(L);
+
+        lua_pushnumber(L, rigidBody->GetDensity());
+
+        return 1;
+    }
+
+    int lua_SetDensity(lua_State* L) {
+        RigidBodyComponent* rigidBody = GetRigidBodyComponent(L);
+
+        int type = lua_type(L, 2);
+        VI_ASSERT(type == LUA_TNUMBER && "Box2DComponent:SetDensity #2 argument required a number");
+
+        rigidBody->SetDensity(lua_tonumber(L, 2));
+
+        return 0;
+    }
+
+    int lua_GetFriction(lua_State* L) {
+        RigidBodyComponent* rigidBody = GetRigidBodyComponent(L);
+
+        lua_pushnumber(L, rigidBody->GetFriction());
+
+        return 1;
+    }
+
+    int lua_SetFriction(lua_State* L) {
+        RigidBodyComponent* rigidBody = GetRigidBodyComponent(L);
+
+        int type = lua_type(L, 2);
+        VI_ASSERT(type == LUA_TNUMBER && "Box2DComponent:SetFriction #2 argument required a number");
+
+        rigidBody->SetFriction(lua_tonumber(L, 2));
+
+        return 0;
+    }
+
     LuaModuleDef<RigidBodyComponent> RigidBodyLuaModule::ModuleDef =
         LuaModuleDef<RigidBodyComponent>
     {
@@ -150,11 +234,17 @@ namespace VIEngine
             {"GetGravityScale", lua_GetGravityScale},
             {"SetGravityScale", lua_SetGravityScale},
             {"ApplyForceToCenter", lua_ApplyForceToCenter},
+            {"SetLinearVelocity", lua_SetLinearVelocity},
             {"GetLinearVelocity", lua_GetLinearVelocity},
             {"SetLinearDamping", lua_SetLinearDamping},
             {"GetLinearDamping", lua_GetLinearDamping},
             {"SetFixedRotation", lua_SetFixedRotation},
             {"GetFixedRotation", lua_GetFixedRotation},
+            {"ApplyImpulseToCenter", lua_ApplyImpulseToCenter},
+            {"SetDensity", lua_SetDensity},
+            {"GetDensity", lua_GetDensity},
+            {"SetFriction", lua_SetFriction},
+            {"GetFriction", lua_GetFriction},
             {NULL, NULL}
         },
         {},

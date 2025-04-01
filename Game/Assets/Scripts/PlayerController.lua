@@ -5,6 +5,9 @@ require("Assets\\Scripts\\Zero\\ZeroSlideState")
 require("Assets\\Scripts\\Zero\\ZeroBasicAttack1State")
 require("Assets\\Scripts\\Zero\\ZeroBasicAttack2State")
 require("Assets\\Scripts\\Zero\\ZeroBasicAttack3State")
+require("Assets\\Scripts\\Zero\\ZeroJumpState")
+require("Assets\\Scripts\\Zero\\ZeroFallingState")
+require("Assets\\Scripts\\Zero\\ZeroTouchGroundState")
 
 PlayerController = PlayerController or {}
 
@@ -22,8 +25,12 @@ PlayerController['SlideState'] = ZeroSlideState
 PlayerController['BasicAttack1State'] = ZeroBasicAttack1State
 PlayerController['BasicAttack2State'] = ZeroBasicAttack2State
 PlayerController['BasicAttack3State'] = ZeroBasicAttack3State
+PlayerController['JumpState'] = ZeroJumpState
+PlayerController['FallingState'] = ZeroFallingState
+PlayerController['TouchGroundState'] = ZeroTouchGroundState
 PlayerController['IsReadyToSlide'] = true
 PlayerController['SlideCooldownSeconds'] = -1.0
+PlayerController['HaveTouchedGround'] = false
 
 function PlayerController:OnStart()
     local idleAnimation = Animation.Create("ZeroIdle");
@@ -93,6 +100,27 @@ function PlayerController:OnStart()
     slideState:AddSprite("Assets/Sprite/Zero/slide/slide06.png");
     slideState:SetIsLoop(false)
 
+    local jumpState = Animation.Create("ZeroJump")
+    jumpState:AddSprite("Assets/Sprite/Zero/jump/jump00.png");
+    jumpState:AddSprite("Assets/Sprite/Zero/jump/jump01.png");
+    jumpState:AddSprite("Assets/Sprite/Zero/jump/jump02.png");
+    jumpState:AddSprite("Assets/Sprite/Zero/jump/jump03.png");
+    jumpState:AddSprite("Assets/Sprite/Zero/jump/jump04.png");
+    jumpState:AddSprite("Assets/Sprite/Zero/jump/jump05.png");
+    jumpState:SetIsLoop(false)
+    
+    local fallingState = Animation.Create("ZeroFalling")
+    fallingState:AddSprite("Assets/Sprite/Zero/jump/jump06.png");
+    fallingState:AddSprite("Assets/Sprite/Zero/jump/jump07.png");
+    fallingState:AddSprite("Assets/Sprite/Zero/jump/jump08.png");
+    fallingState:AddSprite("Assets/Sprite/Zero/jump/jump09.png");
+    fallingState:SetIsLoop(true)
+    
+    local touchGroundState = Animation.Create("ZeroTouchGround")
+    touchGroundState:AddSprite("Assets/Sprite/Zero/jump/jump10.png");
+    touchGroundState:AddSprite("Assets/Sprite/Zero/jump/jump11.png");
+    touchGroundState:SetIsLoop(false)
+
     local animator = self:AddAnimator()
     animator:AddAnimation(idleAnimation)
     animator:AddAnimation(walkAnimation)
@@ -100,21 +128,24 @@ function PlayerController:OnStart()
     animator:AddAnimation(basicAttack2)
     animator:AddAnimation(basicAttack3)
     animator:AddAnimation(slideState)
+    animator:AddAnimation(jumpState)
+    animator:AddAnimation(fallingState)
+    animator:AddAnimation(touchGroundState)
     animator:SetActiveAnimation(walkAnimation:GetName())
     animator:FlipVertical(false)
 
     self:SetPositionX(10.0)
-    self:SetPositionY(10.0)
+    self:SetPositionY(15.0)
 
     local box2D = self:AddBox2D()
-    box2D:SetDensity(1.0)
-    box2D:SetFriction(1.0)
     box2D:SetWidth(0.5)
     box2D:SetHeight(1.25)
-
+    
     local rigidBody = self:AddRigidBody()
+    rigidBody:SetDensity(1.0)
+    rigidBody:SetFriction(1.0)
     rigidBody:SetBodyType(VIPhysic.BodyType.DYNAMIC)
-    rigidBody:SetGravityScale(1)
+    rigidBody:SetGravityScale(1.0)
     rigidBody:SetLinearDamping(10.0)
     rigidBody:SetFixedRotation(true)
 
@@ -154,7 +185,7 @@ function PlayerController:OnUpdate(deltaTime)
 end
 
 function PlayerController:OnCollision(collision)
-    print("From player: " .. tostring(collision:GetContactCount()))
+    self['ActiveState']:OnCollision(collision)
 end
 
 function PlayerController:OnMouseButtonPressed(button)

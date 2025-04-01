@@ -23,11 +23,17 @@ namespace VIEngine {
         VI_FORCE_INLINE float GetLinearDamping() const { return mLinearDamping; }
         VI_FORCE_INLINE void SetFixedRotation(bool fixedRotation) { mFixedRotation = fixedRotation; }
         VI_FORCE_INLINE float GetFixedRotation() const { return mFixedRotation; }
+        VI_FORCE_INLINE void SetDensity(float density) { mDensity = density; }
+        VI_FORCE_INLINE float GetDensity() const { return mDensity; }
+        VI_FORCE_INLINE void SetFriction(float friction) { mFriction = friction; }
+        VI_FORCE_INLINE float GetFriction() const { return mFriction; }
     private:
         b2BodyId mBodyID = b2_nullBodyId;
         EBodyType mBodyType = EBodyType::STATIC;
         float mGravityScale = 1.0f;
         float mLinearDamping = 1.0f;
         bool mFixedRotation = false;
+        float mDensity = 1.0f;
+        float mFriction = 0.3f;
     };
 }

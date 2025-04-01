@@ -55,28 +55,17 @@ namespace VIEngine {
             b2World_Draw(mWorldID, &mPhysicWorldDebugDraw);
         }
 
-        // for (RigidBodyComponent* rigidBody : mCoordinator->GetComponentArray<RigidBodyComponent>()) {
-        //     // b2AABB aabb = b2Body_ComputeAABB(rigidBody->GetBodyID());
+        for (RigidBodyComponent* rigidBody : mCoordinator->GetComponentArray<RigidBodyComponent>()) {
+            b2AABB aabb = b2Body_ComputeAABB(rigidBody->GetBodyID());
   
-        //     // Renderer::DrawQuad(
-        //     //     WorldToPixel(aabb.lowerBound.x), 
-        //     //     WorldToPixel(aabb.lowerBound.y), 
-        //     //     WorldToPixel(aabb.upperBound.x), 
-        //     //     WorldToPixel(aabb.upperBound.y),
-        //     //     mQuadColor
-        //     // );
-        //     // CORE_LOG_DEBUG("Min: {0}, {1}. Max: {2}, {3}", 
-        //     //     WorldToPixel(aabb.lowerBound.x), 
-        //     //     WorldToPixel(-aabb.lowerBound.y), 
-        //     //     WorldToPixel(aabb.upperBound.x), 
-        //     //     WorldToPixel(-aabb.upperBound.y)
-        //     // );
-            
-        //     // CORE_LOG_DEBUG("Position: {0} {1}", 
-        //     //     WorldToPixel(b2Body_GetPosition(rigidBody->GetBodyID()).x), 
-        //     //     WorldToPixel(b2Body_GetPosition(rigidBody->GetBodyID()).y)
-        //     // );
-        // }
+            Renderer::DrawQuad(
+                WorldToPixel(aabb.lowerBound.x), 
+                WorldToPixel(aabb.lowerBound.y), 
+                WorldToPixel(aabb.upperBound.x), 
+                WorldToPixel(aabb.upperBound.y),
+                mQuadColor
+            );
+        }
     }
 
     void DebugDrawSystem::OnShutdown() {

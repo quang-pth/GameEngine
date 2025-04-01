@@ -10,6 +10,18 @@ ZeroWalkState['TriggerSlide'] = false
 ZeroWalkState['CurrentVelocity'] = {x = 0.7, y = 0}
 ZeroWalkState['MaxVelocity'] = {x = 1.4, y = 0}
 ZeroWalkState['BaseFPS'] = 6
+ZeroWalkState['CommandBuffers'] = {
+    FrameIndex = 0,
+    Buffers = {
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1,
+        -1
+    }
+}
 
 function ZeroWalkState:OnEnter(owner)
     self['Owner'] = owner
@@ -21,6 +33,9 @@ function ZeroWalkState:OnEnter(owner)
 end
 
 function ZeroWalkState:OnProcessInput(inputState)
+    local nextIndex = ZeroState:NextIndex(self['CommandBuffers']['FrameIndex'], #self['CommandBuffers']['Buffers'])
+    self['CommandBuffers']['FrameIndex'] = nextIndex
+
     local owner = self['Owner']
     owner['MoveHorizontal'] = 0
     self['TriggerSlide'] = false
@@ -35,6 +50,12 @@ function ZeroWalkState:OnProcessInput(inputState)
     if keyboardState:IsPressed(VIKeyCode.D) then
         animator:FlipHorizontal(false);
         owner['MoveHorizontal'] = owner['MoveHorizontal'] + 1
+    end
+
+    if keyboardState:IsPressed(VIKeyCode.SPACE) then
+        self['CommandBuffers']['Buffers'][nextIndex] = VIMouseButton.SPACE
+    else
+        self['CommandBuffers']['Buffers'][nextIndex] = -1
     end
 
     if owner['MoveHorizontal'] == 0 then
@@ -70,8 +91,15 @@ function ZeroWalkState:OnUpdate(deltaTime)
     if owner['IsReadyToSlide'] and self['TriggerSlide'] then
         return owner['SlideState']
     end
+
+    if ZeroState:CountIsPressed(self['CommandBuffers']['Buffers'], VIMouseButton.SPACE, 1) then
+        local jumpState = self['Owner']['JumpState']
+        jumpState:SetImpulseForward(0.15 * self['Owner']['MoveHorizontal'])
+        return self['Owner']['JumpState']
+    end
 end
 
 function ZeroWalkState:OnExit()
+    ZeroState:ResetCommandBuffers(self['CommandBuffers'])
 end
 

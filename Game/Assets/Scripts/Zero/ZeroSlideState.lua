@@ -77,10 +77,10 @@ function ZeroSlideState:OnUpdate(deltaTime)
         return owner['PrevState']
     end
 
-    local x, y, _ = owner:GetPosition();
+    -- local x, y, _ = owner:GetPosition();
 
-    owner:SetPositionX(x + owner['MoveHorizontal'] * self['Speed'] * deltaTime)
-    owner:SetPositionY(y + owner['MoveVertical'] * self['Speed'] * deltaTime)
+    -- owner:SetPositionX(x + owner['MoveHorizontal'] * self['Speed'] * deltaTime)
+    -- owner:SetPositionY(y + owner['MoveVertical'] * self['Speed'] * deltaTime)
 end
 
 function ZeroSlideState:OnExit()

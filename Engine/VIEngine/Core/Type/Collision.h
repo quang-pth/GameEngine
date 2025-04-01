@@ -7,6 +7,13 @@ namespace VIEngine
 {
     constexpr uint8_t MAX_CONTACT_POINTS = 2;
 
+    enum ECategory {
+        NONE = 0x00000000,
+        STATIC = 0x00000001,
+        DYNAMIC = 0x00000002,
+        KINEMATIC = 0x00000003
+    };
+
     struct ContactPoint {
         glm::vec2 WorldPosition;
         glm::vec2 AnchorA;
